@@ -15,32 +15,23 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class Locales extends Fragment {
 
-    public static Locales newInstance(String fecha) {
-        Bundle args = new Bundle();
-        args.putString("fecha", fecha);
-        Locales l = new Locales();
-        l.setArguments(args);
-        return l;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                               Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.portada_layout, container, false);
-        String fecha = getArguments().getString("fecha");
-        GetPortadas getPortadas = new GetPortadas(rootView, getClass().getSimpleName(), fecha,null);
+        GetPortadas getPortadas = new GetPortadas(rootView, getClass().getSimpleName(),null);
         getPortadas.execute(Revistas.locales);
         SwipeRefreshLayout swipeRefreshLayout = rootView.findViewById(R.id.refreshLayout);
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            refreshFragment(rootView, swipeRefreshLayout, fecha);
+            refreshFragment(rootView, swipeRefreshLayout);
         });
         return getPortadas.getRootView();
     }
 
-    private void refreshFragment(View rootView, SwipeRefreshLayout swipeRefreshLayout, String fecha) {
+    private void refreshFragment(View rootView, SwipeRefreshLayout swipeRefreshLayout) {
         ViewGroup viewGroup = rootView.findViewById(R.id.linearLayout);
         viewGroup.removeAllViews();
-        GetPortadas getPts = new GetPortadas(rootView, getClass().getSimpleName(),fecha, swipeRefreshLayout);
+        GetPortadas getPts = new GetPortadas(rootView, getClass().getSimpleName(), swipeRefreshLayout);
         getPts.execute(Revistas.locales);
     }
 }

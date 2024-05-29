@@ -5,7 +5,8 @@ package sergirex.portadasrevistas;
  * Nothing else to add
  */
 class Revistas {
-    static final String [] corazon = {"Semana:semana.es", "Diez Minutos:diezminutos.es", "Lecturas:lecturas.com", "Hola:hola.com"};
+    static final String [] corazon = {"Semana:semana.es", "Diez Minutos:diezminutos.es", "Lecturas:lecturas.com", "Hola:hola.com", "Love", "Cuore:elperiodico.com/cuore",
+            "Rumore", "QMD:diezminutos.es/que-me-dices", "Hello:hellomagazine.com", "Lux:lux.iol.pt"};
     static final String [] deportes = {"marca.com", "as.com", "sport.es", "mundodeportivo.com", "superdeporte.es", "el9:lesportiudecatalunya.cat"};
     static final String [] economia = {"expansion.com", "eleconomista.es", "5dias:cincodias.elpais.com"};
     static final String [] locales = {"vozgalicia:lavozdegalicia.es", "diario_sevilla:diariodesevilla.es", "diario_informacion:informacion.es",

@@ -56,6 +56,7 @@ import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.QueryProductDetailsParams;
 import com.android.billingclient.api.QueryPurchasesParams;
+import com.facebook.ads.AdSettings;
 import com.facebook.ads.AdSize;
 import com.facebook.ads.AdView;
 import com.facebook.ads.AudienceNetworkAds;
@@ -229,7 +230,7 @@ public class Portadas extends AppCompatActivity {
 
         if(!prefs.getBoolean("remove_fb_ads", false)) {
             AudienceNetworkAds.initialize(this);
-            //AdSettings.setTestMode(true);
+            AdSettings.setTestMode(true);
             // Instantiate an AdView object.
             // NOTE: The placement ID from the Facebook Monetization Manager identifies your App.
             // To get test ads, add IMG_16_9_APP_INSTALL# to your placement id. Remove this when your app is ready to serve real ads.
@@ -331,7 +332,7 @@ public class Portadas extends AppCompatActivity {
                             new MaterialAlertDialogBuilder(this,R.style.Theme_MyApp_Dialog_Alert)
                                     .setTitle(productName)
                                     .setMessage("Deshazte de la publicidad por "+price+" de por vida")
-                                    .setIcon(R.mipmap.news_icon)
+                                    .setIcon(R.mipmap.magazines_icon)
                                     .setNegativeButton("Cancelar", null)
                                     .setNeutralButton("Restaurar compra",(dialog, which) -> restorePurchases())
                                     .setPositiveButton("Comprar", (dialog, which) -> launchPurchaseFlow(productDetailsList.get(0))).show();
@@ -420,10 +421,10 @@ public class Portadas extends AppCompatActivity {
         mViewPager = findViewById(R.id.viewpager);
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), getLifecycle());
         if(!prefsPor.getAll().isEmpty()) {
-            mSectionsPagerAdapter.addFragment(getString(R.string.fav_tab),Favoritos.newInstance(fecha));
+            mSectionsPagerAdapter.addFragment(getString(R.string.fav_tab),new Favoritos());
             favsCount = prefsPor.getAll().size();
         }
-        mSectionsPagerAdapter.addFragment(getString(R.string.first_tab), Corazon.newInstance(fecha));
+        mSectionsPagerAdapter.addFragment(getString(R.string.first_tab), new Corazon());
         //mSectionsPagerAdapter.addFragment(getString(R.string.second_tab),Deportes.newInstance(fecha));
         //mSectionsPagerAdapter.addFragment(getString(R.string.third_tab),Economia.newInstance(fecha));
         //mSectionsPagerAdapter.addFragment(getString(R.string.fourth_tab),Locales.newInstance(fecha));
@@ -530,7 +531,7 @@ public class Portadas extends AppCompatActivity {
             int theme = dark ? R.style.AppThemeDark : R.style.AppTheme;
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this, theme);
             alertDialogBuilder.setTitle(R.string.help);
-            alertDialogBuilder.setIcon(R.mipmap.news_icon);
+            alertDialogBuilder.setIcon(R.mipmap.magazines_icon);
             alertDialogBuilder.setPositiveButton("OK", null);
             alertDialog = alertDialogBuilder.create();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
@@ -708,7 +709,7 @@ public class Portadas extends AppCompatActivity {
     public AlertDialog createNoConnectionDialog() {
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle(" Error de conexión");
-        alertDialogBuilder.setIcon(R.mipmap.news_icon);
+        alertDialogBuilder.setIcon(R.mipmap.magazines_icon);
         alertDialogBuilder.setPositiveButton("Reintentar", (dialog, id) -> {
             if(isOnline())
                loadSectionsAdapter();
@@ -750,12 +751,12 @@ public class Portadas extends AppCompatActivity {
         int count = prefsPor.getAll().size();
         if(count > 0){
             if(!categorias.get(0).equals(getString(R.string.fav_tab))) {
-                mSectionsPagerAdapter.addFirstFragment(getString(R.string.fav_tab), Favoritos.newInstance(fecha));
+                mSectionsPagerAdapter.addFirstFragment(getString(R.string.fav_tab), new Favoritos());
                 mSectionsPagerAdapter.notifyItemInserted(0);
                 mViewPager.setCurrentItem(0);
             }else if(favsCount != count){
                 mSectionsPagerAdapter.removeFragment();
-                mSectionsPagerAdapter.addFirstFragment(getString(R.string.fav_tab),Favoritos.newInstance(fecha));
+                mSectionsPagerAdapter.addFirstFragment(getString(R.string.fav_tab),new Favoritos());
                 mSectionsPagerAdapter.notifyItemChanged(0);
                 favsCount = count;
             }

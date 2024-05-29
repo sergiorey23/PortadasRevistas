@@ -17,37 +17,28 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
  */
 public class Favoritos extends Fragment {
 
-    public static Favoritos newInstance(String fecha) {
-        Bundle args = new Bundle();
-        args.putString("fecha", fecha);
-        Favoritos f = new Favoritos();
-        f.setArguments(args);
-        return f;
-    }
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.portada_layout, container, false);
         SharedPreferences prefs = rootView.getContext().getSharedPreferences("revistas", Context.MODE_PRIVATE);
         if(prefs.getAll().isEmpty())
             return rootView;
-        String fecha = getArguments().getString("fecha");
-        GetPortadas getPortadas = new GetPortadas(rootView, getClass().getSimpleName(),fecha, null);
+        GetPortadas getPortadas = new GetPortadas(rootView, getClass().getSimpleName(), null);
         String[] favRevistas = prefs.getAll().values().toArray(new String[0]);
         getPortadas.execute(favRevistas);
         SwipeRefreshLayout swipeRefreshLayout = rootView.findViewById(R.id.refreshLayout);
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            refreshFragment(rootView, swipeRefreshLayout, prefs, fecha);
+            refreshFragment(rootView, swipeRefreshLayout, prefs);
             swipeRefreshLayout.setRefreshing(false);
         });
         return getPortadas.getRootView();
     }
 
-    private void refreshFragment(View rootView, SwipeRefreshLayout swipeRefreshLayout, SharedPreferences prefs, String fecha) {
+    private void refreshFragment(View rootView, SwipeRefreshLayout swipeRefreshLayout, SharedPreferences prefs) {
         ViewGroup viewGroup = rootView.findViewById(R.id.linearLayout);
         viewGroup.removeAllViews();
         String[] favRevistas = prefs.getAll().values().toArray(new String[0]);
-        GetPortadas getPts = new GetPortadas(rootView, getClass().getSimpleName(),fecha, swipeRefreshLayout);
+        GetPortadas getPts = new GetPortadas(rootView, getClass().getSimpleName(), swipeRefreshLayout);
         getPts.execute(favRevistas);
     }
 

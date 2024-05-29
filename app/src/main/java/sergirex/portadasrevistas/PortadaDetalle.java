@@ -5,14 +5,12 @@ import static sergirex.portadasrevistas.Portadas.scanFile;
 import static sergirex.portadasrevistas.SavePortada.permission;
 
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -36,9 +34,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
 import androidx.preference.PreferenceManager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
@@ -52,29 +48,20 @@ import com.facebook.ads.AudienceNetworkAds;
 import com.facebook.ads.InterstitialAd;
 import com.facebook.ads.InterstitialAdListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.play.core.review.ReviewInfo;
 import com.google.android.play.core.review.ReviewManager;
 import com.google.android.play.core.review.ReviewManagerFactory;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
 
 
 public class PortadaDetalle extends AppCompatActivity {
 
-    private String initialPortada;
     private Portada portada;
     private SharedPreferences prefsPer;
     private AlertDialog alertDialogNoConn;
@@ -83,10 +70,11 @@ public class PortadaDetalle extends AppCompatActivity {
     private ViewPager2 mViewPager2;
     private ViewPagerAdapter mSectionsPagerAdapter;
     private boolean clicked = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String theme = prefs.getString("theme","default");
+        String theme = prefs.getString("theme", "default");
         switch (theme) {
             case "default":
                 if ((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
@@ -99,8 +87,7 @@ public class PortadaDetalle extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_portada_detalle);
 
-        initialPortada = getIntent().getStringExtra("selectedPortada");
-        int showAd = getIntent().getIntExtra("showAd",0);
+        int showAd = getIntent().getIntExtra("showAd", 0);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -116,8 +103,12 @@ public class PortadaDetalle extends AppCompatActivity {
 
         FloatingActionButton fabWeb = findViewById(R.id.httpButton);
         fabWeb.setOnClickListener(v -> {
+            if (portada.getWebRevista().isEmpty()) {
+                Toast.makeText(this, "No existe la página web", Toast.LENGTH_SHORT).show();
+                return;
+            }
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("https://www." + portada.getWebPeriodico()));
+            intent.setData(Uri.parse("https://www." + portada.getWebRevista()));
             startActivity(intent);
         });
 
@@ -125,11 +116,11 @@ public class PortadaDetalle extends AppCompatActivity {
         favfab.setOnDragListener((view, dragEvent) -> false);
         favfab.setOnClickListener(view -> {
             SharedPreferences.Editor editor = prefsPer.edit();
-            if (prefsPer.contains(portada.getWebPeriodico())) {
-                editor.remove(portada.getWebPeriodico());
+            if (prefsPer.contains(portada.getTitle())) {
+                editor.remove(portada.getTitle());
                 favfab.setImageResource(R.drawable.ic_favorite_border_black_24dp);
             } else {
-                editor.putString(portada.getWebPeriodico(), portada.getWebPeriodico());
+                editor.putString(portada.getTitle(), portada.getRevista());
                 favfab.setImageResource(R.drawable.ic_favorite_black_24dp);
             }
             editor.apply();
@@ -137,7 +128,7 @@ public class PortadaDetalle extends AppCompatActivity {
 
         FloatingActionButton addFab = findViewById(R.id.addFab);
         addFab.setOnClickListener(v -> {
-            if(!clicked){
+            if (!clicked) {
                 fabWeb.setVisibility(View.VISIBLE);
                 favfab.setVisibility(View.VISIBLE);
                 fabWeb.startAnimation(fromBottom);
@@ -145,7 +136,7 @@ public class PortadaDetalle extends AppCompatActivity {
                 addFab.startAnimation(rotateOpen);
                 fabWeb.setClickable(true);
                 favfab.setClickable(true);
-            }else{
+            } else {
                 fabWeb.setVisibility(View.INVISIBLE);
                 favfab.setVisibility(View.INVISIBLE);
                 fabWeb.startAnimation(toBottom);
@@ -161,13 +152,13 @@ public class PortadaDetalle extends AppCompatActivity {
 
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        int rate = prefs.getInt("rate",0);
-        if(rate == 0 && showAd%2==0) {
+        int rate = prefs.getInt("rate", 0);
+        if (rate == 0 && showAd % 2 == 0) {
             SharedPreferences.Editor editor = prefs.edit();
-            new MaterialAlertDialogBuilder(this,R.style.Theme_MyApp_Dialog_Alert)
+            new MaterialAlertDialogBuilder(this, R.style.Theme_MyApp_Dialog_Alert)
                     .setTitle(R.string.rateTitle)
                     .setMessage(R.string.rateDescription)
-                    .setIcon(R.mipmap.news_icon)
+                    .setIcon(R.mipmap.magazines_icon)
                     .setNeutralButton("No", (dialog, which) -> {
                         editor.putInt("rate", 1);
                         editor.apply();
@@ -193,7 +184,7 @@ public class PortadaDetalle extends AppCompatActivity {
                                     Log.e("Review Error", task.getException().getMessage());
                                 }
                             });
-                        }else {
+                        } else {
                             Uri uri = Uri.parse("market://details?id=" + getPackageName());
                             Intent myAppLinkToMarket = new Intent(Intent.ACTION_VIEW, uri);
                             try {
@@ -204,15 +195,15 @@ public class PortadaDetalle extends AppCompatActivity {
                         }
                     }).show();
         }
-        if(!prefs.getBoolean("remove_fb_ads", false)) {
+        if (!prefs.getBoolean("remove_fb_ads", false)) {
             AudienceNetworkAds.initialize(this);
-            //AdSettings.setTestMode(true);
+            AdSettings.setTestMode(true);
             AdView bottomBanner = new AdView(this, "799967435028134_799969321694612", AdSize.BANNER_HEIGHT_50);
             // Find the Ad Container
             LinearLayout adContainer = findViewById(R.id.bannerContainerDetail);
             adContainer.addView(bottomBanner);
             bottomBanner.loadAd();
-            if (showAd%3==0) {
+            if (showAd % 3 == 0) {
                 interstitialAd = new InterstitialAd(this, "799967435028134_801174748240736");
                 String TAG = "AD";
                 InterstitialAdListener interstitialAdListener = new InterstitialAdListener() {
@@ -264,38 +255,34 @@ public class PortadaDetalle extends AppCompatActivity {
             if (alertDialogNoConn == null)
                 alertDialogNoConn = createNoConnectionDialog();
             alertDialogNoConn.show();
-        }else {
+        } else {
             mViewPager2 = findViewById(R.id.viewpager2);
             String[] portadas = getIntent().getStringArrayExtra("Portadas");
-            String fecha = getIntent().getStringExtra("Fecha");
+            String selectedRevistaId = getIntent().getStringExtra("Id");
             mSectionsPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), getLifecycle());
             int pos = 0;
             if (portadas != null) {
                 for (int i = 0; i < portadas.length; i++) {
-                    String[] periodicoArray = portadas[i].split(":");
-                    String siglaPais = "es";
-                    String title, webPeriodico = "";
-                    if (periodicoArray.length > 1) {
-                        title = periodicoArray[0];
-                        webPeriodico = periodicoArray[1];
-                        if (periodicoArray.length == 3) {
-                            siglaPais = periodicoArray[2];
-                        }
+                    String[] revistaArray = portadas[i].split(":");
+                    String title = revistaArray[0];
+                    String id, webRevista = "";
+                    if (revistaArray.length > 2) {
+                        webRevista = revistaArray[1];
+                        id = revistaArray[2];
                     } else {
-                        title = portadas[i].split("\\.")[0];
-                        webPeriodico = portadas[i];
+                        id = revistaArray[1];
                     }
-                    if (title.equals(initialPortada)){
+                    if (id.equals(selectedRevistaId)) {
                         pos = i;
                     }
-                    mSectionsPagerAdapter.addFragment(PortadaDetalleFragment.newInstance(title, fecha));
-                    Portada p = new Portada(title,fecha,webPeriodico);
+                    mSectionsPagerAdapter.addFragment(PortadaDetalleFragment.newInstance(id, title));
+                    Portada p = new Portada(id, title, webRevista, portadas[i]);
                     mSectionsPagerAdapter.addPortada(p);
                 }
             }
 
             mViewPager2.setAdapter(mSectionsPagerAdapter);
-            mViewPager2.setCurrentItem(pos,false);
+            mViewPager2.setCurrentItem(pos, false);
         }
     }
 
@@ -303,7 +290,7 @@ public class PortadaDetalle extends AppCompatActivity {
         private final List<Fragment> fragments = new ArrayList<>();
         private final List<Portada> portadas = new ArrayList<>();
 
-        public ViewPagerAdapter(@NonNull FragmentManager fm,@NonNull Lifecycle lifecycle) {
+        public ViewPagerAdapter(@NonNull FragmentManager fm, @NonNull Lifecycle lifecycle) {
             super(fm, lifecycle);
             fm.registerFragmentLifecycleCallbacks(new FragmentManager.FragmentLifecycleCallbacks() {
                 @Override
@@ -311,22 +298,21 @@ public class PortadaDetalle extends AppCompatActivity {
                     super.onFragmentResumed(fm, f);
                     portada = getPortada(mViewPager2.getCurrentItem());
                     FloatingActionButton fabfav = findViewById(R.id.favButton);
-                    if (prefsPer.contains(portada.getWebPeriodico())) {
+                    if (prefsPer.contains(portada.getWebRevista())) {
                         fabfav.setImageResource(R.drawable.ic_favorite_black_24dp);
-                    }else{
+                    } else {
                         fabfav.setImageResource(R.drawable.ic_favorite_border_black_24dp);
                     }
 
                 }
-            },true);
+            }, true);
         }
 
-        public void addFragment(Fragment fragment)
-        {
+        public void addFragment(Fragment fragment) {
             fragments.add(fragment);
         }
-        public void addPortada(Portada portada)
-        {
+
+        public void addPortada(Portada portada) {
             portadas.add(portada);
         }
 
@@ -340,12 +326,13 @@ public class PortadaDetalle extends AppCompatActivity {
         public long getItemId(int position) {
             return fragments.get(position).hashCode();
         }
+
         @Override
         public int getItemCount() {
             return fragments.size();
         }
 
-        public Portada getPortada(int pos){
+        public Portada getPortada(int pos) {
             return portadas.get(pos);
         }
     }
@@ -420,14 +407,14 @@ public class PortadaDetalle extends AppCompatActivity {
     public AlertDialog createNoConnectionDialog() {
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle("Error de conexión");
-        alertDialogBuilder.setIcon(R.mipmap.news_icon);
+        alertDialogBuilder.setIcon(R.mipmap.magazines_icon);
         alertDialogBuilder.setOnCancelListener(dialogInterface -> onBackPressed());
         alertDialogBuilder.setPositiveButton("Reintentar", (dialog, id) -> {
-            /*if (isOnline())
-                loadContent();
-            else
-                alertDialogBuilder.show();*/
-        })
+                    if (isOnline())
+                        loadSectionsAdapter();
+                    else
+                        alertDialogBuilder.show();
+                })
                 .setNegativeButton("Cancelar", (dialog, id) -> onBackPressed());
         alertDialogBuilder.setMessage("No hay conexión a internet. Por favor, comprueba tu conexión");
         return alertDialogBuilder.create();

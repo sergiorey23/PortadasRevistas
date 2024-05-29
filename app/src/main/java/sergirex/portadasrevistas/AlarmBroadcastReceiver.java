@@ -61,7 +61,7 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
 
         }
         mBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.mipmap.news_icon)
+                .setSmallIcon(R.mipmap.magazines_icon)
                 .setLights(Color.CYAN, 300, 300)
                 .setChannelId(CHANNEL_ID)
                 .setContentTitle(context.getString(R.string.notification_name));

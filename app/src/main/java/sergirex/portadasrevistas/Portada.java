@@ -10,14 +10,14 @@ import java.io.Serializable;
 class Portada implements Serializable{
     private final String id;
     private final String title;
-    private final String fecha;
-    private final String webPeriodico;
+    private final String webRevista;
+    private final String revista;
 
-    Portada(String id, String title, String fecha, String webPeriodico) {
+    Portada(String id, String title, String webRevista, String revista) {
         this.id = id;
         this.title = title;
-        this.fecha = fecha;
-        this.webPeriodico = webPeriodico;
+        this.webRevista = webRevista;
+        this.revista = revista;
     }
 
     public String getId() {
@@ -26,7 +26,9 @@ class Portada implements Serializable{
     public String getTitle() {
         return title;
     }
-    public String getWebPeriodico() { return webPeriodico; }
-    public String getFecha() { return fecha; }
+    public String getWebRevista() { return webRevista; }
 
+    public String getRevista() {
+        return revista;
+    }
 }

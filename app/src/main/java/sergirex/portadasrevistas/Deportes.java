@@ -17,30 +17,22 @@ import android.view.ViewGroup;
 
 public class Deportes extends Fragment {
 
-    public static Deportes newInstance(String fecha) {
-        Bundle args = new Bundle();
-        args.putString("fecha", fecha);
-        Deportes d = new Deportes();
-        d.setArguments(args);
-        return d;
-    }
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.portada_layout, container, false);
-        String fecha = getArguments().getString("fecha");
-        GetPortadas getPortadas = new GetPortadas(rootView, getClass().getSimpleName(), fecha,null);
+        GetPortadas getPortadas = new GetPortadas(rootView, getClass().getSimpleName(),null);
         getPortadas.execute(Revistas.deportes);
         SwipeRefreshLayout swipeRefreshLayout = rootView.findViewById(R.id.refreshLayout);
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            refreshFragment(rootView, swipeRefreshLayout, fecha);
+            refreshFragment(rootView, swipeRefreshLayout);
         });
         return getPortadas.getRootView();
     }
 
-    private void refreshFragment(View rootView, SwipeRefreshLayout swipeRefreshLayout, String fecha) {
+    private void refreshFragment(View rootView, SwipeRefreshLayout swipeRefreshLayout) {
         ViewGroup viewGroup = rootView.findViewById(R.id.linearLayout);
         viewGroup.removeAllViews();
-        GetPortadas getPts = new GetPortadas(rootView, getClass().getSimpleName(),fecha, swipeRefreshLayout);
+        GetPortadas getPts = new GetPortadas(rootView, getClass().getSimpleName(), swipeRefreshLayout);
         getPts.execute(Revistas.deportes);
     }
 }

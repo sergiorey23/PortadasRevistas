@@ -10,39 +10,31 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 /**
  * Created by Sergio on 12/02/2017.
- * Clase de revistas generales
+ * Clase de revistas Corazon
  */
 
 public class Corazon extends Fragment {
 
-    public static Corazon newInstance(String fecha) {
-        Bundle args = new Bundle();
-        args.putString("fecha", fecha);
-        Corazon g = new Corazon();
-        g.setArguments(args);
-        return g;
-    }
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              final Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.portada_layout, container, false);
-        String fecha = getArguments().getString("fecha");
-        GetPortadas getPortadas = new GetPortadas(rootView, getClass().getSimpleName(),fecha,null);
+        GetPortadas getPortadas = new GetPortadas(rootView, getClass().getSimpleName(),null);
         getPortadas.execute(Revistas.corazon);
         SwipeRefreshLayout swipeRefreshLayout = rootView.findViewById(R.id.refreshLayout);
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            refreshFragment(rootView,swipeRefreshLayout,fecha);
+            refreshFragment(rootView,swipeRefreshLayout);
             swipeRefreshLayout.setRefreshing(false);
         });
 
         return getPortadas.getRootView();
     }
 
-    private void refreshFragment(View rootView, SwipeRefreshLayout swipeRefreshLayout, String fecha) {
+    private void refreshFragment(View rootView, SwipeRefreshLayout swipeRefreshLayout) {
         ViewGroup viewGroup = rootView.findViewById(R.id.linearLayout);
         viewGroup.removeAllViews();
-        GetPortadas getPts = new GetPortadas(rootView, getClass().getSimpleName(),fecha, swipeRefreshLayout);
+        GetPortadas getPts = new GetPortadas(rootView, getClass().getSimpleName(), swipeRefreshLayout);
         getPts.execute(Revistas.corazon);
     }
 

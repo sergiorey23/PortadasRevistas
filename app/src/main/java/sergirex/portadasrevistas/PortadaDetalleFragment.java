@@ -33,14 +33,12 @@ public class PortadaDetalleFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_ID = "id";
     private static final String ARG_TITLE = "title";
-    private static final String ARG_SIGLA_PAIS = "sigla_pais";
-    private static final String ARG_FECHA = "fecha";
 
     // TODO: Rename and change types of parameters
+    private String id;
     private String title;
-    private String siglaPais;
-    private String fecha;
     //private ImageView imageView;
     private ProgressDialog pd;
 
@@ -52,16 +50,16 @@ public class PortadaDetalleFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param title Parameter 1.
-     * @param fecha Parameter 3.
+     * @param id Parameter 1.
+     * @param title Parameter 2.
      * @return A new instance of fragment PortadaDetalleFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static PortadaDetalleFragment newInstance(String title, String fecha) {
+    public static PortadaDetalleFragment newInstance(String id, String title) {
         PortadaDetalleFragment fragment = new PortadaDetalleFragment();
         Bundle args = new Bundle();
+        args.putString(ARG_ID, id);
         args.putString(ARG_TITLE, title);
-        args.putString(ARG_FECHA, fecha);
         fragment.setArguments(args);
         return fragment;
     }
@@ -70,8 +68,8 @@ public class PortadaDetalleFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            id = getArguments().getString(ARG_ID);
             title = getArguments().getString(ARG_TITLE);
-            fecha = getArguments().getString(ARG_FECHA);
         }
     }
 
@@ -93,60 +91,27 @@ public class PortadaDetalleFragment extends Fragment {
 
     private int tries = 0;
     public void getCover(View rootView){
-        if (tries < 10) {
             ImageView imageView = rootView.findViewById(R.id.imagen_extendida);
-            String url = "https://img.kiosko.net/" + fecha + "/" + siglaPais + "/" + title + ".jpg";
+            String url = "https://www.kioskoymas.com/Imageresize/getLatestImage/"+id+"/424/600";
             Picasso.get().load(url)
                     .into(imageView, new com.squareup.picasso.Callback() {
                         @Override
                         public void onSuccess() {
                             pd.cancel();
                             pd.dismiss();
-                            Calendar calendar = Calendar.getInstance();
-                            Date today = new Date();
-                            calendar.setTime(today);
-                            if (calendar.get(Calendar.HOUR_OF_DAY) < 6) {
-                                calendar.add(Calendar.DATE, -1);
-                            }
-                            DateFormat formatter = new SimpleDateFormat("yyyyMMdd", Locale.FRANCE);
-                            if(!Objects.equals(fecha, formatter.format(calendar.getTime()))){
-                                TextView textView = rootView.findViewById(R.id.fechaPortada);
-                                String[] dateStr = fecha.split("/");
-                                textView.setText(String.format("%s/%s/%s", dateStr[2], dateStr[1], dateStr[0]));
-                                textView.setVisibility(View.VISIBLE);
-                            }
                         }
 
                         @Override
                         public void onError(Exception e) {
-                            tries++;
-                            DateFormat formatter = new SimpleDateFormat("yyyyMMdd", Locale.FRANCE);
-                            try {
-                                Date date = formatter.parse(fecha);
-                                if(date == null){
-                                    throw new ParseException(e.getMessage(),0);
-                                }
-                                Calendar calendar = Calendar.getInstance();
-                                calendar.setTime(date);
-                                calendar.add(Calendar.DATE, -1);
-                                fecha = formatter.format(calendar.getTime());
-                                getCover(rootView);
-                            } catch (ParseException ex) {
-                                Toast.makeText(getActivity(), ex.getMessage(), Toast.LENGTH_LONG).show();
-                                tries = 10;
-                            }
+                            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
                         }
                     });
-        }else{
-            Toast.makeText(getActivity(), "Couldn't find any cover", Toast.LENGTH_LONG).show();
-        }
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        String title = this.title.replace("_", " ");
-        title = title.substring(0, 1).toUpperCase() + title.substring(1);
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle(title);
     }
 }
