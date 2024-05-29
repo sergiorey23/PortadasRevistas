@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Portadas Revistas</string>
+    <string name="fav_tab">Favoritos</string>
+    <string name="first_tab" translatable="false">Corazón</string>
+    <string name="second_tab">Deportes</string>
+    <string name="third_tab">Economia</string>
+    <string name="fourth_tab">Locales</string>
+    <string name="fifth_tab">Internacional</string>
+    <string name="about">Arcerca de</string>
+    <string name="help">Ayuda</string>
+    <string name="rate">Puntuar</string>
+    <string name="action_share">Compartir</string>
+    <string name="action_fav">Añadir a favoritos</string>
+    <string name="help_description">Mantén pulsado en la portada para compartirla, guardarla o visitar su pagina web.</string>
+    <string name="help_description2">También puedes ver las portadas con el widget de la app.</string>
+    <string name="rate_app">Si te gusta la app, deja una reseña! Gracias!</string>
+
+    <string name="titleAppAbout" translatable="false">Portadas Revistas</string>
+    <string name="close">Cerrar</string>
+    <string name="instagram" translatable="false">Instagram</string>
+    <string name="contact">Contacto</string>
+    <string name="save">Guardar</string>
+    <string name="refresh">Actualizar</string>
+    <string name="settings">Ajustes</string>
+    <string name="mode">Modo oscuro</string>
+    <string name="tema">Tema</string>
+    <string name="about_desc">\t¿Tienes alguna sugerencia? ¿Falta alguna portada?\n\tNo dudes en comentármelo!</string>
+    <string name="copyright">Todas las imágenes tienen derechos de autor de sus respectivos propietarios.</string>
+    <string name="freeApp">Esta aplicación es totalmente gratuita y libre de publicidad. Estaría muy agradecido si me invitara a un café. Muchas gracias.</string>
+    <string name="appSource">Una aplicación de lasportadas.es</string>
+    <string name="supportDeveloper">Invítame a un café</string>
+    <string name="privacy_policy">Política de privacidad</string>
+    <string name="date">Fecha</string>
+    <string name="rateTitle">Califica Portadas</string>
+    <string name="rateDescription">Si estás disfrutando de la app. ¿Te importaría calificarla en la Play Store?</string>
+    <string name="later">Mas tarde</string>
+    <string name="sure">Claro!</string>
+    <string name="default_system">Predeterminado del sistema</string>
+    <string name="light">Claro</string>
+    <string name="dark">Oscuro</string>
+    <string name="categories">Categorias</string>
+    <string name="removeAds">Quitar anuncios</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="notification_name">Portadas</string>
+    <string name="notification_description">Echa un vistazo a las portadas de hoy!</string>
+    <string name="loading">Cargando...</string>
+    <!-- TODO: Remove or change this placeholder text -->
+
+</resources>
