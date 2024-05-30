@@ -128,7 +128,7 @@ public class Portadas extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         Date today = new Date();
         calendar.setTime(today);
-        if(calendar.get(Calendar.HOUR_OF_DAY) < 4){
+        if(calendar.get(Calendar.HOUR_OF_DAY) < 6){
             calendar.add(Calendar.DATE, -1);
         }
         DateFormat formatter = new SimpleDateFormat("yyyyMMdd", Locale.FRANCE);
@@ -230,15 +230,15 @@ public class Portadas extends AppCompatActivity {
 
         if(!prefs.getBoolean("remove_fb_ads", false)) {
             AudienceNetworkAds.initialize(this);
-            AdSettings.setTestMode(true);
+            //AdSettings.setTestMode(true);
             // Instantiate an AdView object.
             // NOTE: The placement ID from the Facebook Monetization Manager identifies your App.
             // To get test ads, add IMG_16_9_APP_INSTALL# to your placement id. Remove this when your app is ready to serve real ads.
             boolean isPhone = getResources().getBoolean(R.bool.isPhone);
             if (isPhone) {
-                bottomBanner = new AdView(this, "799967435028134_799969321694612", AdSize.BANNER_HEIGHT_50);
+                bottomBanner = new AdView(this, "483584450995789_483584564329111", AdSize.BANNER_HEIGHT_50);
             } else {
-                bottomBanner = new AdView(this, "799967435028134_799969321694612", AdSize.BANNER_HEIGHT_90);
+                bottomBanner = new AdView(this, "483584450995789_483584564329111", AdSize.BANNER_HEIGHT_90);
             }
 
             // Find the Ad Container
@@ -425,54 +425,25 @@ public class Portadas extends AppCompatActivity {
             favsCount = prefsPor.getAll().size();
         }
         mSectionsPagerAdapter.addFragment(getString(R.string.first_tab), new Corazon());
-        //mSectionsPagerAdapter.addFragment(getString(R.string.second_tab),Deportes.newInstance(fecha));
-        //mSectionsPagerAdapter.addFragment(getString(R.string.third_tab),Economia.newInstance(fecha));
-        //mSectionsPagerAdapter.addFragment(getString(R.string.fourth_tab),Locales.newInstance(fecha));
-        //mSectionsPagerAdapter.addFragment(getString(R.string.fifth_tab),Internacional.newInstance(fecha));
+        mSectionsPagerAdapter.addFragment(getString(R.string.second_tab), new Cultura());
+        mSectionsPagerAdapter.addFragment(getString(R.string.third_tab), new Deportes());
+        mSectionsPagerAdapter.addFragment(getString(R.string.fourth_tab), new LifeStyle());
+        mSectionsPagerAdapter.addFragment(getString(R.string.fifth_tab),new Femeninas());
+        mSectionsPagerAdapter.addFragment(getString(R.string.sixth_tab),new Masculinas());
+        mSectionsPagerAdapter.addFragment(getString(R.string.seventh_tab),new Motor());
+        mSectionsPagerAdapter.addFragment(getString(R.string.eight_tab),new Tecnologia());
+        mSectionsPagerAdapter.addFragment(getString(R.string.nineth_tav),new Historia());
 
         mViewPager.setAdapter(mSectionsPagerAdapter);
-        //mViewPager.setOffscreenPageLimit(mSectionsPagerAdapter.getItemCount()-1);
+        mViewPager.setOffscreenPageLimit(5);
         new TabLayoutMediator(tabLayout, mViewPager,
                 (tab, position) -> tab.setText(categorias.get(position))
         ).attach();
-        String lpValue = prefs.getString("init_category", getString(R.string.first_tab));
+        int lpValue = Integer.parseInt(prefs.getString("init_category", "1"));
         if(prefsPor.getAll().isEmpty()) {
-            switch (lpValue.substring(0,3)) {
-                case "Dep":
-                case "Spo":
-                    mViewPager.setCurrentItem(1,false);
-                    break;
-                case "Eco":
-                    mViewPager.setCurrentItem(2,false);
-                    break;
-                case "Loc":
-                    mViewPager.setCurrentItem(3,false);
-                    break;
-                case "Int":
-                    mViewPager.setCurrentItem(4,false);
-                    break;
-                default: mViewPager.setCurrentItem(0,false);
-            }
+            mViewPager.setCurrentItem(lpValue-1,false);
         }else{
-            switch (lpValue.substring(0,3)) {
-                case "Fav":
-                    mViewPager.setCurrentItem(0,false);
-                    break;
-                case "Dep":
-                case "Spo":
-                    mViewPager.setCurrentItem(2,false);
-                    break;
-                case "Eco":
-                    mViewPager.setCurrentItem(3,false);
-                    break;
-                case "Loc":
-                    mViewPager.setCurrentItem(4,false);
-                    break;
-                case "Int":
-                    mViewPager.setCurrentItem(5,false);
-                    break;
-                default: mViewPager.setCurrentItem(1,false);
-            }
+            mViewPager.setCurrentItem(lpValue,false);
         }
     }
 

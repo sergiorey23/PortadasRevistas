@@ -3,10 +3,10 @@
     <string name="app_name">Revistas</string>
     <string name="fav_tab">Favoritos</string>
     <string name="first_tab" translatable="false">Corazón</string>
-    <string name="second_tab">Deportes</string>
-    <string name="third_tab">Economia</string>
-    <string name="fourth_tab">Locales</string>
-    <string name="fifth_tab">Internacional</string>
+    <string name="second_tab">Cultura</string>
+    <string name="third_tab">Deportes</string>
+    <string name="fourth_tab">Estilo de vida</string>
+    <string name="fifth_tab">Femeninas</string>
     <string name="about">Arcerca de</string>
     <string name="help">Ayuda</string>
     <string name="rate">Puntuar</string>
@@ -45,6 +45,10 @@
     <string name="notification_description">Echa un vistazo a las portadas de hoy!</string>
     <string name="loading">Cargando...</string>
     <string name="app_full_name">Portadas Revistas</string>
+    <string name="sixth_tab">Masculinas</string>
+    <string name="seventh_tab">Motor</string>
+    <string name="eight_tab">Tecnología</string>
+    <string name="nineth_tav">Viajes e Historia</string>
     <!-- TODO: Remove or change this placeholder text -->
 
 </resources>

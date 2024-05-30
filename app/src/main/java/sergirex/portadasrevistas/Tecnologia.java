@@ -12,13 +12,13 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
  * Created by Sergio on 12/02/2017.
  */
 
-public class Economia extends Fragment {
+public class Tecnologia extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.portada_layout, container, false);
         GetPortadas getPortadas = new GetPortadas(rootView, getClass().getSimpleName(), null);
-        getPortadas.execute(Revistas.economia);
+        getPortadas.execute(Revistas.tecnologia);
         SwipeRefreshLayout swipeRefreshLayout = rootView.findViewById(R.id.refreshLayout);
         swipeRefreshLayout.setOnRefreshListener(() -> {
             refreshFragment(rootView, swipeRefreshLayout);
@@ -29,6 +29,6 @@ public class Economia extends Fragment {
         ViewGroup viewGroup = rootView.findViewById(R.id.linearLayout);
         viewGroup.removeAllViews();
         GetPortadas getPts = new GetPortadas(rootView, getClass().getSimpleName(), swipeRefreshLayout);
-        getPts.execute(Revistas.economia);
+        getPts.execute(Revistas.tecnologia);
     }
 }

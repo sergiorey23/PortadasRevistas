@@ -10,21 +10,24 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 /**
  * Created by Sergio on 12/02/2017.
- *
+ * Clase de revistas Corazon
  */
 
-public class Locales extends Fragment {
+public class Historia extends Fragment {
+
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                              Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
+                             final Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.portada_layout, container, false);
         GetPortadas getPortadas = new GetPortadas(rootView, getClass().getSimpleName(),null);
-        getPortadas.execute(Revistas.locales);
+        getPortadas.execute(Revistas.historia);
         SwipeRefreshLayout swipeRefreshLayout = rootView.findViewById(R.id.refreshLayout);
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            refreshFragment(rootView, swipeRefreshLayout);
+            refreshFragment(rootView,swipeRefreshLayout);
+            swipeRefreshLayout.setRefreshing(false);
         });
+
         return getPortadas.getRootView();
     }
 
@@ -32,6 +35,7 @@ public class Locales extends Fragment {
         ViewGroup viewGroup = rootView.findViewById(R.id.linearLayout);
         viewGroup.removeAllViews();
         GetPortadas getPts = new GetPortadas(rootView, getClass().getSimpleName(), swipeRefreshLayout);
-        getPts.execute(Revistas.locales);
+        getPts.execute(Revistas.historia);
     }
+
 }

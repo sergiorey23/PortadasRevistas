@@ -5,7 +5,7 @@
         app:iconSpaceReserved="false">
         <ListPreference
             android:defaultValue="default"
-            android:summary="@string/default_system"
+            android:summary="%s"
             app:iconSpaceReserved="false"
             android:entries="@array/modos_ui"
             android:entryValues="@array/modos_ui_values"
@@ -15,11 +15,11 @@
     <PreferenceCategory android:title="@string/categories"
         app:iconSpaceReserved="false">
     <ListPreference
-        android:defaultValue="@string/first_tab"
-        android:summary="@string/first_tab"
+        android:defaultValue="1"
+        android:summary="%s"
         app:iconSpaceReserved="false"
         android:entries="@array/portadas_categories"
-        android:entryValues="@array/portadas_categories"
+        android:entryValues="@array/portadas_categories_values"
         android:key="init_category"
         android:title="Categoría incial" />
     </PreferenceCategory>

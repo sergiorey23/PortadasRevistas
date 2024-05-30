@@ -7,6 +7,22 @@
         <item>@string/third_tab</item>
         <item>@string/fourth_tab</item>
         <item>@string/fifth_tab</item>
+        <item>@string/sixth_tab</item>
+        <item>@string/seventh_tab</item>
+        <item>@string/eight_tab</item>
+        <item>@string/nineth_tav</item>
+    </string-array>
+    <string-array name="portadas_categories_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
     </string-array>
     <string-array name="modos_ui">
         <item>@string/default_system</item>

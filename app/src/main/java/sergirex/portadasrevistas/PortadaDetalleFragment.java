@@ -1,6 +1,7 @@
 package sergirex.portadasrevistas;
 
 import android.app.ProgressDialog;
+import android.graphics.Bitmap;
 import android.media.Image;
 import android.os.Bundle;
 
@@ -14,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.chrisbanes.photoview.PhotoView;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
@@ -40,7 +42,7 @@ public class PortadaDetalleFragment extends Fragment {
     private String id;
     private String title;
     //private ImageView imageView;
-    private ProgressDialog pd;
+    //private ProgressDialog pd;
 
     public PortadaDetalleFragment() {
         // Required empty public constructor
@@ -79,19 +81,18 @@ public class PortadaDetalleFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_portada_detalle, container, false);
 
-        pd = new ProgressDialog(rootView.getContext(),R.style.DialogCustom);
+        /*pd = new ProgressDialog(rootView.getContext(),R.style.DialogCustom);
         pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         pd.setCancelable(false);
         pd.setMessage(getString(R.string.loading));
         pd.setIndeterminate(true);
-        pd.show();
+        pd.show();*/
         getCover(rootView);
         return rootView;
     }
 
-    private int tries = 0;
     public void getCover(View rootView){
-            ImageView imageView = rootView.findViewById(R.id.imagen_extendida);
+            /*ImageView imageView = rootView.findViewById(R.id.imagen_extendida);
             String url = "https://www.kioskoymas.com/Imageresize/getLatestImage/"+id+"/424/600";
             Picasso.get().load(url)
                     .into(imageView, new com.squareup.picasso.Callback() {
@@ -105,7 +106,11 @@ public class PortadaDetalleFragment extends Fragment {
                         public void onError(Exception e) {
                             Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
                         }
-                    });
+                    });*/
+        SavePortada savePortada = new SavePortada(rootView.getContext());
+        Bitmap portadaBM = savePortada.getThumbFile(title + 't');
+        PhotoView photoView = rootView.findViewById(R.id.imagen_extendida);
+        photoView.setImageBitmap(portadaBM);
 
     }
 

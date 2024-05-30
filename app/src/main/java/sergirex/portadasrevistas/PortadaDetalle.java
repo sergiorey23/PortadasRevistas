@@ -56,6 +56,7 @@ import com.google.android.play.core.review.ReviewManager;
 import com.google.android.play.core.review.ReviewManagerFactory;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -197,14 +198,14 @@ public class PortadaDetalle extends AppCompatActivity {
         }
         if (!prefs.getBoolean("remove_fb_ads", false)) {
             AudienceNetworkAds.initialize(this);
-            AdSettings.setTestMode(true);
-            AdView bottomBanner = new AdView(this, "799967435028134_799969321694612", AdSize.BANNER_HEIGHT_50);
+            //AdSettings.setTestMode(true);
+            AdView bottomBanner = new AdView(this, "483584450995789_483585470995687", AdSize.BANNER_HEIGHT_50);
             // Find the Ad Container
             LinearLayout adContainer = findViewById(R.id.bannerContainerDetail);
             adContainer.addView(bottomBanner);
             bottomBanner.loadAd();
             if (showAd % 3 == 0) {
-                interstitialAd = new InterstitialAd(this, "799967435028134_801174748240736");
+                interstitialAd = new InterstitialAd(this, "483584450995789_483584560995778");
                 String TAG = "AD";
                 InterstitialAdListener interstitialAdListener = new InterstitialAdListener() {
 
@@ -257,27 +258,19 @@ public class PortadaDetalle extends AppCompatActivity {
             alertDialogNoConn.show();
         } else {
             mViewPager2 = findViewById(R.id.viewpager2);
-            String[] portadas = getIntent().getStringArrayExtra("Portadas");
+            @SuppressWarnings("unchecked")
+            List<Portada> portadaList = (List<Portada>) getIntent().getSerializableExtra("Portadas");
             String selectedRevistaId = getIntent().getStringExtra("Id");
             mSectionsPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), getLifecycle());
             int pos = 0;
-            if (portadas != null) {
-                for (int i = 0; i < portadas.length; i++) {
-                    String[] revistaArray = portadas[i].split(":");
-                    String title = revistaArray[0];
-                    String id, webRevista = "";
-                    if (revistaArray.length > 2) {
-                        webRevista = revistaArray[1];
-                        id = revistaArray[2];
-                    } else {
-                        id = revistaArray[1];
-                    }
-                    if (id.equals(selectedRevistaId)) {
+            if (portadaList != null) {
+                for (int i = 0; i < portadaList.size(); i++) {
+                    Portada portada = portadaList.get(i);
+                    if (portada.getId().equals(selectedRevistaId)) {
                         pos = i;
                     }
-                    mSectionsPagerAdapter.addFragment(PortadaDetalleFragment.newInstance(id, title));
-                    Portada p = new Portada(id, title, webRevista, portadas[i]);
-                    mSectionsPagerAdapter.addPortada(p);
+                    mSectionsPagerAdapter.addFragment(PortadaDetalleFragment.newInstance(portada.getId(), portada.getTitle()));
+                    mSectionsPagerAdapter.addPortada(portada);
                 }
             }
 

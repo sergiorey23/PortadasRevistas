@@ -1,10 +1,12 @@
 package sergirex.portadasrevistas;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
@@ -38,28 +40,35 @@ public class SettingsActivity extends AppCompatActivity {
 
             androidx.preference.ListPreference modesLP = (androidx.preference.ListPreference) findPreference("theme");
             modesLP.setSummary(modesLP.getEntry());
-            modesLP.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    preference.setSummary(newValue.toString());
-                    preference.setDefaultValue(newValue);
-                    Activity activity = getActivity();
-                    if(activity != null) {
-                        getActivity().recreate();
-                    }
-                    return true;
+            modesLP.setOnPreferenceChangeListener((preference, newValue) -> {
+                preference.setSummary(getSummary(modesLP, newValue));
+                preference.setDefaultValue(newValue);
+                Activity activity = getActivity();
+                if(activity != null) {
+                    getActivity().recreate();
                 }
+                return true;
             });
+
             androidx.preference.ListPreference categoriesLP = (androidx.preference.ListPreference) findPreference("init_category");
-            categoriesLP.setSummary(categoriesLP.getValue());
-            categoriesLP.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    preference.setSummary(newValue.toString());
-                    preference.setDefaultValue(newValue);
-                    return true;
-                }
+            categoriesLP.setSummary(categoriesLP.getSummary());
+            categoriesLP.setOnPreferenceChangeListener((preference, newValue) -> {
+                preference.setSummary(getSummary(categoriesLP, newValue));
+                preference.setDefaultValue(newValue);
+                return true;
             });
+        }
+
+        public CharSequence getSummary(ListPreference listPreference, Object newValue){
+            int id = 0;
+            for (int i = 0; i < listPreference.getEntryValues().length; i++)
+            {
+                if(listPreference.getEntryValues()[i].equals(newValue.toString())){
+                    id = i;
+                    break;
+                }
+            }
+            return listPreference.getEntries()[id];
         }
     }
 }
