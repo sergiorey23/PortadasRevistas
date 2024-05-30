@@ -291,7 +291,7 @@ public class PortadaDetalle extends AppCompatActivity {
                     super.onFragmentResumed(fm, f);
                     portada = getPortada(mViewPager2.getCurrentItem());
                     FloatingActionButton fabfav = findViewById(R.id.favButton);
-                    if (prefsPer.contains(portada.getWebRevista())) {
+                    if (prefsPer.contains(portada.getTitle())) {
                         fabfav.setImageResource(R.drawable.ic_favorite_black_24dp);
                     } else {
                         fabfav.setImageResource(R.drawable.ic_favorite_border_black_24dp);
