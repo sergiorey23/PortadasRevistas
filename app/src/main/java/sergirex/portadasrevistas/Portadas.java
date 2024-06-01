@@ -224,7 +224,7 @@ public class Portadas extends AppCompatActivity {
         }
 
 
-        /*if(!prefs.getBoolean("remove_fb_ads", false)) {
+        if(!prefs.getBoolean("remove_fb_ads", false)) {
             AudienceNetworkAds.initialize(this);
             //AdSettings.setTestMode(true);
             // Instantiate an AdView object.
@@ -241,7 +241,7 @@ public class Portadas extends AppCompatActivity {
             LinearLayout adContainer = findViewById(R.id.bannerContainer);
             adContainer.addView(bottomBanner);
             bottomBanner.loadAd();
-        }*/
+        }
     }
 
 

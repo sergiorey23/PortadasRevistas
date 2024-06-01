@@ -203,7 +203,7 @@ public class PortadaDetalle extends AppCompatActivity {
                         }
                     }).show();
         }
-        /*if (!prefs.getBoolean("remove_fb_ads", false)) {
+        if (!prefs.getBoolean("remove_fb_ads", false)) {
             AudienceNetworkAds.initialize(this);
             //AdSettings.setTestMode(true);
             AdView bottomBanner = new AdView(this, "483584450995789_483585470995687", AdSize.BANNER_HEIGHT_50);
@@ -255,7 +255,7 @@ public class PortadaDetalle extends AppCompatActivity {
                         .withAdListener(interstitialAdListener)
                         .build());
             }
-        }*/
+        }
     }
 
     private void loadSectionsAdapter() {
@@ -377,11 +377,9 @@ public class PortadaDetalle extends AppCompatActivity {
                             return;
                         }
                         today = aLong;
-                        DateFormat formatter = new SimpleDateFormat("yyyyMMdd", Locale.US);
-                        String fecha = formatter.format(aLong);
 
                         PortadaDetalleFragment currentFragment = (PortadaDetalleFragment) mSectionsPagerAdapter.createFragment(mViewPager2.getCurrentItem());
-                        currentFragment.getCoverByDate(fecha);
+                        currentFragment.getCoverByDate(aLong);
                     });
 
         } else if (itemId == R.id.share) {

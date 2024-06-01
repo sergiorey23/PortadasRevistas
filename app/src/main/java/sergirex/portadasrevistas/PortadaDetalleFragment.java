@@ -17,6 +17,12 @@ import com.github.chrisbanes.photoview.PhotoView;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -35,6 +41,7 @@ public class PortadaDetalleFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String id;
     private String title;
+    private int tries = 0;
 
     public PortadaDetalleFragment() {
         // Required empty public constructor
@@ -82,9 +89,10 @@ public class PortadaDetalleFragment extends Fragment {
         Bitmap portadaBM = savePortada.getFile(title + 't');
         PhotoView photoView = rootView.findViewById(R.id.imagen_extendida);
         photoView.setImageBitmap(portadaBM);
+        getThread(new Date().getTime(), photoView, null);
     }
 
-    public void getCoverByDate(String date) {
+    public void getCoverByDate(Long date) {
         ProgressDialog pd = new ProgressDialog(rootView.getContext(),R.style.DialogCustom);
         pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         pd.setCancelable(false);
@@ -93,15 +101,18 @@ public class PortadaDetalleFragment extends Fragment {
         pd.show();
 
         PhotoView imageView = rootView.findViewById(R.id.imagen_extendida);
-        Thread thread = getThread(date, imageView, pd);
 
-        thread.start();
+        getThread(date, imageView, pd);
     }
 
-    private Thread getThread(String date, PhotoView imageView, ProgressDialog pd) {
-        String strUrl = "https://t.prcdn.co/img?file="+ id + date +"00000000001001";
+    private void getThread(Long longDate, PhotoView imageView, ProgressDialog pd) {
 
-        return new Thread(() -> {
+        DateFormat formatter = new SimpleDateFormat("yyyyMMdd", Locale.FRANCE);
+        Date date = new Date(longDate);
+        String dateStr = formatter.format(date);
+        String strUrl = "https://t.prcdn.co/img?file="+ id + dateStr +"00000000001001&scale=171";
+
+        new Thread(() -> {
             try {
                 URL url = new URL(strUrl);
                 InputStream is;
@@ -109,15 +120,28 @@ public class PortadaDetalleFragment extends Fragment {
                 Bitmap portadaBM = BitmapFactory.decodeStream(is);
                 requireActivity().runOnUiThread(() -> {
                     imageView.setImageBitmap(portadaBM);
-                    pd.cancel();
-                    pd.dismiss();
+                    tries = 0;
+                    if(pd != null) {
+                        pd.cancel();
+                        pd.dismiss();
+                    }
                 });
             } catch (IOException e) {
-                requireActivity().runOnUiThread(() -> Toast.makeText(getActivity(), "Image not found", Toast.LENGTH_LONG).show());
-                pd.cancel();
-                pd.dismiss();
+                if(tries > 31) {
+                    if(pd != null) {
+                        requireActivity().runOnUiThread(() -> Toast.makeText(getActivity(), "Portada no encontrada", Toast.LENGTH_LONG).show());
+                        pd.cancel();
+                        pd.dismiss();
+                    }
+                }else {
+                    tries++;
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(date);
+                    calendar.add(Calendar.DATE, -1);
+                    getThread(calendar.getTimeInMillis(), imageView, pd);
+                }
             }
-        });
+        }).start();
     }
 
     @Override
