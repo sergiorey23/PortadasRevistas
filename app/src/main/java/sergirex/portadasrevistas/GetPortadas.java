@@ -66,6 +66,8 @@ class GetPortadas extends AsyncTask<String, Button, Boolean> {
     private WeakReference<ProgressBar> pb;
     private final SharedPreferences fechasSP;
     private String strUrl = null;
+    private String category;
+    private String log = "";
 
     @SuppressLint("StaticFieldLeak")
     private final SwipeRefreshLayout swipeRefreshLayout;
@@ -74,6 +76,7 @@ class GetPortadas extends AsyncTask<String, Button, Boolean> {
         this.rootView = new WeakReference<>(rootView);
         context = new WeakReference<>(rootView.getContext());
         fechasSP = context.get().getSharedPreferences("Fechas" + simpleName, MODE_PRIVATE);
+        category = simpleName;
         this.swipeRefreshLayout = swipeRefreshLayout;
     }
 
@@ -123,7 +126,9 @@ class GetPortadas extends AsyncTask<String, Button, Boolean> {
                     if(values.length > 1){
                         webRevista = values[1];
                     }
-                    portadasList.add(new Portada(elements.get(0).attr("id"),values[0],webRevista,portada));
+                    String id = elements.get(0).attr("id");
+                    portadasList.add(new Portada(id,values[0],webRevista,portada));
+                    log += "\""+id+":"+portada+"\", ";
                 }
             } else {
                 Document doc = null;
@@ -143,6 +148,7 @@ class GetPortadas extends AsyncTask<String, Button, Boolean> {
                         webRevista = values[1];
                     }
                     portadasList.add(new Portada(id,values[0],webRevista,portada));
+                    log += "\""+id+":"+portada+"\", ";
                 }
             }
             for (Portada revista : portadasList) {
@@ -281,6 +287,7 @@ class GetPortadas extends AsyncTask<String, Button, Boolean> {
         if (swipeRefreshLayout != null) {
             swipeRefreshLayout.setRefreshing(false);
         }
+        Log.d(category, log);
         super.onPostExecute(aBoolean);
     }
 
