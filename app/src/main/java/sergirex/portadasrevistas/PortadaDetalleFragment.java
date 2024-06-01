@@ -1,16 +1,22 @@
 package sergirex.portadasrevistas;
 
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.github.chrisbanes.photoview.PhotoView;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Objects;
 
 /**
@@ -22,14 +28,13 @@ public class PortadaDetalleFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private View rootView;
     private static final String ARG_ID = "id";
     private static final String ARG_TITLE = "title";
 
     // TODO: Rename and change types of parameters
     private String id;
     private String title;
-    //private ImageView imageView;
-    //private ProgressDialog pd;
 
     public PortadaDetalleFragment() {
         // Required empty public constructor
@@ -66,39 +71,53 @@ public class PortadaDetalleFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_portada_detalle, container, false);
+        rootView = inflater.inflate(R.layout.fragment_portada_detalle, container, false);
 
-        /*pd = new ProgressDialog(rootView.getContext(),R.style.DialogCustom);
-        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        pd.setCancelable(false);
-        pd.setMessage(getString(R.string.loading));
-        pd.setIndeterminate(true);
-        pd.show();*/
-        getCover(rootView);
+        getCover();
         return rootView;
     }
 
-    public void getCover(View rootView){
-            /*ImageView imageView = rootView.findViewById(R.id.imagen_extendida);
-            String url = "https://www.kioskoymas.com/Imageresize/getLatestImage/"+id+"/424/600";
-            Picasso.get().load(url)
-                    .into(imageView, new com.squareup.picasso.Callback() {
-                        @Override
-                        public void onSuccess() {
-                            pd.cancel();
-                            pd.dismiss();
-                        }
-
-                        @Override
-                        public void onError(Exception e) {
-                            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    });*/
+    public void getCover(){
         SavePortada savePortada = new SavePortada(rootView.getContext());
         Bitmap portadaBM = savePortada.getFile(title + 't');
         PhotoView photoView = rootView.findViewById(R.id.imagen_extendida);
         photoView.setImageBitmap(portadaBM);
+    }
 
+    public void getCoverByDate(String date) {
+        ProgressDialog pd = new ProgressDialog(rootView.getContext(),R.style.DialogCustom);
+        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pd.setCancelable(false);
+        pd.setMessage(getString(R.string.loading));
+        pd.setIndeterminate(true);
+        pd.show();
+
+        PhotoView imageView = rootView.findViewById(R.id.imagen_extendida);
+        Thread thread = getThread(date, imageView, pd);
+
+        thread.start();
+    }
+
+    private Thread getThread(String date, PhotoView imageView, ProgressDialog pd) {
+        String strUrl = "https://t.prcdn.co/img?file="+ id + date +"00000000001001";
+
+        return new Thread(() -> {
+            try {
+                URL url = new URL(strUrl);
+                InputStream is;
+                is = (InputStream) url.getContent();
+                Bitmap portadaBM = BitmapFactory.decodeStream(is);
+                requireActivity().runOnUiThread(() -> {
+                    imageView.setImageBitmap(portadaBM);
+                    pd.cancel();
+                    pd.dismiss();
+                });
+            } catch (IOException e) {
+                requireActivity().runOnUiThread(() -> Toast.makeText(getActivity(), "Image not found", Toast.LENGTH_LONG).show());
+                pd.cancel();
+                pd.dismiss();
+            }
+        });
     }
 
     @Override

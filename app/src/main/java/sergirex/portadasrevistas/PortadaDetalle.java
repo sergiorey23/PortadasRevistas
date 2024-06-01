@@ -48,6 +48,9 @@ import com.facebook.ads.AudienceNetworkAds;
 import com.facebook.ads.InterstitialAd;
 import com.facebook.ads.InterstitialAdListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.datepicker.CalendarConstraints;
+import com.google.android.material.datepicker.DateValidatorPointBackward;
+import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -57,8 +60,12 @@ import com.google.android.play.core.review.ReviewManagerFactory;
 
 import java.io.File;
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 public class PortadaDetalle extends AppCompatActivity {
@@ -196,7 +203,7 @@ public class PortadaDetalle extends AppCompatActivity {
                         }
                     }).show();
         }
-        if (!prefs.getBoolean("remove_fb_ads", false)) {
+        /*if (!prefs.getBoolean("remove_fb_ads", false)) {
             AudienceNetworkAds.initialize(this);
             //AdSettings.setTestMode(true);
             AdView bottomBanner = new AdView(this, "483584450995789_483585470995687", AdSize.BANNER_HEIGHT_50);
@@ -248,7 +255,7 @@ public class PortadaDetalle extends AppCompatActivity {
                         .withAdListener(interstitialAdListener)
                         .build());
             }
-        }
+        }*/
     }
 
     private void loadSectionsAdapter() {
@@ -353,7 +360,31 @@ public class PortadaDetalle extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         SavePortada savePortada = new SavePortada(this);
         int itemId = item.getItemId();
-        if (itemId == R.id.share) {
+        if (itemId == R.id.date) {
+            if(today == null) today = MaterialDatePicker.todayInUtcMilliseconds();
+            MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder
+                    .datePicker()
+                    .setTitleText("Select date").setSelection(today)
+                    .setCalendarConstraints(new CalendarConstraints.Builder()
+                            .setValidator(
+                                    DateValidatorPointBackward.now()).build())
+                    .build();
+            datePicker.show(getSupportFragmentManager(), "MATERIAL_DATE_PICKER");
+            datePicker.addOnPositiveButtonClickListener(
+                    aLong -> {
+                        if(aLong > new Date().getTime()){
+                            Toast.makeText(this, "La fecha debe ser anterior a la actual", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                        today = aLong;
+                        DateFormat formatter = new SimpleDateFormat("yyyyMMdd", Locale.US);
+                        String fecha = formatter.format(aLong);
+
+                        PortadaDetalleFragment currentFragment = (PortadaDetalleFragment) mSectionsPagerAdapter.createFragment(mViewPager2.getCurrentItem());
+                        currentFragment.getCoverByDate(fecha);
+                    });
+
+        } else if (itemId == R.id.share) {
             ImageView imageView = mSectionsPagerAdapter.createFragment(mViewPager2.getCurrentItem()).requireActivity().findViewById(R.id.imagen_extendida);
             Uri fileURI = savePortada.saveFile(portada.getTitle(), ((BitmapDrawable) imageView.getDrawable()).getBitmap());
             Intent i = new Intent(Intent.ACTION_SEND);
