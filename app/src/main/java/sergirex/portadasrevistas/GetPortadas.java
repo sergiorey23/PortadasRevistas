@@ -9,42 +9,28 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.preference.PreferenceManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -55,19 +41,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 class GetPortadas extends AsyncTask<String, Button, Boolean> {
     private final WeakReference<View> rootView;
     private final WeakReference<Context> context;
     private int portCont = 0;
-    private List<Portada> portadasList;
     private WeakReference<LinearLayout> ly;
     private WeakReference<ProgressBar> pb;
     private final SharedPreferences fechasSP;
     private String strUrl = null;
-    private String category;
-    private String log = "";
 
     @SuppressLint("StaticFieldLeak")
     private final SwipeRefreshLayout swipeRefreshLayout;
@@ -76,7 +58,6 @@ class GetPortadas extends AsyncTask<String, Button, Boolean> {
         this.rootView = new WeakReference<>(rootView);
         context = new WeakReference<>(rootView.getContext());
         fechasSP = context.get().getSharedPreferences("Fechas" + simpleName, MODE_PRIVATE);
-        category = simpleName;
         this.swipeRefreshLayout = swipeRefreshLayout;
     }
 
@@ -87,7 +68,6 @@ class GetPortadas extends AsyncTask<String, Button, Boolean> {
     protected void onPreExecute() {
         ly = new WeakReference<>(rootView.get().findViewById(R.id.linearLayout));
         pb = new WeakReference<>(new ProgressBar(context.get()));
-        portadasList = new ArrayList<>();
         ly.get().addView(pb.get());
     }
 
@@ -114,133 +94,100 @@ class GetPortadas extends AsyncTask<String, Button, Boolean> {
 
         SharedPreferences.Editor editor = fechasSP.edit();
 
-        try {
-            if (descargar || swipeRefreshLayout != null) {
-                Document doc = Jsoup.connect("https://www.kioskoymas.com/Catalogo/filtro/revistas").get();
-                for (String portada : params) {
-                    String[] values = portada.split(":");
-                    Log.e("PORTADA",values[0]);
-                    Elements elements = doc.getElementsByAttributeValue("data-filter",values[0]);
-                    if(elements.isEmpty()) continue;
-                    String webRevista = "";
-                    if(values.length > 1){
-                        webRevista = values[1];
-                    }
-                    String id = elements.get(0).attr("id");
-                    portadasList.add(new Portada(id,values[0],webRevista,portada));
-                    log += "\""+id+":"+portada+"\", ";
-                }
+        for (String portada : params) {
+            String[] portadaArray = portada.split(":");
+            String id = portadaArray[0];
+            String title = portadaArray[1];
+            String webRevista;
+            if(portadaArray.length > 2) {
+                webRevista = portadaArray[2];
             } else {
-                Document doc = null;
-                for (String portada : params) {
-                    String[] values = portada.split(":");
-                    String id = fechasSP.getString(values[0], "");
-                    if(id.isEmpty()){
-                        if(doc == null) {
-                            doc = Jsoup.connect("https://www.kioskoymas.com/Catalogo/filtro/revistas").get();
-                        }
-                        Elements elements = doc.getElementsByAttributeValue("data-filter",values[0]);
-                        if(elements.isEmpty()) continue;
-                        id = elements.get(0).attr("id");
-                    }
-                    String webRevista = "";
-                    if(values.length > 1){
-                        webRevista = values[1];
-                    }
-                    portadasList.add(new Portada(id,values[0],webRevista,portada));
-                    log += "\""+id+":"+portada+"\", ";
+                webRevista = "";
+            }
+
+            strUrl = "https://www.kioskoymas.com/Imageresize/getLatestImage/"+id+"/424/600";
+            Bitmap portadaBM = savePortada.getFile(title + 't');
+            if(descargar || portadaBM == null || swipeRefreshLayout != null) {
+                try {
+                    URL url = new URL(strUrl);
+                    InputStream is = (InputStream) url.getContent();
+                    portadaBM = BitmapFactory.decodeStream(is);
+                    savePortada.saveFile(context.get().getCacheDir(), title + "t", portadaBM);
+                } catch (FileNotFoundException fne) {
+                    fne.printStackTrace();
+                    break;
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                    break;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    break;
                 }
             }
-            for (Portada revista : portadasList) {
 
-                strUrl = "https://www.kioskoymas.com/Imageresize/getLatestImage/"+revista.getId()+"/424/600";
-                Bitmap portadaBM = savePortada.getThumbFile(revista.getTitle() + 't');
-                if(descargar || portadaBM == null || swipeRefreshLayout != null) {
-                    try {
-                        URL url = new URL(strUrl);
-                        InputStream is = (InputStream) url.getContent();
-                        portadaBM = BitmapFactory.decodeStream(is);
-                        savePortada.saveFile(context.get().getCacheDir(), revista.getTitle() + "t", portadaBM);
-                        editor.putString(revista.getTitle(), revista.getId());
+            LinearLayout.LayoutParams paramsly = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-                    } catch (FileNotFoundException fne) {
-                        fne.printStackTrace();
-                        break;
-                    } catch (MalformedURLException e) {
-                        e.printStackTrace();
-                        break;
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        break;
-                    }
-                }
+            Button imageButton = new Button(context.get());
+            paramsly.width = getHalfScreenWidth();
+            paramsly.height = (portadaBM.getHeight() * paramsly.width) / portadaBM.getWidth();
+            Drawable drawable = new BitmapDrawable(context.get().getResources(), portadaBM);
+            imageButton.setBackground(drawable);
+            imageButton.setLayoutParams(paramsly);
 
-                LinearLayout.LayoutParams paramsly = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-                Button imageButton = new Button(context.get());
-                paramsly.width = getHalfScreenWidth();
-                paramsly.height = (portadaBM.getHeight() * paramsly.width) / portadaBM.getWidth();
-                Drawable drawable = new BitmapDrawable(context.get().getResources(), portadaBM);
-                imageButton.setBackground(drawable);
-                imageButton.setLayoutParams(paramsly);
-
-                imageButton.setOnClickListener(view -> {
-                    Intent intent = new Intent(context.get(), PortadaDetalle.class);
-                    intent.putExtra("Portadas",(Serializable) portadasList);
-                    intent.putExtra("Id", revista.getId());
-                    int adCount = prefs.getInt("adCount", 0) + 1;
-                    SharedPreferences.Editor edit = prefs.edit();
-                    edit.putInt("adCount", adCount);
-                    edit.apply();
-                    intent.putExtra("showAd", adCount);
-                    context.get().startActivity(intent);
-                });
-                imageButton.setOnLongClickListener(view -> {
-                    PopupMenu popup = new PopupMenu(view.getContext(), view);
-                    popup.getMenuInflater().inflate(R.menu.menu_portada_list, popup.getMenu());
-                    popup.setOnMenuItemClickListener(menuItem -> {
-                        if (menuItem.getItemId() == R.id.share) {
-                            if (savePortada.isExternalStorageWritable()) {
-                                if (!savePortada.checkPermissions())
-                                    return false;
-                                new DownloadPortada(context.get(), savePortada, revista.getTitle()).execute(strUrl);
-                            }
-                        } else if (menuItem.getItemId() == R.id.save) {
-                            if (savePortada.isExternalStorageWritable()) {
-                                if (!savePortada.checkPermissions())
-                                    return false;
-                                File file;
-                                if ((file = new File(savePortada.getAlbumStorageDir() + File.separator + revista.getTitle() + "_" + (revista.getTitle() != null ? fecha : "") + ".jpg")).exists()) {
-                                    Toast.makeText(context.get(), "Ya se ha guardado la portada.", Toast.LENGTH_LONG).show();
-                                    return true;
-                                }
-                                DownloadPortada dp = new DownloadPortada(context.get(), file);
-                                dp.execute(strUrl);
-                            } else {
-                                Toast.makeText(context.get(), "Internal Storage unreadable", Toast.LENGTH_LONG).show();
-                            }
-                        } else if (menuItem.getItemId() == R.id.web) {
-                            //menuItem.setTitle(menuItem.getTitle() + url1);
-                            if(revista.getWebRevista().isEmpty()){
-                                Toast.makeText(context.get(), "No existe la página web", Toast.LENGTH_LONG).show();
+            imageButton.setOnClickListener(view -> {
+                Intent intent = new Intent(context.get(), PortadaDetalle.class);
+                intent.putExtra("Portadas", params);
+                intent.putExtra("Id", id);
+                int adCount = prefs.getInt("adCount", 0) + 1;
+                SharedPreferences.Editor edit = prefs.edit();
+                edit.putInt("adCount", adCount);
+                edit.apply();
+                intent.putExtra("showAd", adCount);
+                context.get().startActivity(intent);
+            });
+            imageButton.setOnLongClickListener(view -> {
+                PopupMenu popup = new PopupMenu(view.getContext(), view);
+                popup.getMenuInflater().inflate(R.menu.menu_portada_list, popup.getMenu());
+                popup.setOnMenuItemClickListener(menuItem -> {
+                    if (menuItem.getItemId() == R.id.share) {
+                        if (savePortada.isExternalStorageWritable()) {
+                            if (!savePortada.checkPermissions())
+                                return false;
+                            new DownloadPortada(context.get(), savePortada, title).execute(strUrl);
+                        }
+                    } else if (menuItem.getItemId() == R.id.save) {
+                        if (savePortada.isExternalStorageWritable()) {
+                            if (!savePortada.checkPermissions())
+                                return false;
+                            File file;
+                            if ((file = new File(savePortada.getAlbumStorageDir() + File.separator + title + "_" + (title != null ? fecha : "") + ".jpg")).exists()) {
+                                Toast.makeText(context.get(), "Ya se ha guardado la portada.", Toast.LENGTH_LONG).show();
                                 return true;
                             }
-                            Intent i = new Intent(Intent.ACTION_VIEW);
-                            i.setData(Uri.parse("https://www." + revista.getWebRevista()));
-                            context.get().startActivity(i);
+                            DownloadPortada dp = new DownloadPortada(context.get(), file);
+                            dp.execute(strUrl);
+                        } else {
+                            Toast.makeText(context.get(), "Internal Storage unreadable", Toast.LENGTH_LONG).show();
                         }
-                        return true;
-                    });
-                    MenuPopupHelper menuHelper = new MenuPopupHelper(context.get(), (MenuBuilder) popup.getMenu(), view);
-                    menuHelper.setForceShowIcon(true);
-                    menuHelper.show();
+                    } else if (menuItem.getItemId() == R.id.web) {
+                        //menuItem.setTitle(menuItem.getTitle() + url1);
+                        if(webRevista.isEmpty()){
+                            Toast.makeText(context.get(), "No existe la página web", Toast.LENGTH_LONG).show();
+                            return true;
+                        }
+                        Intent i = new Intent(Intent.ACTION_VIEW);
+                        i.setData(Uri.parse("https://www." + webRevista));
+                        context.get().startActivity(i);
+                    }
                     return true;
                 });
+                MenuPopupHelper menuHelper = new MenuPopupHelper(context.get(), (MenuBuilder) popup.getMenu(), view);
+                menuHelper.setForceShowIcon(true);
+                menuHelper.show();
+                return true;
+            });
 
-                publishProgress(imageButton);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            publishProgress(imageButton);
         }
 
         if (descargar) {
@@ -287,7 +234,6 @@ class GetPortadas extends AsyncTask<String, Button, Boolean> {
         if (swipeRefreshLayout != null) {
             swipeRefreshLayout.setRefreshing(false);
         }
-        Log.d(category, log);
         super.onPostExecute(aBoolean);
     }
 

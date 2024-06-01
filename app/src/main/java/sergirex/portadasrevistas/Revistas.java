@@ -5,33 +5,35 @@ package sergirex.portadasrevistas;
  * Nothing else to add
  */
 class Revistas {
-    static final String [] corazon = {"Semana:semana.es", "Diez Minutos:diezminutos.es", "Lecturas:lecturas.com", "Hola:hola.com", "Love", "Cuore:elperiodico.com/cuore",
-            "Rumore", "QMD:diezminutos.es/que-me-dices", "Hello:hellomagazine.com", "Lux:lux.iol.pt", "Hola Venezuela", "Hola México"};
-    static final String [] cultura = {"Muy Interesante:muyinteresante.com", "National Geographic:nationalgeographic.com.es", "Selecciones Reader´s Digest:selecciones.es",
-            "Año Cero:", "Muy Negocios y Economía", "Revista Literaria El Gato Negro:revistaliterariaelgatonegro.com", "Crítica:revista-critica.es", "Muy Preguntas y Respuestas",
-            "Muy Extra", "Veritas Arcana", "Anuario Astrológico", "Año/Cero Monográfico", "Enigmas Monográfico"
-    };
-    static final String [] deportes = {"Sport Life:sportlife.es", "Bike", "Ciclismo a fondo:ciclismoafondo.es", "Runner's World:runnersworld.com/es", "Sport Training:sportraining.es",
-            "Trail Run:trailrun.es", "Bikes World", "Ciclista Extra", "Magazine Futbol Tactico"};
-    static final String [] estilo_de_vida = {"Saber Vivir:sabervivirtv.com", "Quercus:diariodesevilla.es", "Clara:informacion.es", "Cuerpo Mente:cuerpomente.com",
-            "Vanity Fair:revistavanityfair.es", "Vanidad:vanidad.es", "Yoga Spirit", "InStyle:instyle.es", "Salud y Bienestar", "Ser Padres", "Hola Living",
-            "KOAX magazine:koaxmagazine.com", "Hola Novias", "Hola Niños", "Hola Modas" };
-    static final String [] femeninas = {"Mía:miarevista.es", "Elle:elle.com", "Marie Claire España:marie-claire.es","Woman:woman.elperiodico.com",
-            "Cosmopolitan España:cosmopolitan.com", "Harpers Bazaar","Mujer Hoy:mujerhoy.com","Vogue:vogue.es", "Women's Health",
-            "Hola Fashion", "Glamour", "Stilo"};
+    static final String [] corazon = {"3845:Semana:semana.es", "e061:Diez Minutos:diezminutos.es", "3741:Lecturas:lecturas.com", "ebkm:Hola:hola.com", "2490:Love",
+            "e586:Cuore:elperiodico.com/cuore", "ebda:Rumore", "e149:QMD:diezminutos.es/que-me-dices", "ebmj:Hello:hellomagazine.com", "ebma:Lux:lux.iol.pt", "e913:Hola Venezuela",
+            "ebmh:Hola México"};
+    static final String [] cultura = {"3792:Muy Interesante:muyinteresante.com", "3813:National Geographic:nationalgeographic.com.es", "ebmf:Selecciones Reader´s Digest:selecciones.es",
+            "3880:Año Cero:", "ecat:Muy Negocios y Economía", "ebp9:Revista Literaria El Gato Negro:revistaliterariaelgatonegro.com", "ebkk:Crítica:revista-critica.es",
+            "eca2:Muy Preguntas y Respuestas", "eca3:Muy Extra", "ebd1:Veritas Arcana", "3896:Anuario Astrológico", "e686:Año/Cero Monográfico", "e685:Enigmas Monográfico" };
+    static final String [] deportes = {"2439:Sport Life:sportlife.es", "2443:Bike", "2442:Ciclismo a fondo:ciclismoafondo.es", "ebhf:Runner's World:runnersworld.com/es",
+            "e571:Sport Training:sportraining.es", "e627:Trail Run:trailrun.es", "e524:Bikes World", "ebke:Ciclista Extra", "e689:Magazine Futbol Tactico"};
+    static final String [] estilo_de_vida = {"3814:Saber Vivir:sabervivirtv.com", "2407:Quercus:diariodesevilla.es", "3804:Clara:informacion.es", "3808:Cuerpo Mente:cuerpomente.com",
+            "ebns:Vanity Fair:revistavanityfair.es", "ecaq:Vanidad:vanidad.es", "ed91:Yoga Spirit", "e555:InStyle:instyle.es", "ebkd:Salud y Bienestar", "3869:Ser Padres",
+            "ebmk:Hola Living", "ecap:KOAX magazine:koaxmagazine.com", "ebra:Hola Novias", "ebr6:Hola Niños", "ebr9:Hola Modas" };
+    static final String [] femeninas = {"e687:Mía:miarevista.es", "2488:Elle:elle.com", "3871:Marie Claire España:marie-claire.es", "3838:Woman:woman.elperiodico.com",
+            "eb15:Cosmopolitan España:cosmopolitan.com", "e688:Harpers Bazaar", "v156:Mujer Hoy:mujerhoy.com", "ebnj:Vogue:vogue.es", "ebhe:Women's Health", "ebnk:Hola Fashion",
+            "ebnq:Glamour", "2387:Stilo"};
 
-    static final String [] masculinas = {"Men's Health:menshealth.com/es/", "Esquire:esquire.com/es", "Gentleman","GQ:revistagq.com", "Icon:elpais.com/icon", "Código Único" };
+    static final String [] masculinas = {"ebhh:Men's Health:menshealth.com/es/", "ebhm:Esquire:esquire.com/es", "e817:Gentleman", "ebnr:GQ:revistagq.com", "e565:Icon:elpais.com/icon", "v157:Código Único" };
 
-    static final String [] motor = {"Coches", "Auto Bild:autobild.es", "Motos 2000","Car and Driver:caranddriver.com/es/", "Altagama Motor", "Motociclismo:motociclismo.es",
-    "Motor Clásico", "Autopista:autopista.es", "Revista Car:revistacar.es", "Truck:camionactualidad.es", "Moto Verde:motociclismo.es/moto-verde", "Automóvil", "Business Car:businesscar.autopista.es",
-    "Coche Actual:autopista.es/tag/coche-actual", "Clásicos de Ocasión", "Fórmula Moto:formulamoto.es", "Auto Bild Extra", "Coches Comerciales", "Evo", "Autovía", "Todo Terreno",
-    "Coches Clásicos", "Autofácil:autofacil.es", "Transporte Mundial", "Top Gear Extra:topgear.es", "Barcos a  Motor", "Top Gear:topgear.es", "Solo Moto By MD Scooter:mundodeportivo.com/solomoto",
-    "Motocatálogo", "Todos los Coches del Mundo", "Solo Moto By MD Trail:mundodeportivo.com/solomoto", "Solo Moto Catálogo:mundodeportivo.com/solomoto", "La Moto"};
+    static final String [] motor = {"2492:Coches", "2005:Auto Bild:autobild.es", "e646:Motos 2000", "e064:Car and Driver:caranddriver.com/es/", "e059:Altagama Motor",
+            "2448:Motociclismo:motociclismo.es", "2456:Motor Clásico", "2452:Autopista:autopista.es", "e815:Revista Car:revistacar.es", "ecar:Truck:camionactualidad.es",
+            "2450:Moto Verde:motociclismo.es/moto-verde", "2455:Automóvil", "2457:Business Car:businesscar.autopista.es", "2453:Coche Actual:autopista.es/tag/coche-actual",
+            "e183:Clásicos de Ocasión", "e082:Fórmula Moto:formulamoto.es", "2347:Auto Bild Extra", "eca9:Coches Comerciales", "e081:Evo", "2454:Autovía", "e078:Todo Terreno",
+            "e180:Coches Clásicos", "e077:Autofácil:autofacil.es", "2477:Transporte Mundial", "ebd5:Top Gear Extra:topgear.es", "e113:Barcos a  Motor", "ea27:Top Gear:topgear.es",
+            "eanj:Solo Moto By MD Scooter:mundodeportivo.com/solomoto", "3700:Motocatálogo", "e619:Todos los Coches del Mundo", "eank:Solo Moto By MD Trail:mundodeportivo.com/solomoto",
+            "eann:Solo Moto Catálogo:mundodeportivo.com/solomoto", "2449:La Moto"};
 
-    static final String [] tecnologia = {"Computer Hoy:computerhoy.com", "Gadget:revista-gadget.es", "Hobby Consolas:hobbyconsolas.com", "Retrogamer", "Como Funciona",
-    "Retina", "New Súper Juegos", "Digital Camera:digitalcameras.es", "Computer Hoy Extra", "Hobby Consolas Extra:hobbyconsolas.com", "Superfoto Digital", "Playmanía"};
+    static final String [] tecnologia = { "2013:Computer Hoy:computerhoy.com", "2496:Gadget:revista-gadget.es", "2342:Hobby Consolas:hobbyconsolas.com", "e498:Retrogamer", "eb20:Como Funciona",
+            "v463:Retina", "ebd9:New Súper Juegos", "2391:Digital Camera:digitalcameras.es", "2339:Computer Hoy Extra", "2343:Hobby Consolas Extra:hobbyconsolas.com", "e055:Superfoto Digital", "2022:Playmanía"};
 
-    static final String [] historia = {"Muy Historia", "Viajar:viajar.elperiodico.com", "La Aventura de la Historia:laaventuradelahistoria.es", "Descubrir el Arte:descubrirelarte.es",
-    "Historia National:historia.nationalgeographic.com.es", "Historia y Vida:lavanguardia.com/historiayvida", "Historia Moderna", "Viajes National Geographic:viajes.nationalgeographic.com.es",
-    "CN Traveler", "Vive la Historia", "Sapiens", "Hola Viajes", "Turismo Rural", "Laus Hispaniae", "Historia de Iberia Vieja", "Historia de Iberia Vieja Monográfico"};
+    static final String [] historia = {"3877:Muy Historia", "2388:Viajar:viajar.elperiodico.com", "eb18:La Aventura de la Historia:laaventuradelahistoria.es", "eb19:Descubrir el Arte:descubrirelarte.es",
+            "e133:Historia y Vida:lavanguardia.com/historiayvida", "3816:Viajes National Geographic:viajes.nationalgeographic.com.es", "ebnp:CN Traveler", "eb21:Vive la Historia",
+            "e349:Sapiens", "ebr7:Hola Viajes", "e007:Turismo Rural", "e554:Laus Hispaniae", "3883:Historia de Iberia Vieja", "e684:Historia de Iberia Vieja Monográfico"};
 }

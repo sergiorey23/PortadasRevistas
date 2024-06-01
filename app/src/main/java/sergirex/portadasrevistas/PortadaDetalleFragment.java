@@ -95,7 +95,7 @@ public class PortadaDetalleFragment extends Fragment {
                         }
                     });*/
         SavePortada savePortada = new SavePortada(rootView.getContext());
-        Bitmap portadaBM = savePortada.getThumbFile(title + 't');
+        Bitmap portadaBM = savePortada.getFile(title + 't');
         PhotoView photoView = rootView.findViewById(R.id.imagen_extendida);
         photoView.setImageBitmap(portadaBM);
 

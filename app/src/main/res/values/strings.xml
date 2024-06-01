@@ -49,6 +49,8 @@
     <string name="seventh_tab">Motor</string>
     <string name="eight_tab">Tecnología</string>
     <string name="nineth_tav">Viajes e Historia</string>
+    <string name="portadas_periodicos">Portadas Periódicos</string>
+    <string name="mas_apps">Más apps:</string>
     <!-- TODO: Remove or change this placeholder text -->
 
 </resources>

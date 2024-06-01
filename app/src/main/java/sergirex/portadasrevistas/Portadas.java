@@ -56,11 +56,9 @@ import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.QueryProductDetailsParams;
 import com.android.billingclient.api.QueryPurchasesParams;
-import com.facebook.ads.AdSettings;
 import com.facebook.ads.AdSize;
 import com.facebook.ads.AdView;
 import com.facebook.ads.AudienceNetworkAds;
-import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
@@ -97,8 +95,6 @@ public class Portadas extends AppCompatActivity {
     private Handler handler;
     private int favsCount = 0;
     private boolean dark = false;
-    private Long today;
-    private String fecha;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,7 +128,7 @@ public class Portadas extends AppCompatActivity {
             calendar.add(Calendar.DATE, -1);
         }
         DateFormat formatter = new SimpleDateFormat("yyyyMMdd", Locale.FRANCE);
-        fecha = formatter.format(calendar.getTime());
+        String fecha = formatter.format(calendar.getTime());
         String fechaPortadas = getSharedPreferences("FechasGeneral", Context.MODE_PRIVATE).getString("fechaPortadas", null);
         boolean descargar = fechaPortadas == null || !fechaPortadas.equals(fecha);
 
@@ -452,6 +448,7 @@ public class Portadas extends AppCompatActivity {
         int theme = dark ? R.style.AppThemeDark : R.style.AppTheme;
         AlertDialog.Builder builder = new AlertDialog.Builder(this, theme);
         builder.setPositiveButton(R.string.close, null);
+
         builder.setView(aboutLayout);
         TextView appSource = aboutLayout.findViewById(R.id.appSource);
         TextView tv = aboutLayout.findViewById(R.id.appVersion);
@@ -486,12 +483,22 @@ public class Portadas extends AppCompatActivity {
 //            }
 //        });
 
-        Button button2 = aboutLayout.findViewById(R.id.contact);
-        button2.setOnClickListener(view -> {
+        Button contact = aboutLayout.findViewById(R.id.contact);
+        contact.setOnClickListener(view -> {
             Uri uri = Uri.parse("mailto:sssergiooo23@gmail.com");
             Intent emailIntent = new Intent(Intent.ACTION_SENDTO, uri);
             emailIntent.setData(uri);
             startActivity(emailIntent);
+        });
+        Button portadas_periodicos = aboutLayout.findViewById(R.id.portadas_periodicos);
+        portadas_periodicos.setOnClickListener(v -> {
+            Uri uri = Uri.parse("market://details?id=sergirex.portadasperiodicos");
+            Intent myAppLinkToMarket = new Intent(Intent.ACTION_VIEW, uri);
+            try {
+                startActivity(myAppLinkToMarket);
+            } catch (ActivityNotFoundException e) {
+                Toast.makeText(this, " unable to find market app", Toast.LENGTH_LONG).show();
+            }
         });
         builder.create();
         builder.show();
@@ -731,7 +738,7 @@ public class Portadas extends AppCompatActivity {
                 mSectionsPagerAdapter.notifyItemChanged(0);
                 favsCount = count;
             }
-        }else if(mSectionsPagerAdapter.getItemCount() > 5) {
+        }else if(mSectionsPagerAdapter.getItemCount() > 9) {
             mSectionsPagerAdapter.removeFragment();
             mSectionsPagerAdapter.notifyItemRemoved(0);
         }

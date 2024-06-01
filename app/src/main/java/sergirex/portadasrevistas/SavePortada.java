@@ -77,8 +77,8 @@ class SavePortada {
         return file;
     }
 
-    Bitmap getThumbFile(String title) {
-        File file = new File(context.getCacheDir() + File.separator + title + ".jpg");
+    Bitmap getFile(String title) {
+        File file = new File(context.getCacheDir() + File.separator + title.replace("/","-") + ".jpg");
         if (file.exists())
             return BitmapFactory.decodeFile(file.getPath());
         else
@@ -87,7 +87,7 @@ class SavePortada {
 
     void saveFile(File path, String fileName, Bitmap pic) {
         try {
-            File file = new File(path, fileName+".jpg");
+            File file = new File(path, fileName.replace("/","-")+".jpg");
             FileOutputStream fos = new FileOutputStream(file);
             pic.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             fos.close();
@@ -98,7 +98,7 @@ class SavePortada {
 
     Uri saveFile(String fileName, Bitmap pic) {
         try {
-            File file = new File(context.getCacheDir(), fileName + ".jpg");
+            File file = new File(context.getCacheDir(), fileName.replace("/","-") + ".jpg");
             FileOutputStream fos = new FileOutputStream(file);
             pic.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             fos.close();
@@ -121,7 +121,7 @@ class DownloadPortada extends AsyncTask<String, FileOutputStream, FileOutputStre
     DownloadPortada(Context ctx, SavePortada sp, String fileName) {
         this.ctx = ctx;
         this.sp = sp;
-        this.fileName = fileName;
+        this.fileName = fileName.replace("/","-");
     }
 
     DownloadPortada(Context ctx, File file) {

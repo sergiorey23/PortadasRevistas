@@ -258,14 +258,16 @@ public class PortadaDetalle extends AppCompatActivity {
             alertDialogNoConn.show();
         } else {
             mViewPager2 = findViewById(R.id.viewpager2);
-            @SuppressWarnings("unchecked")
-            List<Portada> portadaList = (List<Portada>) getIntent().getSerializableExtra("Portadas");
+            String[] portadaList = getIntent().getStringArrayExtra("Portadas");
             String selectedRevistaId = getIntent().getStringExtra("Id");
             mSectionsPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), getLifecycle());
             int pos = 0;
             if (portadaList != null) {
-                for (int i = 0; i < portadaList.size(); i++) {
-                    Portada portada = portadaList.get(i);
+                for (int i = 0; i < portadaList.length; i++) {
+                    String[] portadaArray = portadaList[i].split(":");
+                    String webRevista = "";
+                    if(portadaArray.length > 2) webRevista = portadaArray[2];
+                    Portada portada = new Portada(portadaArray[0],portadaArray[1],webRevista,portadaList[i]);
                     if (portada.getId().equals(selectedRevistaId)) {
                         pos = i;
                     }
