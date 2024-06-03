@@ -58,9 +58,12 @@ import com.google.android.play.core.review.ReviewManager;
 import com.google.android.play.core.review.ReviewManagerFactory;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 public class PortadaDetalle extends AppCompatActivity {
@@ -98,6 +101,8 @@ public class PortadaDetalle extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
         prefsPer = getSharedPreferences("revistas", Context.MODE_PRIVATE);
+
+        today = MaterialDatePicker.todayInUtcMilliseconds();
 
         Animation rotateOpen = AnimationUtils.loadAnimation(this, R.anim.rotate_open_anim);
         Animation rotateClose = AnimationUtils.loadAnimation(this, R.anim.rotate_close_anim);
@@ -352,6 +357,20 @@ public class PortadaDetalle extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        DateFormat formatter = new SimpleDateFormat("yyyyMMdd", Locale.FRANCE);
+        String date = formatter.format(today);
+        if(!date.equals(prefs.getString("fechaPortadas", ""))){
+            SharedPreferences sp = getSharedPreferences(portada.getTitle(), MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.remove("currentPage");
+            editor.apply();
+        }
+        super.onBackPressed();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_portada, menu);
@@ -364,7 +383,6 @@ public class PortadaDetalle extends AppCompatActivity {
         SavePortada savePortada = new SavePortada(this);
         int itemId = item.getItemId();
         if (itemId == R.id.date) {
-            if(today == null) today = MaterialDatePicker.todayInUtcMilliseconds();
             MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder
                     .datePicker()
                     .setTitleText("Select date").setSelection(today)
@@ -375,14 +393,13 @@ public class PortadaDetalle extends AppCompatActivity {
             datePicker.show(getSupportFragmentManager(), "MATERIAL_DATE_PICKER");
             datePicker.addOnPositiveButtonClickListener(
                     aLong -> {
-                        if(aLong > new Date().getTime()){
-                            Toast.makeText(this, "La fecha debe ser anterior a la actual", Toast.LENGTH_LONG).show();
-                            return;
-                        }
                         today = aLong;
-
+                        SharedPreferences sp = getSharedPreferences(portada.getTitle(), MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.remove("currentPage");
+                        editor.apply();
                         PortadaDetalleFragment currentFragment = (PortadaDetalleFragment) mSectionsPagerAdapter.createFragment(mViewPager2.getCurrentItem());
-                        currentFragment.getCoverByDate(aLong);
+                        currentFragment.getCoverByDate(aLong, true);
                     });
 
         } else if (itemId == R.id.share) {

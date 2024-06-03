@@ -1,4 +1,4 @@
-package sergirex.portadasrevistas;
+package sergirex.portadasrevistas.categorias;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,6 +8,10 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import sergirex.portadasrevistas.GetPortadas;
+import sergirex.portadasrevistas.R;
+import sergirex.portadasrevistas.Revistas;
 
 /**
  * Created by Sergio on 12/02/2017.

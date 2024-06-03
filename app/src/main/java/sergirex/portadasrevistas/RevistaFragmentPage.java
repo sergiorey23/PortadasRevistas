@@ -65,15 +65,16 @@ public class RevistaFragmentPage extends Fragment {
         new Thread(() -> {
             try {
                 String strUrl = "https://t.prcdn.co/img?file="+ id + date +"00000000001001&page="+page+"&scale="+scale;
-                Log.i(id,strUrl);
                 URL url = new URL(strUrl);
                 InputStream is;
                 is = (InputStream) url.getContent();
                 Bitmap portadaBM = BitmapFactory.decodeStream(is);
-                requireActivity().runOnUiThread(() -> {
-                    PhotoView photoView = rootView.findViewById(R.id.pageDetailPhotoView);
-                    photoView.setImageBitmap(portadaBM);
-                });
+                if(isAdded()) {
+                    requireActivity().runOnUiThread(() -> {
+                        PhotoView photoView = rootView.findViewById(R.id.pageDetailPhotoView);
+                        photoView.setImageBitmap(portadaBM);
+                    });
+                }
             } catch (IOException e) {
                 requireActivity().runOnUiThread(() -> {
                     Log.e("ERROR 404",e.getMessage());

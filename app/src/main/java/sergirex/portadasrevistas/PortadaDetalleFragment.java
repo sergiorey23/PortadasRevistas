@@ -99,18 +99,18 @@ public class PortadaDetalleFragment extends Fragment {
         Bitmap portadaBM = savePortada.getFile(title + 't');
         photoView = rootView.findViewById(R.id.imagen_extendida);
         photoView.setImageBitmap(portadaBM);
-        getCoverByDate(new Date().getTime());
+        getCoverByDate(new Date().getTime(), false);
     }
 
-    public void getCoverByDate(Long date) {
+    public void getCoverByDate(Long date, boolean showToast) {
         ProgressBar progressBar = rootView.findViewById(R.id.progressBar);
         progressBar.setIndeterminate(true);
         progressBar.setVisibility(View.VISIBLE);
 
-        getThread(date, progressBar);
+        getThread(date, progressBar, showToast);
     }
 
-    private void getThread(Long longDate, ProgressBar pb) {
+    private void getThread(Long longDate, ProgressBar pb, boolean showToast) {
 
         DateFormat formatter = new SimpleDateFormat("yyyyMMdd", Locale.FRANCE);
         Date date = new Date(longDate);
@@ -141,17 +141,21 @@ public class PortadaDetalleFragment extends Fragment {
                 }
             } catch (IOException e) {
                 if (tries > 31) {
-                    requireActivity().runOnUiThread(() -> {
-                        Toast.makeText(getActivity(), "Portada no encontrada", Toast.LENGTH_LONG).show();
-                        pb.setVisibility(View.GONE);
-                    });
+                    if(isAdded()) {
+                        requireActivity().runOnUiThread(() -> {
+                            if(showToast) {
+                                Toast.makeText(getActivity(), "Portada no encontrada", Toast.LENGTH_LONG).show();
+                            }
+                            pb.setVisibility(View.GONE);
+                        });
+                    }
                     tries = 0;
                 } else {
                     tries++;
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(date);
                     calendar.add(Calendar.DATE, -1);
-                    getThread(calendar.getTimeInMillis(), pb);
+                    getThread(calendar.getTimeInMillis(), pb, showToast);
                 }
             }
         }).start();

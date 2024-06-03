@@ -1,5 +1,7 @@
 package sergirex.portadasrevistas;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -38,7 +40,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-class GetPortadas extends AsyncTask<String, ImageButton, Boolean> {
+public class GetPortadas extends AsyncTask<String, ImageButton, Boolean> {
     private final WeakReference<View> rootView;
     private final WeakReference<Context> context;
     private int portCont = 0;
@@ -49,13 +51,13 @@ class GetPortadas extends AsyncTask<String, ImageButton, Boolean> {
     @SuppressLint("StaticFieldLeak")
     private final SwipeRefreshLayout swipeRefreshLayout;
 
-    GetPortadas(View rootView, SwipeRefreshLayout swipeRefreshLayout) {
+    public GetPortadas(View rootView, SwipeRefreshLayout swipeRefreshLayout) {
         this.rootView = new WeakReference<>(rootView);
         context = new WeakReference<>(rootView.getContext());
         this.swipeRefreshLayout = swipeRefreshLayout;
     }
 
-    View getRootView() {
+    public View getRootView() {
         return rootView.get();
     }
 
@@ -99,6 +101,10 @@ class GetPortadas extends AsyncTask<String, ImageButton, Boolean> {
             strUrl = "https://www.kioskoymas.com/Imageresize/getLatestImage/"+id+"/424/600";
             Bitmap portadaBM;
             if(descargar || (portadaBM = savePortada.getFile(title + 't')) == null || swipeRefreshLayout != null) {
+                SharedPreferences sp = context.get().getSharedPreferences(title, MODE_PRIVATE);
+                SharedPreferences.Editor editor = sp.edit();
+                editor.remove("currentPage");
+                editor.apply();
                 try {
                     URL url = new URL(strUrl);
                     InputStream is = (InputStream) url.getContent();

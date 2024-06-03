@@ -5,6 +5,8 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -14,6 +16,11 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceManager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
+
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RevistaPagerActivity extends FragmentActivity {
 
@@ -59,9 +66,37 @@ public class RevistaPagerActivity extends FragmentActivity {
             viewPager.setPageTransformer(new DepthPageTransformer());
         }
         int currentPage = sp.getInt("currentPage",0);
-        if(currentPage > 0){
-            viewPager.setCurrentItem(currentPage, false);
-        }
+        viewPager.setCurrentItem(currentPage, false);
+
+        SeekBar seekBar = findViewById(R.id.seekBar);
+        seekBar.setMax(pages);
+        seekBar.setProgress(currentPage);
+        TextView pageCounter = findViewById(R.id.pageCounter);
+        pageCounter.setText(String.format("%s/%s", currentPage+1, pages));
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                pageCounter.setText(String.format("%s/%s", position+1, pages));
+                seekBar.setProgress(position);
+            }
+        });
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                viewPager.setCurrentItem(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                //viewPager.setCurrentItem(seekBar.getProgress());
+            }
+        });
     }
 
 

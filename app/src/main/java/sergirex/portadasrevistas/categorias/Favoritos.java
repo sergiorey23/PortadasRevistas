@@ -1,4 +1,4 @@
-package sergirex.portadasrevistas;
+package sergirex.portadasrevistas.categorias;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -10,6 +10,9 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import sergirex.portadasrevistas.GetPortadas;
+import sergirex.portadasrevistas.R;
 
 /**
  * Created by sergio on 01/10/2019.

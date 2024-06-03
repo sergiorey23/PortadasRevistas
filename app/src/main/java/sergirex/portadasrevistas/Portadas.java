@@ -76,6 +76,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import sergirex.portadasrevistas.categorias.Corazon;
+import sergirex.portadasrevistas.categorias.Cultura;
+import sergirex.portadasrevistas.categorias.Deportes;
+import sergirex.portadasrevistas.categorias.Favoritos;
+import sergirex.portadasrevistas.categorias.Femeninas;
+import sergirex.portadasrevistas.categorias.Historia;
+import sergirex.portadasrevistas.categorias.LifeStyle;
+import sergirex.portadasrevistas.categorias.Masculinas;
+import sergirex.portadasrevistas.categorias.Motor;
+import sergirex.portadasrevistas.categorias.Tecnologia;
+
 public class Portadas extends AppCompatActivity {
     static final int MY_PERMISSIONS_REQUEST_WRITE_STORAGE = 0;
     static final int MY_PERMISSIONS_REQUEST_POST_NOTIFICATION = 1;
