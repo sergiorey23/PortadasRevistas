@@ -23,7 +23,7 @@ public class Favoritos extends Fragment {
         SharedPreferences prefs = rootView.getContext().getSharedPreferences("revistas", Context.MODE_PRIVATE);
         if(prefs.getAll().isEmpty())
             return rootView;
-        GetPortadas getPortadas = new GetPortadas(rootView, getClass().getSimpleName(), null);
+        GetPortadas getPortadas = new GetPortadas(rootView, null);
         String[] favRevistas = prefs.getAll().values().toArray(new String[0]);
         getPortadas.execute(favRevistas);
         SwipeRefreshLayout swipeRefreshLayout = rootView.findViewById(R.id.refreshLayout);
@@ -38,7 +38,7 @@ public class Favoritos extends Fragment {
         ViewGroup viewGroup = rootView.findViewById(R.id.linearLayout);
         viewGroup.removeAllViews();
         String[] favRevistas = prefs.getAll().values().toArray(new String[0]);
-        GetPortadas getPts = new GetPortadas(rootView, getClass().getSimpleName(), swipeRefreshLayout);
+        GetPortadas getPts = new GetPortadas(rootView, swipeRefreshLayout);
         getPts.execute(favRevistas);
     }
 

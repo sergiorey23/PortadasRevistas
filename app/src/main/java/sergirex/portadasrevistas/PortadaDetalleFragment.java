@@ -2,7 +2,6 @@ package sergirex.portadasrevistas;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -20,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -43,7 +41,6 @@ public class PortadaDetalleFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String id;
     private String title;
-    private String date;
     private int tries = 0;
 
     public PortadaDetalleFragment() {
@@ -122,14 +119,14 @@ public class PortadaDetalleFragment extends Fragment {
                 is = (InputStream) url.getContent();
                 Bitmap portadaBM = BitmapFactory.decodeStream(is);
                 requireActivity().runOnUiThread(() -> {
-                    this.date = dateStr;
                     imageView.setImageBitmap(portadaBM);
-                    /*imageView.setOnClickListener(v -> {
-                        Intent intent = new Intent(getActivity(), RevistaDetalle.class);
+                    imageView.setOnClickListener(v -> {
+                        Intent intent = new Intent(getActivity(), RevistaPagerActivity.class);
                         intent.putExtra("id", id);
-                        intent.putExtra("date", date);
+                        intent.putExtra("date", dateStr);
+                        intent.putExtra("title", title);
                         startActivity(intent);
-                    });*/
+                    });
                     tries = 0;
                     if(pd != null) {
                         pd.cancel();

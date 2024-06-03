@@ -1,7 +1,5 @@
 package sergirex.portadasrevistas;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -16,7 +14,7 @@ import android.os.AsyncTask;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -36,28 +34,24 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
-class GetPortadas extends AsyncTask<String, Button, Boolean> {
+class GetPortadas extends AsyncTask<String, ImageButton, Boolean> {
     private final WeakReference<View> rootView;
     private final WeakReference<Context> context;
     private int portCont = 0;
     private WeakReference<LinearLayout> ly;
     private WeakReference<ProgressBar> pb;
-    private final SharedPreferences fechasSP;
     private String strUrl = null;
 
     @SuppressLint("StaticFieldLeak")
     private final SwipeRefreshLayout swipeRefreshLayout;
 
-    GetPortadas(View rootView, String simpleName, SwipeRefreshLayout swipeRefreshLayout) {
+    GetPortadas(View rootView, SwipeRefreshLayout swipeRefreshLayout) {
         this.rootView = new WeakReference<>(rootView);
         context = new WeakReference<>(rootView.getContext());
-        fechasSP = context.get().getSharedPreferences("Fechas" + simpleName, MODE_PRIVATE);
         this.swipeRefreshLayout = swipeRefreshLayout;
     }
 
@@ -89,10 +83,7 @@ class GetPortadas extends AsyncTask<String, Button, Boolean> {
 
         String fecha = formatter.format(calendar.getTime());
 
-        String fechaPortadas = fechasSP.getString("fechaPortadas", "");
-        boolean descargar = !fechaPortadas.equals(fecha);
-
-        SharedPreferences.Editor editor = fechasSP.edit();
+        boolean descargar = !fecha.equals(prefs.getString("fechaPortadas", ""));
 
         for (String portada : params) {
             String[] portadaArray = portada.split(":");
@@ -106,8 +97,8 @@ class GetPortadas extends AsyncTask<String, Button, Boolean> {
             }
 
             strUrl = "https://www.kioskoymas.com/Imageresize/getLatestImage/"+id+"/424/600";
-            Bitmap portadaBM = savePortada.getFile(title + 't');
-            if(descargar || portadaBM == null || swipeRefreshLayout != null) {
+            Bitmap portadaBM;
+            if(descargar || (portadaBM = savePortada.getFile(title + 't')) == null || swipeRefreshLayout != null) {
                 try {
                     URL url = new URL(strUrl);
                     InputStream is = (InputStream) url.getContent();
@@ -127,7 +118,7 @@ class GetPortadas extends AsyncTask<String, Button, Boolean> {
 
             LinearLayout.LayoutParams paramsly = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-            Button imageButton = new Button(context.get());
+            ImageButton imageButton = new ImageButton(context.get());
             paramsly.width = getHalfScreenWidth();
             paramsly.height = (portadaBM.getHeight() * paramsly.width) / portadaBM.getWidth();
             Drawable drawable = new BitmapDrawable(context.get().getResources(), portadaBM);
@@ -191,6 +182,7 @@ class GetPortadas extends AsyncTask<String, Button, Boolean> {
         }
 
         if (descargar) {
+            SharedPreferences.Editor editor = prefs.edit();
             editor.putString("fechaPortadas", fecha);
             editor.apply();
         }
@@ -201,7 +193,7 @@ class GetPortadas extends AsyncTask<String, Button, Boolean> {
     private WeakReference<LinearLayout> linearLayout;
     private int lycount = 0;
 
-    protected void onProgressUpdate(Button... ib) {
+    protected void onProgressUpdate(ImageButton... ib) {
         if (portCont % 2 == 0) {
             linearLayout = new WeakReference<>(new LinearLayout(context.get()));
             linearLayout.get().setOrientation(LinearLayout.HORIZONTAL);
@@ -212,7 +204,7 @@ class GetPortadas extends AsyncTask<String, Button, Boolean> {
             lycount++;
         } else {
             if (linearLayout.get() != null) {
-                Button button = (Button) linearLayout.get().getChildAt(0);
+                ImageButton button = (ImageButton) linearLayout.get().getChildAt(0);
                 LinearLayout.LayoutParams paramsly = (LinearLayout.LayoutParams) button.getLayoutParams();
                 if (paramsly.height > ib[0].getLayoutParams().height) {
                     ib[0].setLayoutParams(paramsly);

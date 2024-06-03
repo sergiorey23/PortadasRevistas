@@ -41,7 +41,6 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.facebook.ads.Ad;
 import com.facebook.ads.AdError;
-import com.facebook.ads.AdSettings;
 import com.facebook.ads.AdSize;
 import com.facebook.ads.AdView;
 import com.facebook.ads.AudienceNetworkAds;
@@ -59,13 +58,9 @@ import com.google.android.play.core.review.ReviewManager;
 import com.google.android.play.core.review.ReviewManagerFactory;
 
 import java.io.File;
-import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 
 public class PortadaDetalle extends AppCompatActivity {
@@ -203,7 +198,7 @@ public class PortadaDetalle extends AppCompatActivity {
                         }
                     }).show();
         }
-        if (!prefs.getBoolean("remove_fb_ads", false)) {
+        if (!prefs.getBoolean("remove_fb_ads", true)) {
             AudienceNetworkAds.initialize(this);
             //AdSettings.setTestMode(true);
             AdView bottomBanner = new AdView(this, "483584450995789_483585470995687", AdSize.BANNER_HEIGHT_50);

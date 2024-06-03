@@ -129,8 +129,7 @@ public class Portadas extends AppCompatActivity {
         }
         DateFormat formatter = new SimpleDateFormat("yyyyMMdd", Locale.FRANCE);
         String fecha = formatter.format(calendar.getTime());
-        String fechaPortadas = getSharedPreferences("FechasGeneral", Context.MODE_PRIVATE).getString("fechaPortadas", null);
-        boolean descargar = fechaPortadas == null || !fechaPortadas.equals(fecha);
+        boolean descargar = !fecha.equals(prefs.getString("fechaPortadas", ""));
 
         setContentView(R.layout.activity_portadas);
 
@@ -169,7 +168,7 @@ public class Portadas extends AppCompatActivity {
                 if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
                     mDrawerLayout.closeDrawer(GravityCompat.START);
                 } else {
-                    moveTaskToBack(true);
+                    getOnBackPressedDispatcher().onBackPressed();
                 }
             }
         };
@@ -224,7 +223,7 @@ public class Portadas extends AppCompatActivity {
         }
 
 
-        if(!prefs.getBoolean("remove_fb_ads", false)) {
+        if(!prefs.getBoolean("remove_fb_ads", true)) {
             AudienceNetworkAds.initialize(this);
             //AdSettings.setTestMode(true);
             // Instantiate an AdView object.
