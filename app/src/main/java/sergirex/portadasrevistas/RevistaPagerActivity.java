@@ -49,8 +49,10 @@ public class RevistaPagerActivity extends FragmentActivity {
 
         String id = getIntent().getStringExtra("id");
         String date = getIntent().getStringExtra("date");
+        int pages = getIntent().getIntExtra("pages", 100);
+        String scale = getIntent().getStringExtra("scale");
         viewPager = findViewById(R.id.viewPagerRevista);
-        pagerAdapter = new ScreenSlidePagerAdapter(this, id, date, sp.getInt("size",0));
+        pagerAdapter = new ScreenSlidePagerAdapter(this, id, date, pages, scale);
         viewPager.setAdapter(pagerAdapter);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -67,7 +69,6 @@ public class RevistaPagerActivity extends FragmentActivity {
     public void onBackPressed() {
         SharedPreferences.Editor editor = sp.edit();
         editor.putInt("currentPage",viewPager.getCurrentItem());
-        editor.putInt("size",pagerAdapter.getItemCount());
         editor.apply();
         super.onBackPressed();
     }
@@ -75,21 +76,22 @@ public class RevistaPagerActivity extends FragmentActivity {
     private static class ScreenSlidePagerAdapter extends FragmentStateAdapter {
         private final String id;
         private final String date;
-        private int size;
+        private final int size;
+        private final String scale;
 
-        public ScreenSlidePagerAdapter(FragmentActivity fa, String id, String date, int size) {
+        public ScreenSlidePagerAdapter(FragmentActivity fa, String id, String date, int size, String scale) {
             super(fa);
             this.id = id;
             this.date = date;
             this.size = size;
+            this.scale = scale;
             createFragment(0);
         }
 
         @NonNull
         @Override
         public Fragment createFragment(int position) {
-            size++;
-            return RevistaFragmentPage.newInstance(id, date, position + 1);
+            return RevistaFragmentPage.newInstance(id, date, position + 1, scale);
         }
 
         @Override

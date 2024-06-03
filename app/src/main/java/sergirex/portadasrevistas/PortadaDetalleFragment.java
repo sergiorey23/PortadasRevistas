@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,12 +36,17 @@ public class PortadaDetalleFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private View rootView;
+    private PhotoView photoView;
     private static final String ARG_ID = "id";
     private static final String ARG_TITLE = "title";
+    private static final String ARG_PAGES = "pages";
+    private static final String ARG_SCALE = "scale";
 
     // TODO: Rename and change types of parameters
     private String id;
     private String title;
+    private int pages;
+    private String scale;
     private int tries = 0;
 
     public PortadaDetalleFragment() {
@@ -51,16 +57,20 @@ public class PortadaDetalleFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param id Parameter 1.
+     * @param id    Parameter 1.
      * @param title Parameter 2.
+     * @param pages Parameter 3.
+     * @param scale Parameter 4.
      * @return A new instance of fragment PortadaDetalleFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static PortadaDetalleFragment newInstance(String id, String title) {
+    public static PortadaDetalleFragment newInstance(String id, String title, int pages, String scale) {
         PortadaDetalleFragment fragment = new PortadaDetalleFragment();
         Bundle args = new Bundle();
         args.putString(ARG_ID, id);
         args.putString(ARG_TITLE, title);
+        args.putInt(ARG_PAGES, pages);
+        args.putString(ARG_SCALE, scale);
         fragment.setArguments(args);
         return fragment;
     }
@@ -71,6 +81,8 @@ public class PortadaDetalleFragment extends Fragment {
         if (getArguments() != null) {
             id = getArguments().getString(ARG_ID);
             title = getArguments().getString(ARG_TITLE);
+            pages = getArguments().getInt(ARG_PAGES);
+            scale = getArguments().getString(ARG_SCALE);
         }
     }
 
@@ -79,38 +91,32 @@ public class PortadaDetalleFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_portada_detalle, container, false);
-
         getCover();
         return rootView;
     }
 
-    public void getCover(){
+    public void getCover() {
         SavePortada savePortada = new SavePortada(rootView.getContext());
         Bitmap portadaBM = savePortada.getFile(title + 't');
-        PhotoView photoView = rootView.findViewById(R.id.imagen_extendida);
+        photoView = rootView.findViewById(R.id.imagen_extendida);
         photoView.setImageBitmap(portadaBM);
-        getThread(new Date().getTime(), photoView, null);
+        getCoverByDate(new Date().getTime());
     }
 
     public void getCoverByDate(Long date) {
-        ProgressDialog pd = new ProgressDialog(rootView.getContext(),R.style.DialogCustom);
-        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        pd.setCancelable(false);
-        pd.setMessage(getString(R.string.loading));
-        pd.setIndeterminate(true);
-        pd.show();
+        ProgressBar progressBar = rootView.findViewById(R.id.progressBar);
+        progressBar.setIndeterminate(true);
+        progressBar.setVisibility(View.VISIBLE);
 
-        PhotoView imageView = rootView.findViewById(R.id.imagen_extendida);
-
-        getThread(date, imageView, pd);
+        getThread(date, progressBar);
     }
 
-    private void getThread(Long longDate, PhotoView imageView, ProgressDialog pd) {
+    private void getThread(Long longDate, ProgressBar pb) {
 
         DateFormat formatter = new SimpleDateFormat("yyyyMMdd", Locale.FRANCE);
         Date date = new Date(longDate);
         String dateStr = formatter.format(date);
-        String strUrl = "https://t.prcdn.co/img?file="+ id + dateStr +"00000000001001&scale=171";
+        String strUrl = "https://t.prcdn.co/img?file=" + id + dateStr + "00000000001001&scale=171";
 
         new Thread(() -> {
             try {
@@ -118,34 +124,33 @@ public class PortadaDetalleFragment extends Fragment {
                 InputStream is;
                 is = (InputStream) url.getContent();
                 Bitmap portadaBM = BitmapFactory.decodeStream(is);
-                requireActivity().runOnUiThread(() -> {
-                    imageView.setImageBitmap(portadaBM);
-                    imageView.setOnClickListener(v -> {
-                        Intent intent = new Intent(getActivity(), RevistaPagerActivity.class);
-                        intent.putExtra("id", id);
-                        intent.putExtra("date", dateStr);
-                        intent.putExtra("title", title);
-                        startActivity(intent);
+                if (isAdded()) {
+                    requireActivity().runOnUiThread(() -> {
+                        photoView.setImageBitmap(portadaBM);
+                        photoView.setOnClickListener(v -> {
+                            Intent intent = new Intent(getActivity(), RevistaPagerActivity.class);
+                            intent.putExtra("id", id);
+                            intent.putExtra("date", dateStr);
+                            intent.putExtra("title", title);
+                            intent.putExtra("pages", pages);
+                            intent.putExtra("scale", scale);
+                            startActivity(intent);
+                        });
+
+                        pb.setVisibility(View.GONE);
                     });
-                    tries = 0;
-                    if(pd != null) {
-                        pd.cancel();
-                        pd.dismiss();
-                    }
-                });
+                }
             } catch (IOException e) {
-                if(tries > 31) {
-                    if(pd != null) {
-                        requireActivity().runOnUiThread(() -> Toast.makeText(getActivity(), "Portada no encontrada", Toast.LENGTH_LONG).show());
-                        pd.cancel();
-                        pd.dismiss();
-                    }
-                }else {
+                if (tries > 31) {
+                    requireActivity().runOnUiThread(() -> Toast.makeText(getActivity(), "Portada no encontrada", Toast.LENGTH_LONG).show());
+                    pb.setVisibility(View.GONE);
+                    tries = 0;
+                } else {
                     tries++;
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(date);
                     calendar.add(Calendar.DATE, -1);
-                    getThread(calendar.getTimeInMillis(), imageView, pd);
+                    getThread(calendar.getTimeInMillis(), pb);
                 }
             }
         }).start();

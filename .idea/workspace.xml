@@ -95,41 +95,21 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c839e087-9cd3-47f3-8654-5d49f61872cc" name="Default" comment="Improved image quality">
-      <change afterPath="$PROJECT_DIR$/.idea/modules/app/PortadasRevistas.app.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/RevistaPagerActivity.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_revista_page.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/revista_pager_activity.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.4/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/checksums/checksums.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.4/checksums/md5-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/checksums/md5-checksums.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.4/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/checksums/sha1-checksums.bin" afterDir="false" />
+    <list default="true" id="c839e087-9cd3-47f3-8654-5d49f61872cc" name="Default" comment="Revista detalle navigation">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/RevistaFragmentPage.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.4/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.4/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.4/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.4/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.4/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_arch_core_core_runtime_2_1_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_arch_core_core_runtime_2_1_0_aar.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Corazon.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Corazon.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Cultura.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Cultura.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Deportes.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Deportes.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Favoritos.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Favoritos.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Femeninas.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Femeninas.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/GetPortadas.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/GetPortadas.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Historia.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Historia.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/LifeStyle.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/LifeStyle.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Masculinas.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Masculinas.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Motor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Motor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/PortadaDetalle.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/PortadaDetalle.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/PortadaDetalleFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/PortadaDetalleFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Portadas.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Portadas.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Tecnologia.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Tecnologia.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/RevistaPagerActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/RevistaPagerActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Revistas.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Revistas.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_portada_detalle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_portada_detalle.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -139,7 +119,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Sergio\.android\avd\Pixel_8_Pro_API_34.avd]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[adb-7ffddc19-RebSOK._adb-tls-connect._tcp]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -1087,7 +1067,15 @@
       <option name="project" value="LOCAL" />
       <updated>1717247227766</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary="Revista detalle navigation">
+      <option name="closed" value="true" />
+      <created>1717419107752</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1717419107752</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1155,7 +1143,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$" />
     </ignored-roots>
-    <MESSAGE value="Fix error while building release apk" />
     <MESSAGE value="Added MaterialDatePicker&#10;Fixed styles" />
     <MESSAGE value="Added MaterialDatePicker in Portadas.java&#10;Added rate dialog&#10;Added FB interstitial banner" />
     <MESSAGE value="Fix MaterialDatePicker in Dark mode Portadas.java&#10;Fixed other styles" />
@@ -1180,7 +1167,8 @@
     <MESSAGE value="First commit" />
     <MESSAGE value="Added search portadas by date" />
     <MESSAGE value="Improved image quality" />
-    <option name="LAST_COMMIT_MESSAGE" value="Improved image quality" />
+    <MESSAGE value="Revista detalle navigation" />
+    <option name="LAST_COMMIT_MESSAGE" value="Revista detalle navigation" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>

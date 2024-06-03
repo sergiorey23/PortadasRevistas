@@ -260,20 +260,28 @@ public class PortadaDetalle extends AppCompatActivity {
             alertDialogNoConn.show();
         } else {
             mViewPager2 = findViewById(R.id.viewpager2);
-            String[] portadaList = getIntent().getStringArrayExtra("Portadas");
+            String[] portadas = getIntent().getStringArrayExtra("Portadas");
             String selectedRevistaId = getIntent().getStringExtra("Id");
             mSectionsPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), getLifecycle());
             int pos = 0;
-            if (portadaList != null) {
-                for (int i = 0; i < portadaList.length; i++) {
-                    String[] portadaArray = portadaList[i].split(":");
+            if (portadas != null) {
+                for (int i = 0; i < portadas.length; i++) {
+                    String[] portadaArray = portadas[i].split(":");
                     String webRevista = "";
-                    if(portadaArray.length > 2) webRevista = portadaArray[2];
-                    Portada portada = new Portada(portadaArray[0],portadaArray[1],webRevista,portadaList[i]);
+                    int pages = 100;
+                    String scale = "74";
+                    if(portadaArray.length > 2) {
+                        webRevista = portadaArray[2];
+                        if(portadaArray.length > 3){
+                            pages = Integer.parseInt(portadaArray[3]);
+                            scale = portadaArray[4];
+                        }
+                    }
+                    Portada portada = new Portada(portadaArray[0],portadaArray[1],webRevista,portadas[i]);
                     if (portada.getId().equals(selectedRevistaId)) {
                         pos = i;
                     }
-                    mSectionsPagerAdapter.addFragment(PortadaDetalleFragment.newInstance(portada.getId(), portada.getTitle()));
+                    mSectionsPagerAdapter.addFragment(PortadaDetalleFragment.newInstance(portada.getId(), portada.getTitle(), pages, scale));
                     mSectionsPagerAdapter.addPortada(portada);
                 }
             }
