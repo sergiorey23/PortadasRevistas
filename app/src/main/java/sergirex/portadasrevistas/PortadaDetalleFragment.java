@@ -142,8 +142,10 @@ public class PortadaDetalleFragment extends Fragment {
                 }
             } catch (IOException e) {
                 if (tries > 31) {
-                    requireActivity().runOnUiThread(() -> Toast.makeText(getActivity(), "Portada no encontrada", Toast.LENGTH_LONG).show());
-                    pb.setVisibility(View.GONE);
+                    requireActivity().runOnUiThread(() -> {
+                        Toast.makeText(getActivity(), "Portada no encontrada", Toast.LENGTH_LONG).show();
+                        pb.setVisibility(View.GONE);
+                    });
                     tries = 0;
                 } else {
                     tries++;
