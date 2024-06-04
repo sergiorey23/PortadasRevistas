@@ -362,7 +362,7 @@ public class PortadaDetalle extends AppCompatActivity {
         DateFormat formatter = new SimpleDateFormat("yyyyMMdd", Locale.FRANCE);
         String date = formatter.format(today);
         if(!date.equals(prefs.getString("fechaPortadas", ""))){
-            SharedPreferences sp = getSharedPreferences(portada.getTitle(), MODE_PRIVATE);
+            SharedPreferences sp = getSharedPreferences(portada.getId(), MODE_PRIVATE);
             SharedPreferences.Editor editor = sp.edit();
             editor.remove("currentPage");
             editor.apply();
@@ -394,7 +394,7 @@ public class PortadaDetalle extends AppCompatActivity {
             datePicker.addOnPositiveButtonClickListener(
                     aLong -> {
                         today = aLong;
-                        SharedPreferences sp = getSharedPreferences(portada.getTitle(), MODE_PRIVATE);
+                        SharedPreferences sp = getSharedPreferences(portada.getId(), MODE_PRIVATE);
                         SharedPreferences.Editor editor = sp.edit();
                         editor.remove("currentPage");
                         editor.apply();

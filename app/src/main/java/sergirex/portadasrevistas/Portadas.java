@@ -132,14 +132,9 @@ public class Portadas extends AppCompatActivity {
         }
         super.onCreate(savedInstanceState);
 
-        Calendar calendar = Calendar.getInstance();
-        Date today = new Date();
-        calendar.setTime(today);
-        if(calendar.get(Calendar.HOUR_OF_DAY) < 6){
-            calendar.add(Calendar.DATE, -1);
-        }
+
         DateFormat formatter = new SimpleDateFormat("yyyyMMdd", Locale.FRANCE);
-        String fecha = formatter.format(calendar.getTime());
+        String fecha = formatter.format(new Date());
         boolean descargar = !fecha.equals(prefs.getString("fechaPortadas", ""));
 
         setContentView(R.layout.activity_portadas);

@@ -76,9 +76,11 @@ public class RevistaFragmentPage extends Fragment {
                     });
                 }
             } catch (IOException e) {
-                requireActivity().runOnUiThread(() -> {
-                    Log.e("ERROR 404",e.getMessage());
-                });
+                if(isAdded()) {
+                    requireActivity().runOnUiThread(() -> {
+                        Log.e("ERROR 404", e.getMessage());
+                    });
+                }
             }
         }).start();
     }

@@ -85,13 +85,16 @@
         android:layout_height="wrap_content"
         android:drawableStart="@mipmap/news_icon"
         android:drawableLeft="@mipmap/news_icon"
-        android:paddingRight="8dp"
-        android:paddingStart="2dp"
-        android:background="@color/cardview_light_background"
+        android:paddingRight="12dp"
+        android:paddingStart="8dp"
+        android:backgroundTint="@color/cardview_light_background"
         android:text="@string/portadas_periodicos"
         android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
-        android:paddingEnd="8dp"
-        android:paddingLeft="2dp" />
+        android:fontFamily="cursive"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:paddingEnd="12dp"
+        android:paddingLeft="8dp" />
 
     <Space
         android:layout_width="match_parent"

@@ -36,7 +36,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -74,16 +73,9 @@ public class GetPortadas extends AsyncTask<String, ImageButton, Boolean> {
 
         final SavePortada savePortada = new SavePortada(context.get());
 
-        Calendar calendar = Calendar.getInstance();
-        Date today = new Date();
-        calendar.setTime(today);
-        if (calendar.get(Calendar.HOUR_OF_DAY) < 7) {
-            calendar.add(Calendar.DATE, -1);
-        }
-
         DateFormat formatter = new SimpleDateFormat("yyyyMMdd", Locale.FRANCE);
 
-        String fecha = formatter.format(calendar.getTime());
+        String fecha = formatter.format(new Date());
 
         boolean descargar = !fecha.equals(prefs.getString("fechaPortadas", ""));
 
@@ -101,7 +93,7 @@ public class GetPortadas extends AsyncTask<String, ImageButton, Boolean> {
             strUrl = "https://www.kioskoymas.com/Imageresize/getLatestImage/"+id+"/424/600";
             Bitmap portadaBM;
             if(descargar || (portadaBM = savePortada.getFile(title + 't')) == null || swipeRefreshLayout != null) {
-                SharedPreferences sp = context.get().getSharedPreferences(title, MODE_PRIVATE);
+                SharedPreferences sp = context.get().getSharedPreferences(id, MODE_PRIVATE);
                 SharedPreferences.Editor editor = sp.edit();
                 editor.remove("currentPage");
                 editor.apply();

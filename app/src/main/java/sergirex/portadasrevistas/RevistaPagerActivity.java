@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -17,10 +18,7 @@ import androidx.preference.PreferenceManager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 public class RevistaPagerActivity extends FragmentActivity {
 
@@ -52,7 +50,6 @@ public class RevistaPagerActivity extends FragmentActivity {
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
-        sp = getSharedPreferences(title, MODE_PRIVATE);
 
         String id = getIntent().getStringExtra("id");
         String date = getIntent().getStringExtra("date");
@@ -65,6 +62,7 @@ public class RevistaPagerActivity extends FragmentActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             viewPager.setPageTransformer(new DepthPageTransformer());
         }
+        sp = getSharedPreferences(id, MODE_PRIVATE);
         int currentPage = sp.getInt("currentPage",0);
         viewPager.setCurrentItem(currentPage, false);
 
@@ -84,7 +82,11 @@ public class RevistaPagerActivity extends FragmentActivity {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                viewPager.setCurrentItem(progress);
+                try {
+                    viewPager.setCurrentItem(progress);
+                }catch (IllegalStateException ise){
+                    Log.e("Error", Objects.requireNonNull(ise.getMessage()));
+                }
             }
 
             @Override
