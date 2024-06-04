@@ -13,6 +13,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -122,6 +123,10 @@ public class GetPortadas extends AsyncTask<String, ImageButton, Boolean> {
             Drawable drawable = new BitmapDrawable(context.get().getResources(), portadaBM);
             imageButton.setBackground(drawable);
             imageButton.setLayoutParams(paramsly);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                imageButton.setTooltipText(title);
+            }
+            imageButton.setContentDescription(title);
 
             imageButton.setOnClickListener(view -> {
                 Intent intent = new Intent(context.get(), PortadaDetalle.class);

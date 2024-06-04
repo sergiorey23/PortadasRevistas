@@ -44,6 +44,7 @@ public class PortadaDetalleFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String id;
     private String title;
+    private Long date;
     private int pages;
     private String scale;
     private int tries = 0;
@@ -123,10 +124,11 @@ public class PortadaDetalleFragment extends Fragment {
                 InputStream is;
                 is = (InputStream) url.getContent();
                 Bitmap portadaBM = BitmapFactory.decodeStream(is);
+                this.date = longDate;
                 if (isAdded()) {
                     requireActivity().runOnUiThread(() -> {
                         photoView.setImageBitmap(portadaBM);
-                        photoView.setOnClickListener(v -> {
+                        /*photoView.setOnClickListener(v -> {
                             Intent intent = new Intent(getActivity(), RevistaPagerActivity.class);
                             intent.putExtra("id", id);
                             intent.putExtra("date", dateStr);
@@ -134,7 +136,7 @@ public class PortadaDetalleFragment extends Fragment {
                             intent.putExtra("pages", pages);
                             intent.putExtra("scale", scale);
                             startActivity(intent);
-                        });
+                        });*/
 
                         pb.setVisibility(View.GONE);
                     });
@@ -159,6 +161,10 @@ public class PortadaDetalleFragment extends Fragment {
                 }
             }
         }).start();
+    }
+
+    public Long getDate(){
+        return date;
     }
 
     @Override

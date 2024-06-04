@@ -70,7 +70,6 @@ import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -102,15 +101,16 @@ public class Portadas extends AppCompatActivity {
     private SharedPreferences prefs;
     private SharedPreferences prefsPor;
     private BillingClient billingClient;
-    private List <ProductDetails> productDetailsList;
+    private List<ProductDetails> productDetailsList;
     private Handler handler;
     private int favsCount = 0;
     private boolean dark = false;
+    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String theme = prefs.getString("theme","default");
+        String theme = prefs.getString("theme", "default");
         switch (theme) {
             case "default":
                 switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
@@ -144,7 +144,7 @@ public class Portadas extends AppCompatActivity {
 
         mDrawerLayout = findViewById(R.id.drawerLayout);
         NavigationView mNavigationView = findViewById(R.id.navView);
-        if(prefs.getBoolean("remove_fb_ads", false)){
+        if (prefs.getBoolean("remove_fb_ads", false)) {
             Menu nav_Menu = mNavigationView.getMenu();
             nav_Menu.findItem(R.id.nav_remove_ads).setVisible(false);
         }
@@ -152,10 +152,10 @@ public class Portadas extends AppCompatActivity {
         tabLayout = findViewById(R.id.tabs);
         prefsPor = getSharedPreferences("revistas", Context.MODE_PRIVATE);
 
-        int rateDialog = prefs.getInt("rate",0);
-        if(rateDialog == 2){
+        int rateDialog = prefs.getInt("rate", 0);
+        if (rateDialog == 2) {
             SharedPreferences.Editor editor = prefs.edit();
-            editor.putInt("rate",0);
+            editor.putInt("rate", 0);
             editor.apply();
         }
 
@@ -163,7 +163,7 @@ public class Portadas extends AppCompatActivity {
             if (alertDialogNoConn == null)
                 alertDialogNoConn = createNoConnectionDialog();
             alertDialogNoConn.show();
-        }else{
+        } else {
             loadSectionsAdapter();
         }
 
@@ -178,38 +178,37 @@ public class Portadas extends AppCompatActivity {
                 }
             }
         };
-        getOnBackPressedDispatcher().addCallback(this,onBackPressedCallback);
+        getOnBackPressedDispatcher().addCallback(this, onBackPressedCallback);
 
         mNavigationView.setNavigationItemSelectedListener(menuItem -> {
             mDrawerLayout.closeDrawers();
             int itemId = menuItem.getItemId();
             if (itemId == R.id.nav_help)
                 showDialog().show();
-            else if(itemId == R.id.nav_remove_ads){
+            else if (itemId == R.id.nav_remove_ads) {
                 handler = new Handler();
                 productDetailsList = new ArrayList<>();
                 removeFBAds();
-            }
-            else if (itemId == R.id.nav_rate)
+            } else if (itemId == R.id.nav_rate)
                 launchMarket();
             else if (itemId == R.id.nav_share) {
                 Intent i = new Intent(Intent.ACTION_SEND);
                 i.setType("text/plain");
-                i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name));
+                i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_full_name));
                 String sAux = "Descarga la app de Portadas gratis!\n\nhttps://play.google.com/store/apps/details?id=" + getPackageName();
                 i.putExtra(Intent.EXTRA_TEXT, sAux);
                 startActivity(Intent.createChooser(i, null));
             } else if (itemId == R.id.nav_about) {
                 showAboutInfo();
-            }else if (itemId == R.id.nav_settings){
+            } else if (itemId == R.id.nav_settings) {
                 Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
                 startActivity(intent);
             }
             return true;
         });
 
-        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.app_name,
-                R.string.app_name);
+        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.open_menu,
+                R.string.close_menu);
 
         mDrawerLayout.addDrawerListener(mDrawerToggle);
 
@@ -222,14 +221,14 @@ public class Portadas extends AppCompatActivity {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS},
                         MY_PERMISSIONS_REQUEST_POST_NOTIFICATION);
             }
-        }else{
+        } else {
             if (Build.VERSION.SDK_INT <= 33) {
                 startAlarmBroadcastReceiver(this);
             }
         }
 
 
-        if(!prefs.getBoolean("remove_fb_ads", true)) {
+        if (!prefs.getBoolean("remove_fb_ads", false)) {
             AudienceNetworkAds.initialize(this);
             //AdSettings.setTestMode(true);
             // Instantiate an AdView object.
@@ -249,16 +248,21 @@ public class Portadas extends AppCompatActivity {
         }
     }
 
+    private void setFavoriteIconVisible(boolean visible) {
+        menu.findItem(R.id.fav).setVisible(visible);
+    }
+
 
     public void startAlarmBroadcastReceiver(Context context) {
         AlarmBroadcastReceiver alarmBroadcastReceiver = new AlarmBroadcastReceiver();
-        alarmBroadcastReceiver.startAlarmBroadcastReceiver(context,false);
+        alarmBroadcastReceiver.startAlarmBroadcastReceiver(context, false);
     }
 
 
     private ProgressDialog pd;
-    void removeFBAds(){
-        pd = new ProgressDialog(mDrawerLayout.getContext(),R.style.DialogCustom);
+
+    void removeFBAds() {
+        pd = new ProgressDialog(mDrawerLayout.getContext(), R.style.DialogCustom);
         pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         pd.setMessage(getString(R.string.loading));
         pd.setCancelable(false);
@@ -330,14 +334,14 @@ public class Portadas extends AppCompatActivity {
                             //Log.d(TAG, productDetailsList.size() + " number of products");
                             String price = Objects.requireNonNull(productDetailsList.get(0).getOneTimePurchaseOfferDetails()).getFormattedPrice();
                             String productName = productDetailsList.get(0).getName();
-                            new MaterialAlertDialogBuilder(this,R.style.Theme_MyApp_Dialog_Alert)
+                            new MaterialAlertDialogBuilder(this, R.style.Theme_MyApp_Dialog_Alert)
                                     .setTitle(productName)
-                                    .setMessage("Deshazte de la publicidad por "+price+" de por vida")
+                                    .setMessage("Deshazte de la publicidad por " + price + " de por vida")
                                     .setIcon(R.mipmap.magazines_icon)
                                     .setNegativeButton("Cancelar", null)
-                                    .setNeutralButton("Restaurar compra",(dialog, which) -> restorePurchases())
+                                    .setNeutralButton("Restaurar compra", (dialog, which) -> restorePurchases())
                                     .setPositiveButton("Comprar", (dialog, which) -> launchPurchaseFlow(productDetailsList.get(0))).show();
-                        }else{
+                        } else {
                             Toast.makeText(this, "No products available", Toast.LENGTH_LONG).show();
                         }
                     }, 1500);
@@ -363,7 +367,7 @@ public class Portadas extends AppCompatActivity {
 
     void handlePurchase(Purchase purchases) {
 
-        if(!purchases.isAcknowledged()){
+        if (!purchases.isAcknowledged()) {
             billingClient.acknowledgePurchase(AcknowledgePurchaseParams
                     .newBuilder()
                     .setPurchaseToken(purchases.getPurchaseToken())
@@ -371,7 +375,7 @@ public class Portadas extends AppCompatActivity {
 
                 if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
                     SharedPreferences.Editor editor = prefs.edit();
-                    editor.putBoolean("remove_fb_ads",true);
+                    editor.putBoolean("remove_fb_ads", true);
                     editor.apply();
                     bottomBanner.removeAllViews();
                 }
@@ -381,6 +385,7 @@ public class Portadas extends AppCompatActivity {
             Log.d(TAG, "Purchase OrderID: " + purchases.getOrderId());
         }
     }
+
     void restorePurchases() {
         billingClient = BillingClient.newBuilder(this).enablePendingPurchases().setListener((billingResult, list) -> {
         }).build();
@@ -401,7 +406,7 @@ public class Portadas extends AppCompatActivity {
                                     if (!list.isEmpty()) {
                                         //prefs.setIsRemoveAd(true); // set true to activate remove ad feature
                                         SharedPreferences.Editor editor = prefs.edit();
-                                        editor.putBoolean("remove_fb_ads",true);
+                                        editor.putBoolean("remove_fb_ads", true);
                                         editor.apply();
                                         sb = Snackbar.make(findViewById(R.id.drawerLayout), "Successfully restored", Snackbar.LENGTH_LONG);
                                         bottomBanner.removeAllViews();
@@ -418,22 +423,23 @@ public class Portadas extends AppCompatActivity {
             }
         });
     }
-    void loadSectionsAdapter(){
+
+    void loadSectionsAdapter() {
         mViewPager = findViewById(R.id.viewpager);
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), getLifecycle());
-        if(!prefsPor.getAll().isEmpty()) {
-            mSectionsPagerAdapter.addFragment(getString(R.string.fav_tab),new Favoritos());
+        if (!prefsPor.getAll().isEmpty()) {
+            mSectionsPagerAdapter.addFragment(getString(R.string.fav_tab), new Favoritos());
             favsCount = prefsPor.getAll().size();
         }
         mSectionsPagerAdapter.addFragment(getString(R.string.first_tab), new Corazon());
         mSectionsPagerAdapter.addFragment(getString(R.string.second_tab), new Cultura());
         mSectionsPagerAdapter.addFragment(getString(R.string.third_tab), new Deportes());
         mSectionsPagerAdapter.addFragment(getString(R.string.fourth_tab), new LifeStyle());
-        mSectionsPagerAdapter.addFragment(getString(R.string.fifth_tab),new Femeninas());
-        mSectionsPagerAdapter.addFragment(getString(R.string.sixth_tab),new Masculinas());
-        mSectionsPagerAdapter.addFragment(getString(R.string.seventh_tab),new Motor());
-        mSectionsPagerAdapter.addFragment(getString(R.string.eight_tab),new Tecnologia());
-        mSectionsPagerAdapter.addFragment(getString(R.string.nineth_tav),new Historia());
+        mSectionsPagerAdapter.addFragment(getString(R.string.fifth_tab), new Femeninas());
+        mSectionsPagerAdapter.addFragment(getString(R.string.sixth_tab), new Masculinas());
+        mSectionsPagerAdapter.addFragment(getString(R.string.seventh_tab), new Motor());
+        mSectionsPagerAdapter.addFragment(getString(R.string.eight_tab), new Tecnologia());
+        mSectionsPagerAdapter.addFragment(getString(R.string.nineth_tav), new Historia());
 
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setOffscreenPageLimit(5);
@@ -441,15 +447,15 @@ public class Portadas extends AppCompatActivity {
                 (tab, position) -> tab.setText(categorias.get(position))
         ).attach();
         int lpValue = Integer.parseInt(prefs.getString("init_category", "1"));
-        if(prefsPor.getAll().isEmpty()) {
-            mViewPager.setCurrentItem(lpValue-1,false);
-        }else{
-            mViewPager.setCurrentItem(lpValue,false);
+        if (prefsPor.getAll().isEmpty()) {
+            mViewPager.setCurrentItem(lpValue - 1, false);
+        } else {
+            mViewPager.setCurrentItem(lpValue, false);
         }
     }
 
-    void showAboutInfo(){
-        View aboutLayout = getLayoutInflater().inflate(R.layout.about, mDrawerLayout ,false);
+    void showAboutInfo() {
+        View aboutLayout = getLayoutInflater().inflate(R.layout.about, mDrawerLayout, false);
         int theme = dark ? R.style.AppThemeDark : R.style.AppTheme;
         AlertDialog.Builder builder = new AlertDialog.Builder(this, theme);
         builder.setPositiveButton(R.string.close, null);
@@ -518,9 +524,9 @@ public class Portadas extends AppCompatActivity {
             alertDialogBuilder.setPositiveButton("OK", null);
             alertDialog = alertDialogBuilder.create();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                alertDialog.setMessage(Html.fromHtml("<Big>" + getString(R.string.help_description) + "<br/><br/>"+ getString(R.string.help_description2) + "</Big>" + "<br/><br/>" + getString(R.string.rate_app), Html.FROM_HTML_MODE_LEGACY));
+                alertDialog.setMessage(Html.fromHtml("<Big>" + getString(R.string.help_description) + "<br/><br/>" + getString(R.string.help_description2) + "</Big>" + "<br/><br/>" + getString(R.string.rate_app), Html.FROM_HTML_MODE_LEGACY));
             else
-                alertDialog.setMessage(Html.fromHtml("<Big>" + getString(R.string.help_description) + "<br/><br/>"+ getString(R.string.help_description2) + "</Big>" + "<br/><br/>" + getString(R.string.rate_app)));
+                alertDialog.setMessage(Html.fromHtml("<Big>" + getString(R.string.help_description) + "<br/><br/>" + getString(R.string.help_description2) + "</Big>" + "<br/><br/>" + getString(R.string.rate_app)));
         }
         return alertDialog;
     }
@@ -542,6 +548,7 @@ public class Portadas extends AppCompatActivity {
     private class SectionsPagerAdapter extends FragmentStateAdapter {
         private final List<Fragment> mFragments = new ArrayList<>();
         private final List<Long> fragmentsIds = new ArrayList<>();
+
         void addFragment(String title, Fragment fragment) {
             categorias.add(title);
             mFragments.add(fragment);
@@ -549,12 +556,12 @@ public class Portadas extends AppCompatActivity {
         }
 
         void addFirstFragment(String title, Fragment fragment) {
-            categorias.add(0,title);
-            mFragments.add(0,fragment);
+            categorias.add(0, title);
+            mFragments.add(0, fragment);
             new TabLayoutMediator(tabLayout, mViewPager,
                     (tab, position) -> tab.setText(categorias.get(position))
             ).attach();
-            fragmentsIds.add(0,(long) fragment.hashCode());
+            fragmentsIds.add(0, (long) fragment.hashCode());
         }
 
         @Override
@@ -574,8 +581,7 @@ public class Portadas extends AppCompatActivity {
             fragmentsIds.remove(0);
         }
 
-        public
-        SectionsPagerAdapter(FragmentManager fm, Lifecycle lifecycle) {
+        public SectionsPagerAdapter(FragmentManager fm, Lifecycle lifecycle) {
             super(fm, lifecycle);
             categorias = new ArrayList<>();
         }
@@ -597,25 +603,18 @@ public class Portadas extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
-        /*MenuItem shareItem = menu.findItem(R.id.date);
-
-        if (dark) {
-            shareItem.setVisible(false);
-        }*/
+        this.menu = menu;
+        if(!prefsPor.getAll().isEmpty()){
+            setFavoriteIconVisible(true);
+        }
 
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem menuItem) {
-        if(menuItem.getItemId() == R.id.fav){
-            if(!prefsPor.getAll().isEmpty()) {
-                mViewPager.setCurrentItem(0);
-            }else{
-                Snackbar sb = Snackbar.make(mDrawerLayout, "No tienes ninguna portada favorita", Snackbar.LENGTH_SHORT);
-                sb.setAnimationMode(Snackbar.ANIMATION_MODE_FADE);
-                sb.show();
-            }
+        if (menuItem.getItemId() == R.id.fav) {
+            mViewPager.setCurrentItem(0);
             return true;
         }
         return true;
@@ -631,8 +630,8 @@ public class Portadas extends AppCompatActivity {
 
     public static void scanFile(Context ctxt, File f, String mimeType) {
         MediaScannerConnection
-                .scanFile(ctxt, new String[] {f.getAbsolutePath()},
-                        new String[] {mimeType}, null);
+                .scanFile(ctxt, new String[]{f.getAbsolutePath()},
+                        new String[]{mimeType}, null);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             final Intent scanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
             final Uri contentUri = Uri.fromFile(f);
@@ -658,7 +657,7 @@ public class Portadas extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "Para poder compartir y guardar fotos, es necesario otorgar permisos de almacenamiento", Toast.LENGTH_LONG).show();
             }
-        } else if (requestCode == MY_PERMISSIONS_REQUEST_POST_NOTIFICATION){
+        } else if (requestCode == MY_PERMISSIONS_REQUEST_POST_NOTIFICATION) {
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startAlarmBroadcastReceiver(getApplicationContext());
@@ -667,7 +666,7 @@ public class Portadas extends AppCompatActivity {
         }
     }
 
-    public void requestWritePermission(){
+    public void requestWritePermission() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -677,7 +676,7 @@ public class Portadas extends AppCompatActivity {
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         MY_PERMISSIONS_REQUEST_WRITE_STORAGE);
             }
-        }else {
+        } else {
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.READ_MEDIA_IMAGES)
                     != PackageManager.PERMISSION_GRANTED) {
@@ -694,11 +693,11 @@ public class Portadas extends AppCompatActivity {
         alertDialogBuilder.setTitle(" Error de conexión");
         alertDialogBuilder.setIcon(R.mipmap.magazines_icon);
         alertDialogBuilder.setPositiveButton("Reintentar", (dialog, id) -> {
-            if(isOnline())
-               loadSectionsAdapter();
-            else
-                alertDialogBuilder.show();
-        })
+                    if (isOnline())
+                        loadSectionsAdapter();
+                    else
+                        alertDialogBuilder.show();
+                })
                 .setNegativeButton("Cencelar", (dialog, id) -> alertDialogNoConn.dismiss());
         alertDialogBuilder.setMessage("No hay conexión a internet. Por favor, comprueba tu conexión");
         return alertDialogBuilder.create();
@@ -709,17 +708,17 @@ public class Portadas extends AppCompatActivity {
         super.onResume();
         String theme = prefs.getString("theme", "default");
 
-        if (theme.equals("dark") && !dark || theme.equals("light") && dark){
+        if (theme.equals("dark") && !dark || theme.equals("light") && dark) {
             recreate();
-        }else if(theme.equals("default")){
+        } else if (theme.equals("default")) {
             switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
                 case Configuration.UI_MODE_NIGHT_YES:
-                    if(!dark){
+                    if (!dark) {
                         recreate();
                     }
                     break;
                 case Configuration.UI_MODE_NIGHT_NO:
-                    if(dark){
+                    if (dark) {
                         recreate();
                     }
             }
@@ -728,24 +727,26 @@ public class Portadas extends AppCompatActivity {
             mBottomBanner.resume();
         }*/
 
-        if(mSectionsPagerAdapter == null){
+        if (mSectionsPagerAdapter == null) {
             return;
         }
         int count = prefsPor.getAll().size();
-        if(count > 0){
-            if(!categorias.get(0).equals(getString(R.string.fav_tab))) {
+        if (count > 0) {
+            if (!categorias.get(0).equals(getString(R.string.fav_tab))) {
                 mSectionsPagerAdapter.addFirstFragment(getString(R.string.fav_tab), new Favoritos());
                 mSectionsPagerAdapter.notifyItemInserted(0);
+                setFavoriteIconVisible(true);
                 mViewPager.setCurrentItem(0);
-            }else if(favsCount != count){
+            } else if (favsCount != count) {
                 mSectionsPagerAdapter.removeFragment();
-                mSectionsPagerAdapter.addFirstFragment(getString(R.string.fav_tab),new Favoritos());
+                mSectionsPagerAdapter.addFirstFragment(getString(R.string.fav_tab), new Favoritos());
                 mSectionsPagerAdapter.notifyItemChanged(0);
                 favsCount = count;
             }
-        }else if(mSectionsPagerAdapter.getItemCount() > 9) {
+        } else if (mSectionsPagerAdapter.getItemCount() > 9) {
             mSectionsPagerAdapter.removeFragment();
             mSectionsPagerAdapter.notifyItemRemoved(0);
+            setFavoriteIconVisible(false);
         }
     }
     /*@Override

@@ -98,6 +98,7 @@ public class PortadaDetalle extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+        toolbar.setNavigationContentDescription(R.string.back);
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
         prefsPer = getSharedPreferences("revistas", Context.MODE_PRIVATE);
@@ -203,7 +204,7 @@ public class PortadaDetalle extends AppCompatActivity {
                         }
                     }).show();
         }
-        if (!prefs.getBoolean("remove_fb_ads", true)) {
+        if (!prefs.getBoolean("remove_fb_ads", false)) {
             AudienceNetworkAds.initialize(this);
             //AdSettings.setTestMode(true);
             AdView bottomBanner = new AdView(this, "483584450995789_483585470995687", AdSize.BANNER_HEIGHT_50);
@@ -297,7 +298,7 @@ public class PortadaDetalle extends AppCompatActivity {
     }
 
     public class ViewPagerAdapter extends FragmentStateAdapter {
-        private final List<Fragment> fragments = new ArrayList<>();
+        private final List<PortadaDetalleFragment> fragments = new ArrayList<>();
         private final List<Portada> portadas = new ArrayList<>();
 
         public ViewPagerAdapter(@NonNull FragmentManager fm, @NonNull Lifecycle lifecycle) {
@@ -319,7 +320,7 @@ public class PortadaDetalle extends AppCompatActivity {
         }
 
         public void addFragment(Fragment fragment) {
-            fragments.add(fragment);
+            fragments.add((PortadaDetalleFragment) fragment);
         }
 
         public void addPortada(Portada portada) {
@@ -328,7 +329,7 @@ public class PortadaDetalle extends AppCompatActivity {
 
         @NonNull
         @Override
-        public Fragment createFragment(int position) {
+        public PortadaDetalleFragment createFragment(int position) {
             return fragments.get(position);
         }
 
@@ -381,6 +382,7 @@ public class PortadaDetalle extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         SavePortada savePortada = new SavePortada(this);
+        today = mSectionsPagerAdapter.createFragment(mViewPager2.getCurrentItem()).getDate();
         int itemId = item.getItemId();
         if (itemId == R.id.date) {
             MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder
@@ -398,12 +400,11 @@ public class PortadaDetalle extends AppCompatActivity {
                         SharedPreferences.Editor editor = sp.edit();
                         editor.remove("currentPage");
                         editor.apply();
-                        PortadaDetalleFragment currentFragment = (PortadaDetalleFragment) mSectionsPagerAdapter.createFragment(mViewPager2.getCurrentItem());
-                        currentFragment.getCoverByDate(aLong, true);
+                        mSectionsPagerAdapter.createFragment(mViewPager2.getCurrentItem()).getCoverByDate(aLong, true);
                     });
 
         } else if (itemId == R.id.share) {
-            ImageView imageView = mSectionsPagerAdapter.createFragment(mViewPager2.getCurrentItem()).requireActivity().findViewById(R.id.imagen_extendida);
+            ImageView imageView = findViewById(R.id.imagen_extendida);
             Uri fileURI = savePortada.saveFile(portada.getTitle(), ((BitmapDrawable) imageView.getDrawable()).getBitmap());
             Intent i = new Intent(Intent.ACTION_SEND);
             i.putExtra(Intent.EXTRA_STREAM, fileURI);
@@ -423,7 +424,7 @@ public class PortadaDetalle extends AppCompatActivity {
                     sb.show();
                     return true;
                 }
-                ImageView imageView = mSectionsPagerAdapter.createFragment(mViewPager2.getCurrentItem()).requireActivity().findViewById(R.id.imagen_extendida);
+                ImageView imageView = findViewById(R.id.imagen_extendida);
                 savePortada.saveFile(savePortada.getAlbumStorageDir(), portada.getTitle(), ((BitmapDrawable) imageView.getDrawable()).getBitmap());
 
                 scanFile(this, file, "images/jp" +

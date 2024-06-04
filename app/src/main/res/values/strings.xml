@@ -43,7 +43,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="notification_name">Portadas</string>
     <string name="notification_description">Echa un vistazo a las portadas de hoy!</string>
-    <string name="loading">Cargando...</string>
+    <string name="loading">Cargando…</string>
     <string name="app_full_name">Portadas Revistas</string>
     <string name="sixth_tab">Masculinas</string>
     <string name="seventh_tab">Motor</string>
@@ -51,8 +51,9 @@
     <string name="nineth_tav">Viajes e Historia</string>
     <string name="portadas_periodicos">Portadas Periódicos</string>
     <string name="mas_apps">Más apps:</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="fav_covers">Portadas favoritas</string>
+    <string name="open_menu">Abrir menu</string>
+    <string name="close_menu">Cerrar menu</string>
+    <string name="back">Atrás</string>
 
 </resources>

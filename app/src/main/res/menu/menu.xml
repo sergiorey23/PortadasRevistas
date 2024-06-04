@@ -5,6 +5,7 @@
     <item
         android:id="@+id/fav"
         android:icon="@drawable/ic_favorite_black_24dp"
-        android:title="@string/fav_tab"
+        android:title="@string/fav_covers"
+        android:visible="false"
         app:showAsAction="ifRoom" />
 </menu>
