@@ -145,8 +145,7 @@ public class Portadas extends AppCompatActivity {
         mDrawerLayout = findViewById(R.id.drawerLayout);
         NavigationView mNavigationView = findViewById(R.id.navView);
         if (prefs.getBoolean("remove_fb_ads", false)) {
-            Menu nav_Menu = mNavigationView.getMenu();
-            nav_Menu.findItem(R.id.nav_remove_ads).setVisible(false);
+            hideRemoveAdsMenuItem(mNavigationView);
         }
 
         tabLayout = findViewById(R.id.tabs);
@@ -248,6 +247,11 @@ public class Portadas extends AppCompatActivity {
         }
     }
 
+    private void hideRemoveAdsMenuItem(NavigationView mNavigationView) {
+        Menu nav_Menu = mNavigationView.getMenu();
+        nav_Menu.findItem(R.id.nav_remove_ads).setVisible(false);
+    }
+
     private void setFavoriteIconVisible(boolean visible) {
         menu.findItem(R.id.fav).setVisible(visible);
     }
@@ -334,7 +338,7 @@ public class Portadas extends AppCompatActivity {
                             //Log.d(TAG, productDetailsList.size() + " number of products");
                             String price = Objects.requireNonNull(productDetailsList.get(0).getOneTimePurchaseOfferDetails()).getFormattedPrice();
                             String productName = productDetailsList.get(0).getName();
-                            new MaterialAlertDialogBuilder(this, R.style.Theme_MyApp_Dialog_Alert)
+                            new MaterialAlertDialogBuilder(this)
                                     .setTitle(productName)
                                     .setMessage("Deshazte de la publicidad por " + price + " de por vida")
                                     .setIcon(R.mipmap.magazines_icon)
@@ -378,6 +382,7 @@ public class Portadas extends AppCompatActivity {
                     editor.putBoolean("remove_fb_ads", true);
                     editor.apply();
                     bottomBanner.removeAllViews();
+                    hideRemoveAdsMenuItem(findViewById(R.id.navView));
                 }
             });
             Log.d(TAG, "Purchase Token: " + purchases.getPurchaseToken());
@@ -410,6 +415,7 @@ public class Portadas extends AppCompatActivity {
                                         editor.apply();
                                         sb = Snackbar.make(findViewById(R.id.drawerLayout), "Successfully restored", Snackbar.LENGTH_LONG);
                                         bottomBanner.removeAllViews();
+                                        hideRemoveAdsMenuItem(findViewById(R.id.navView));
                                     } else {
                                         Log.d(TAG, "Oops, No purchase found.");
                                         sb = Snackbar.make(findViewById(R.id.drawerLayout), "No purchase found", Snackbar.LENGTH_LONG);

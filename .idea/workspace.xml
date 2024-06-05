@@ -14,7 +14,7 @@
       </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/about.xml">
         <config>
-          <theme>@style/AppThemeDark</theme>
+          <theme>@style/AppTheme</theme>
         </config>
       </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_portada_detalle.xml">
@@ -102,23 +102,19 @@
       <change beforePath="$PROJECT_DIR$/.gradle/8.4/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.4/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/app/PortadasRevistas.app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/app/PortadasRevistas.app.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/GetPortadas.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/GetPortadas.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/release/app-release.apk" beforeDir="false" afterPath="$PROJECT_DIR$/app/release/app-release.apk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/release/baselineProfiles/0/app-release.dm" beforeDir="false" afterPath="$PROJECT_DIR$/app/release/baselineProfiles/0/app-release.dm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/release/baselineProfiles/1/app-release.dm" beforeDir="false" afterPath="$PROJECT_DIR$/app/release/baselineProfiles/1/app-release.dm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/release/output-metadata.json" beforeDir="false" afterPath="$PROJECT_DIR$/app/release/output-metadata.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/PortadaDetalle.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/PortadaDetalle.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/PortadaDetalleFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/PortadaDetalleFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Portadas.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Portadas.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/._portadas_preview_widget.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/portadas_preview_widget.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/splash_screen.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/about.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/about.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/menu/menu.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/menu/menu.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values-en/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values-en/strings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/values-v21/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values-v21/styles.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/styles.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -128,7 +124,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[LGH870DS3044af03]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Sergio\.android\avd\Pixel_8_Pro_API_34.avd]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -305,6 +301,7 @@
     <option name="KEY_STORE_PATH" value="C:\Users\Sergio\AndroidStudioProjects\PortadasRevistas\PortadasKS.jks" />
     <option name="KEY_ALIAS" value="sergiorey" />
     <option name="REMEMBER_PASSWORDS" value="true" />
+    <option name="BUILD_TARGET_KEY" value="apk" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
@@ -446,9 +443,10 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;ApkExportedModule&quot;: &quot;PortadasPeriodicos.app&quot;,
+    &quot;ApkExportedModule&quot;: &quot;PortadasRevistas.app&quot;,
     &quot;BundleExportedModule&quot;: &quot;PortadasRevistas.app&quot;,
     &quot;ExportApk.ApkPathForPortadasPeriodicos.app&quot;: &quot;C:\\Users\\Sergio\\Desktop&quot;,
+    &quot;ExportApk.ApkPathForPortadasRevistas.app&quot;: &quot;C:\\Users\\Sergio\\AndroidStudioProjects\\PortadasRevistas\\app&quot;,
     &quot;ExportBundle.BundlePathForPortadasPeriodicos.app&quot;: &quot;C:\\Users\\Sergio\\Desktop&quot;,
     &quot;ExportBundle.BundlePathForPortadasRevistas.app&quot;: &quot;C:\\Users\\Sergio\\AndroidStudioProjects\\PortadasRevistas\\app&quot;,
     &quot;ResourceManagerPrefKey.ResourceType&quot;: &quot;ANIM&quot;,
@@ -1124,7 +1122,15 @@
       <option name="project" value="LOCAL" />
       <updated>1717461014690</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="Some changes">
+      <option name="closed" value="true" />
+      <created>1717514354766</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1717514354766</updated>
+    </task>
+    <option name="localTasksCounter" value="50" />
     <servers />
   </component>
   <component name="TodoView">

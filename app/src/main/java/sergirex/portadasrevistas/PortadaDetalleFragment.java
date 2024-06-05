@@ -128,7 +128,7 @@ public class PortadaDetalleFragment extends Fragment {
                 if (isAdded()) {
                     requireActivity().runOnUiThread(() -> {
                         photoView.setImageBitmap(portadaBM);
-                        /*photoView.setOnClickListener(v -> {
+                        photoView.setOnClickListener(v -> {
                             Intent intent = new Intent(getActivity(), RevistaPagerActivity.class);
                             intent.putExtra("id", id);
                             intent.putExtra("date", dateStr);
@@ -136,7 +136,7 @@ public class PortadaDetalleFragment extends Fragment {
                             intent.putExtra("pages", pages);
                             intent.putExtra("scale", scale);
                             startActivity(intent);
-                        });*/
+                        });
 
                         pb.setVisibility(View.GONE);
                     });

@@ -164,7 +164,7 @@ public class PortadaDetalle extends AppCompatActivity {
         int rate = prefs.getInt("rate", 0);
         if (rate == 0 && showAd % 2 == 0) {
             SharedPreferences.Editor editor = prefs.edit();
-            new MaterialAlertDialogBuilder(this, R.style.Theme_MyApp_Dialog_Alert)
+            new MaterialAlertDialogBuilder(this)
                     .setTitle(R.string.rateTitle)
                     .setMessage(R.string.rateDescription)
                     .setIcon(R.mipmap.magazines_icon)
@@ -361,7 +361,7 @@ public class PortadaDetalle extends AppCompatActivity {
     public void onBackPressed() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         DateFormat formatter = new SimpleDateFormat("yyyyMMdd", Locale.FRANCE);
-        String date = formatter.format(today);
+        String date = formatter.format(new Date(today));
         if(!date.equals(prefs.getString("fechaPortadas", ""))){
             SharedPreferences sp = getSharedPreferences(portada.getId(), MODE_PRIVATE);
             SharedPreferences.Editor editor = sp.edit();
