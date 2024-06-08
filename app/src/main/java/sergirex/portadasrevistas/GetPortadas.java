@@ -94,10 +94,10 @@ public class GetPortadas extends AsyncTask<String, ImageButton, Boolean> {
             strUrl = "https://www.kioskoymas.com/Imageresize/getLatestImage/"+id+"/424/600";
             Bitmap portadaBM;
             if(descargar || (portadaBM = savePortada.getFile(title + 't')) == null || swipeRefreshLayout != null) {
-                SharedPreferences sp = context.get().getSharedPreferences(id, MODE_PRIVATE);
+                /*SharedPreferences sp = context.get().getSharedPreferences(id, MODE_PRIVATE);
                 SharedPreferences.Editor editor = sp.edit();
                 editor.remove("currentPage");
-                editor.apply();
+                editor.apply();*/
                 try {
                     URL url = new URL(strUrl);
                     InputStream is = (InputStream) url.getContent();

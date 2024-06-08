@@ -95,26 +95,13 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c839e087-9cd3-47f3-8654-5d49f61872cc" name="Default" comment="Some changes">
-      <change beforePath="$PROJECT_DIR$/.gradle/8.4/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/executionHistory/executionHistory.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.4/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/executionHistory/executionHistory.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.4/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/fileHashes/fileHashes.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.4/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.4/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/fileHashes/resourceHashesCache.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/app/PortadasRevistas.app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/app/PortadasRevistas.app.iml" afterDir="false" />
+    <list default="true" id="c839e087-9cd3-47f3-8654-5d49f61872cc" name="Default" comment="Style fixes and minor changes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/release/app-release.apk" beforeDir="false" afterPath="$PROJECT_DIR$/app/release/app-release.apk" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/release/baselineProfiles/0/app-release.dm" beforeDir="false" afterPath="$PROJECT_DIR$/app/release/baselineProfiles/0/app-release.dm" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/release/baselineProfiles/1/app-release.dm" beforeDir="false" afterPath="$PROJECT_DIR$/app/release/baselineProfiles/1/app-release.dm" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/release/output-metadata.json" beforeDir="false" afterPath="$PROJECT_DIR$/app/release/output-metadata.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/GetPortadas.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/GetPortadas.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/PortadaDetalle.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/PortadaDetalle.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/PortadaDetalleFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/PortadaDetalleFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Portadas.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Portadas.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values-v21/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values-v21/styles.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -301,7 +288,6 @@
     <option name="KEY_STORE_PATH" value="C:\Users\Sergio\AndroidStudioProjects\PortadasRevistas\PortadasKS.jks" />
     <option name="KEY_ALIAS" value="sergiorey" />
     <option name="REMEMBER_PASSWORDS" value="true" />
-    <option name="BUILD_TARGET_KEY" value="apk" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
@@ -746,14 +732,6 @@
       <option name="project" value="LOCAL" />
       <updated>1619649312556</updated>
     </task>
-    <task id="LOCAL-00002" summary="Fix new target version and Facebook banner">
-      <option name="closed" value="true" />
-      <created>1714953769293</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1714953769293</updated>
-    </task>
     <task id="LOCAL-00003" summary="Fix error while building release apk">
       <option name="closed" value="true" />
       <created>1714955601444</created>
@@ -1130,7 +1108,15 @@
       <option name="project" value="LOCAL" />
       <updated>1717514354766</updated>
     </task>
-    <option name="localTasksCounter" value="50" />
+    <task id="LOCAL-00050" summary="Style fixes and minor changes">
+      <option name="closed" value="true" />
+      <created>1717618581362</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1717618581364</updated>
+    </task>
+    <option name="localTasksCounter" value="51" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1198,7 +1184,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$" />
     </ignored-roots>
-    <MESSAGE value="Added default system theme mode" />
     <MESSAGE value="Added option to remove ads" />
     <MESSAGE value="Changed protocol from http to https&#10;Remove ads when purchase" />
     <MESSAGE value="Fecha is passed through params" />
@@ -1223,7 +1208,8 @@
     <MESSAGE value="Minor change" />
     <MESSAGE value="Major changes" />
     <MESSAGE value="Some changes" />
-    <option name="LAST_COMMIT_MESSAGE" value="Some changes" />
+    <MESSAGE value="Style fixes and minor changes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Style fixes and minor changes" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>

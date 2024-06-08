@@ -207,13 +207,13 @@ public class PortadaDetalle extends AppCompatActivity {
         if (!prefs.getBoolean("remove_fb_ads", false)) {
             AudienceNetworkAds.initialize(this);
             //AdSettings.setTestMode(true);
-            AdView bottomBanner = new AdView(this, "483584450995789_483585470995687", AdSize.BANNER_HEIGHT_50);
+            AdView bottomBanner = new AdView(this, "483584450995789_487598390594395", AdSize.BANNER_HEIGHT_50);
             // Find the Ad Container
             LinearLayout adContainer = findViewById(R.id.bannerContainerDetail);
             adContainer.addView(bottomBanner);
             bottomBanner.loadAd();
             if (showAd % 3 == 0) {
-                interstitialAd = new InterstitialAd(this, "483584450995789_483584560995778");
+                interstitialAd = new InterstitialAd(this, "483584450995789_487598570594377");
                 String TAG = "AD";
                 InterstitialAdListener interstitialAdListener = new InterstitialAdListener() {
 
@@ -236,7 +236,6 @@ public class PortadaDetalle extends AppCompatActivity {
                     @Override
                     public void onAdLoaded(Ad ad) {
                         // Interstitial ad is loaded and ready to be displayed
-                        Log.d(TAG, "Interstitial ad is loaded and ready to be displayed!");
                         // Show the ad
                         interstitialAd.show();
                     }
@@ -334,11 +333,6 @@ public class PortadaDetalle extends AppCompatActivity {
         }
 
         @Override
-        public long getItemId(int position) {
-            return fragments.get(position).hashCode();
-        }
-
-        @Override
         public int getItemCount() {
             return fragments.size();
         }
@@ -357,6 +351,7 @@ public class PortadaDetalle extends AppCompatActivity {
         }*/
     }
 
+/*
     @Override
     public void onBackPressed() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -370,6 +365,7 @@ public class PortadaDetalle extends AppCompatActivity {
         }
         super.onBackPressed();
     }
+*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

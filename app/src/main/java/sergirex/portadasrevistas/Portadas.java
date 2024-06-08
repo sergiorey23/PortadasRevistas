@@ -235,9 +235,9 @@ public class Portadas extends AppCompatActivity {
             // To get test ads, add IMG_16_9_APP_INSTALL# to your placement id. Remove this when your app is ready to serve real ads.
             boolean isPhone = getResources().getBoolean(R.bool.isPhone);
             if (isPhone) {
-                bottomBanner = new AdView(this, "483584450995789_483584564329111", AdSize.BANNER_HEIGHT_50);
+                bottomBanner = new AdView(this, "483584450995789_487598283927739", AdSize.BANNER_HEIGHT_50);
             } else {
-                bottomBanner = new AdView(this, "483584450995789_483584564329111", AdSize.BANNER_HEIGHT_90);
+                bottomBanner = new AdView(this, "483584450995789_487598283927739", AdSize.BANNER_HEIGHT_90);
             }
 
             // Find the Ad Container
