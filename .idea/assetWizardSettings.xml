@@ -333,8 +333,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="baseline_add_24" />
-                            <entry key="sourceFile" value="C:\Users\Sergio\C:\Users\Sergio" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="ic_premium_24dp" />
+                            <entry key="sourceFile" value="C:\Users\Sergio\Downloads\premium.svg" />
                           </map>
                         </option>
                       </PersistentState>

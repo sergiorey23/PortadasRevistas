@@ -204,7 +204,7 @@ public class PortadaDetalle extends AppCompatActivity {
                         }
                     }).show();
         }
-        if (!prefs.getBoolean("remove_fb_ads", false)) {
+        if (!prefs.getBoolean("remove_ads_id", false) && !prefs.getBoolean("premium_sub_id", false)) {
             AudienceNetworkAds.initialize(this);
             //AdSettings.setTestMode(true);
             AdView bottomBanner = new AdView(this, "483584450995789_487598390594395", AdSize.BANNER_HEIGHT_50);
@@ -275,14 +275,14 @@ public class PortadaDetalle extends AppCompatActivity {
                     String webRevista = "";
                     int pages = 100;
                     String scale = "74";
-                    if(portadaArray.length > 2) {
+                    if (portadaArray.length > 2) {
                         webRevista = portadaArray[2];
-                        if(portadaArray.length > 3){
+                        if (portadaArray.length > 3) {
                             pages = Integer.parseInt(portadaArray[3]);
                             scale = portadaArray[4];
                         }
                     }
-                    Portada portada = new Portada(portadaArray[0],portadaArray[1],webRevista,portadas[i]);
+                    Portada portada = new Portada(portadaArray[0], portadaArray[1], webRevista, portadas[i]);
                     if (portada.getId().equals(selectedRevistaId)) {
                         pos = i;
                     }
@@ -345,27 +345,23 @@ public class PortadaDetalle extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        /*if (prefs.getBoolean("switch_preference", false) && !dark) {
-            dark = true;
-            recreate();
-        }*/
     }
 
-/*
     @Override
     public void onBackPressed() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        DateFormat formatter = new SimpleDateFormat("yyyyMMdd", Locale.FRANCE);
-        String date = formatter.format(new Date(today));
-        if(!date.equals(prefs.getString("fechaPortadas", ""))){
-            SharedPreferences sp = getSharedPreferences(portada.getId(), MODE_PRIVATE);
-            SharedPreferences.Editor editor = sp.edit();
-            editor.remove("currentPage");
-            editor.apply();
-        }
         super.onBackPressed();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (prefs.getBoolean("premium_sub_id", false)) {
+            DateFormat formatter = new SimpleDateFormat("yyyyMMdd", Locale.FRANCE);
+            String date = formatter.format(new Date(today));
+            if (!date.equals(prefs.getString("fechaPortadas", ""))) {
+                SharedPreferences sp = getSharedPreferences(portada.getId(), MODE_PRIVATE);
+                SharedPreferences.Editor editor = sp.edit();
+                editor.remove("currentPage");
+                editor.apply();
+            }
+        }
     }
-*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

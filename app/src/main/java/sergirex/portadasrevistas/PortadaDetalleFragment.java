@@ -1,6 +1,7 @@
 package sergirex.portadasrevistas;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -12,7 +13,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 
+import com.android.billingclient.api.BillingClient;
 import com.github.chrisbanes.photoview.PhotoView;
 
 import java.io.IOException;
@@ -128,15 +131,21 @@ public class PortadaDetalleFragment extends Fragment {
                 if (isAdded()) {
                     requireActivity().runOnUiThread(() -> {
                         photoView.setImageBitmap(portadaBM);
-                        /*photoView.setOnClickListener(v -> {
-                            Intent intent = new Intent(getActivity(), RevistaPagerActivity.class);
-                            intent.putExtra("id", id);
-                            intent.putExtra("date", dateStr);
-                            intent.putExtra("title", title);
-                            intent.putExtra("pages", pages);
-                            intent.putExtra("scale", scale);
-                            startActivity(intent);
-                        });*/
+                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.requireActivity());
+                        photoView.setOnClickListener(v -> {
+                            if(prefs.getBoolean("premium_sub_id", false)) {
+                                Intent intent = new Intent(getActivity(), RevistaPagerActivity.class);
+                                intent.putExtra("id", id);
+                                intent.putExtra("date", dateStr);
+                                intent.putExtra("title", title);
+                                intent.putExtra("pages", pages);
+                                intent.putExtra("scale", scale);
+                                startActivity(intent);
+                            }else{
+                                PurchaseInAppProduct purchaseInAppProduct = new PurchaseInAppProduct(getActivity(),"premium_sub_id", BillingClient.ProductType.SUBS, getString(R.string.subscribe), requireActivity().findViewById(R.id.bannerContainerDetail));
+                                purchaseInAppProduct.launchInAppProduct();
+                            }
+                        });
 
                         pb.setVisibility(View.GONE);
                     });

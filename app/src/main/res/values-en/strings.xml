@@ -51,4 +51,9 @@
     <string name="open_menu">Open menu</string>
     <string name="close_menu">Close menu</string>
     <string name="back">Back</string>
+    <string name="premium_sub">Premium subscription</string>
+    <string name="restore_purchase">Restore purchase</string>
+    <string name="cancel">Cancel</string>
+    <string name="purchase">Buy</string>
+    <string name="subscribe">Subscribe</string>
 </resources>

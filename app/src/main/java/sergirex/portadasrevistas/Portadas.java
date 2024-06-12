@@ -3,8 +3,6 @@ package sergirex.portadasrevistas;
 import static sergirex.portadasrevistas.SavePortada.permission;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -18,9 +16,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.text.Html;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -47,24 +43,13 @@ import androidx.preference.PreferenceManager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.android.billingclient.api.AcknowledgePurchaseParams;
 import com.android.billingclient.api.BillingClient;
-import com.android.billingclient.api.BillingClientStateListener;
-import com.android.billingclient.api.BillingFlowParams;
-import com.android.billingclient.api.BillingResult;
-import com.android.billingclient.api.ProductDetails;
-import com.android.billingclient.api.Purchase;
-import com.android.billingclient.api.QueryProductDetailsParams;
-import com.android.billingclient.api.QueryPurchasesParams;
 import com.facebook.ads.AdSize;
 import com.facebook.ads.AdView;
 import com.facebook.ads.AudienceNetworkAds;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
-import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -73,7 +58,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 import sergirex.portadasrevistas.categorias.Corazon;
 import sergirex.portadasrevistas.categorias.Cultura;
@@ -89,20 +73,16 @@ import sergirex.portadasrevistas.categorias.Tecnologia;
 public class Portadas extends AppCompatActivity {
     static final int MY_PERMISSIONS_REQUEST_WRITE_STORAGE = 0;
     static final int MY_PERMISSIONS_REQUEST_POST_NOTIFICATION = 1;
-    private static final String TAG = "InAppPurchaseTag";
     private DrawerLayout mDrawerLayout;
     private ViewPager2 mViewPager;
     private List<String> categorias;
     private AlertDialog alertDialog;
+    private LinearLayout adContainer;
     private AlertDialog alertDialogNoConn;
-    private AdView bottomBanner;
     private TabLayout tabLayout;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private SharedPreferences prefs;
     private SharedPreferences prefsPor;
-    private BillingClient billingClient;
-    private List<ProductDetails> productDetailsList;
-    private Handler handler;
     private int favsCount = 0;
     private boolean dark = false;
     private Menu menu;
@@ -144,9 +124,6 @@ public class Portadas extends AppCompatActivity {
 
         mDrawerLayout = findViewById(R.id.drawerLayout);
         NavigationView mNavigationView = findViewById(R.id.navView);
-        if (prefs.getBoolean("remove_fb_ads", false)) {
-            hideRemoveAdsMenuItem(mNavigationView);
-        }
 
         tabLayout = findViewById(R.id.tabs);
         prefsPor = getSharedPreferences("revistas", Context.MODE_PRIVATE);
@@ -184,10 +161,12 @@ public class Portadas extends AppCompatActivity {
             int itemId = menuItem.getItemId();
             if (itemId == R.id.nav_help)
                 showDialog().show();
-            else if (itemId == R.id.nav_remove_ads) {
-                handler = new Handler();
-                productDetailsList = new ArrayList<>();
-                removeFBAds();
+            else if (itemId == R.id.nav_subscribe) {
+                PurchaseInAppProduct purchaseInAppProduct = new PurchaseInAppProduct(this,"premium_sub_id", BillingClient.ProductType.SUBS, getString(R.string.subscribe),adContainer);
+                purchaseInAppProduct.launchInAppProduct();
+            }else if (itemId == R.id.nav_remove_ads) {
+                PurchaseInAppProduct purchaseInAppProduct = new PurchaseInAppProduct(this,"remove_ads_id", BillingClient.ProductType.INAPP, getString(R.string.purchase),adContainer);
+                purchaseInAppProduct.launchInAppProduct();
             } else if (itemId == R.id.nav_rate)
                 launchMarket();
             else if (itemId == R.id.nav_share) {
@@ -227,13 +206,14 @@ public class Portadas extends AppCompatActivity {
         }
 
 
-        if (!prefs.getBoolean("remove_fb_ads", false)) {
+        if (!prefs.getBoolean("remove_ads_id", false) && !prefs.getBoolean("premium_sub_id", false)) {
             AudienceNetworkAds.initialize(this);
             //AdSettings.setTestMode(true);
             // Instantiate an AdView object.
             // NOTE: The placement ID from the Facebook Monetization Manager identifies your App.
             // To get test ads, add IMG_16_9_APP_INSTALL# to your placement id. Remove this when your app is ready to serve real ads.
             boolean isPhone = getResources().getBoolean(R.bool.isPhone);
+            AdView bottomBanner;
             if (isPhone) {
                 bottomBanner = new AdView(this, "483584450995789_487598283927739", AdSize.BANNER_HEIGHT_50);
             } else {
@@ -241,15 +221,25 @@ public class Portadas extends AppCompatActivity {
             }
 
             // Find the Ad Container
-            LinearLayout adContainer = findViewById(R.id.bannerContainer);
+            adContainer = findViewById(R.id.bannerContainer);
             adContainer.addView(bottomBanner);
             bottomBanner.loadAd();
         }
+        PurchaseInAppProduct subProduct = new PurchaseInAppProduct(this,"premium_sub_id", BillingClient.ProductType.SUBS, getString(R.string.subscribe),adContainer);
+        subProduct.restorePurchases();
+
+        if (prefs.getBoolean("remove_ads_id", false)) {
+            hideRemoveAdsMenuItem(mNavigationView, R.id.nav_remove_ads);
+        }
+        if (prefs.getBoolean("premium_sub_id", false)) {
+            hideRemoveAdsMenuItem(mNavigationView, R.id.nav_remove_ads);
+            hideRemoveAdsMenuItem(mNavigationView, R.id.nav_subscribe);
+        }
     }
 
-    private void hideRemoveAdsMenuItem(NavigationView mNavigationView) {
+    private void hideRemoveAdsMenuItem(NavigationView mNavigationView, int resource) {
         Menu nav_Menu = mNavigationView.getMenu();
-        nav_Menu.findItem(R.id.nav_remove_ads).setVisible(false);
+        nav_Menu.findItem(resource).setVisible(false);
     }
 
     private void setFavoriteIconVisible(boolean visible) {
@@ -260,174 +250,6 @@ public class Portadas extends AppCompatActivity {
     public void startAlarmBroadcastReceiver(Context context) {
         AlarmBroadcastReceiver alarmBroadcastReceiver = new AlarmBroadcastReceiver();
         alarmBroadcastReceiver.startAlarmBroadcastReceiver(context, false);
-    }
-
-
-    private ProgressDialog pd;
-
-    void removeFBAds() {
-        pd = new ProgressDialog(mDrawerLayout.getContext(), R.style.DialogCustom);
-        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        pd.setMessage(getString(R.string.loading));
-        pd.setCancelable(false);
-        pd.setIndeterminate(true);
-        pd.show();
-        billingClient = BillingClient.newBuilder(this)
-                .enablePendingPurchases()
-                .setListener(
-                        (billingResult, list) -> {
-                            if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && list != null) {
-                                for (Purchase purchase : list) {
-                                    handlePurchase(purchase);
-                                }
-                            }
-                        }
-                ).build();
-
-        //start the connection after initializing the billing client
-        establishConnection();
-    }
-
-    void establishConnection() {
-
-        billingClient.startConnection(new BillingClientStateListener() {
-            @Override
-            public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
-                if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
-                    // The BillingClient is ready. You can query purchases here.
-                    showProducts();
-                }
-            }
-
-            @Override
-            public void onBillingServiceDisconnected() {
-                // Try to restart the connection on the next request to
-                // Google Play by calling the startConnection() method.
-                establishConnection();
-            }
-        });
-    }
-
-    @SuppressLint("SetTextI18n")
-    void showProducts() {
-
-        ImmutableList<QueryProductDetailsParams.Product> productList = ImmutableList.of(
-                //Product 1
-                QueryProductDetailsParams.Product.newBuilder()
-                        .setProductId("remove_ads_id")
-                        .setProductType(BillingClient.ProductType.INAPP)
-                        .build()
-        );
-
-        QueryProductDetailsParams params = QueryProductDetailsParams.newBuilder()
-                .setProductList(productList)
-                .build();
-
-        billingClient.queryProductDetailsAsync(
-                params,
-                (billingResult, prodDetailsList) -> {
-                    // Process the result
-                    productDetailsList.clear();
-
-                    handler.postDelayed(() -> {
-                        pd.cancel();
-                        pd.dismiss();
-                        productDetailsList.addAll(prodDetailsList);
-                        if (!productDetailsList.isEmpty()) {
-                            productDetailsList.addAll(prodDetailsList);
-                            //Log.d(TAG, productDetailsList.size() + " number of products");
-                            String price = Objects.requireNonNull(productDetailsList.get(0).getOneTimePurchaseOfferDetails()).getFormattedPrice();
-                            String productName = productDetailsList.get(0).getName();
-                            new MaterialAlertDialogBuilder(this)
-                                    .setTitle(productName)
-                                    .setMessage("Deshazte de la publicidad por " + price + " de por vida")
-                                    .setIcon(R.mipmap.magazines_icon)
-                                    .setNegativeButton("Cancelar", null)
-                                    .setNeutralButton("Restaurar compra", (dialog, which) -> restorePurchases())
-                                    .setPositiveButton("Comprar", (dialog, which) -> launchPurchaseFlow(productDetailsList.get(0))).show();
-                        } else {
-                            Toast.makeText(this, "No products available", Toast.LENGTH_LONG).show();
-                        }
-                    }, 1500);
-
-                }
-        );
-
-    }
-
-    void launchPurchaseFlow(ProductDetails productDetails) {
-        ImmutableList<BillingFlowParams.ProductDetailsParams> productDetailsParamsList =
-                ImmutableList.of(
-                        BillingFlowParams.ProductDetailsParams.newBuilder()
-                                .setProductDetails(productDetails)
-                                .build()
-                );
-        BillingFlowParams billingFlowParams = BillingFlowParams.newBuilder()
-                .setProductDetailsParamsList(productDetailsParamsList)
-                .build();
-
-        billingClient.launchBillingFlow(this, billingFlowParams);
-    }
-
-    void handlePurchase(Purchase purchases) {
-
-        if (!purchases.isAcknowledged()) {
-            billingClient.acknowledgePurchase(AcknowledgePurchaseParams
-                    .newBuilder()
-                    .setPurchaseToken(purchases.getPurchaseToken())
-                    .build(), billingResult -> {
-
-                if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.putBoolean("remove_fb_ads", true);
-                    editor.apply();
-                    bottomBanner.removeAllViews();
-                    hideRemoveAdsMenuItem(findViewById(R.id.navView));
-                }
-            });
-            Log.d(TAG, "Purchase Token: " + purchases.getPurchaseToken());
-            Log.d(TAG, "Purchase Time: " + purchases.getPurchaseTime());
-            Log.d(TAG, "Purchase OrderID: " + purchases.getOrderId());
-        }
-    }
-
-    void restorePurchases() {
-        billingClient = BillingClient.newBuilder(this).enablePendingPurchases().setListener((billingResult, list) -> {
-        }).build();
-        final BillingClient finalBillingClient = billingClient;
-        billingClient.startConnection(new BillingClientStateListener() {
-            @Override
-            public void onBillingServiceDisconnected() {
-                establishConnection();
-            }
-
-            @Override
-            public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
-                if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
-                    finalBillingClient.queryPurchasesAsync(
-                            QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.INAPP).build(), (billingResult1, list) -> {
-                                if (billingResult1.getResponseCode() == BillingClient.BillingResponseCode.OK) {
-                                    Snackbar sb;
-                                    if (!list.isEmpty()) {
-                                        //prefs.setIsRemoveAd(true); // set true to activate remove ad feature
-                                        SharedPreferences.Editor editor = prefs.edit();
-                                        editor.putBoolean("remove_fb_ads", true);
-                                        editor.apply();
-                                        sb = Snackbar.make(findViewById(R.id.drawerLayout), "Successfully restored", Snackbar.LENGTH_LONG);
-                                        bottomBanner.removeAllViews();
-                                        hideRemoveAdsMenuItem(findViewById(R.id.navView));
-                                    } else {
-                                        Log.d(TAG, "Oops, No purchase found.");
-                                        sb = Snackbar.make(findViewById(R.id.drawerLayout), "No purchase found", Snackbar.LENGTH_LONG);
-                                        //prefs.setIsRemoveAd(false); // set false to de-activate remove ad feature
-                                    }
-                                    sb.setAnimationMode(Snackbar.ANIMATION_MODE_FADE);
-                                    sb.show();
-                                }
-                            });
-                }
-            }
-        });
     }
 
     void loadSectionsAdapter() {
@@ -766,8 +588,9 @@ public class Portadas extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        if (bottomBanner != null) {
-            bottomBanner.destroy();
+        AdView adView = (AdView) adContainer.getChildAt(0);
+        if (adView != null) {
+            adView.destroy();
         }
         super.onDestroy();
     }
