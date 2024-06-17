@@ -46,7 +46,6 @@ public class GetPortadas extends AsyncTask<String, ImageButton, Boolean> {
     private int portCont = 0;
     private WeakReference<LinearLayout> ly;
     private WeakReference<ProgressBar> pb;
-    private String strUrl = null;
 
     @SuppressLint("StaticFieldLeak")
     private final SwipeRefreshLayout swipeRefreshLayout;
@@ -91,7 +90,7 @@ public class GetPortadas extends AsyncTask<String, ImageButton, Boolean> {
                 webRevista = "";
             }
 
-            strUrl = "https://www.kioskoymas.com/Imageresize/getLatestImage/"+id+"/424/600";
+            String strUrl = "https://www.kioskoymas.com/Imageresize/getLatestImage/"+id+"/424/600";
             Bitmap portadaBM;
             if(descargar || (portadaBM = savePortada.getFile(title + 't')) == null || swipeRefreshLayout != null) {
                 if(prefs.getBoolean("premium_sub_id", false)) {
