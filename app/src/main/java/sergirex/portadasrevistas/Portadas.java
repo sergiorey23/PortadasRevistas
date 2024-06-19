@@ -162,10 +162,10 @@ public class Portadas extends AppCompatActivity {
             if (itemId == R.id.nav_help)
                 showDialog().show();
             else if (itemId == R.id.nav_subscribe) {
-                PurchaseInAppProduct purchaseInAppProduct = new PurchaseInAppProduct(this,"premium_sub_id", BillingClient.ProductType.SUBS, getString(R.string.subscribe),adContainer);
+                PurchaseInAppProduct purchaseInAppProduct = new PurchaseInAppProduct(this, "premium_sub_id", BillingClient.ProductType.SUBS, getString(R.string.subscribe), adContainer);
                 purchaseInAppProduct.launchInAppProduct();
-            }else if (itemId == R.id.nav_remove_ads) {
-                PurchaseInAppProduct purchaseInAppProduct = new PurchaseInAppProduct(this,"remove_ads_id", BillingClient.ProductType.INAPP, getString(R.string.purchase),adContainer);
+            } else if (itemId == R.id.nav_remove_ads) {
+                PurchaseInAppProduct purchaseInAppProduct = new PurchaseInAppProduct(this, "remove_ads_id", BillingClient.ProductType.INAPP, getString(R.string.purchase), adContainer);
                 purchaseInAppProduct.launchInAppProduct();
             } else if (itemId == R.id.nav_rate)
                 launchMarket();
@@ -225,15 +225,11 @@ public class Portadas extends AppCompatActivity {
             adContainer.addView(bottomBanner);
             bottomBanner.loadAd();
         }
-        PurchaseInAppProduct subProduct = new PurchaseInAppProduct(this,"premium_sub_id", BillingClient.ProductType.SUBS, getString(R.string.subscribe),adContainer);
+        PurchaseInAppProduct subProduct = new PurchaseInAppProduct(this, "premium_sub_id", BillingClient.ProductType.SUBS, getString(R.string.subscribe), adContainer);
         subProduct.restorePurchases();
 
         if (prefs.getBoolean("remove_ads_id", false)) {
             hideRemoveAdsMenuItem(mNavigationView, R.id.nav_remove_ads);
-        }
-        if (prefs.getBoolean("premium_sub_id", false)) {
-            hideRemoveAdsMenuItem(mNavigationView, R.id.nav_remove_ads);
-            hideRemoveAdsMenuItem(mNavigationView, R.id.nav_subscribe);
         }
     }
 
@@ -432,7 +428,7 @@ public class Portadas extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
         this.menu = menu;
-        if(!prefsPor.getAll().isEmpty()){
+        if (!prefsPor.getAll().isEmpty()) {
             setFavoriteIconVisible(true);
         }
 
@@ -575,6 +571,14 @@ public class Portadas extends AppCompatActivity {
             mSectionsPagerAdapter.removeFragment();
             mSectionsPagerAdapter.notifyItemRemoved(0);
             setFavoriteIconVisible(false);
+        }
+
+        if (prefs.getBoolean("premium_sub_id", false)) {
+            if (adContainer != null)
+                adContainer.removeAllViews();
+            NavigationView mNavigationView = findViewById(R.id.navView);
+            hideRemoveAdsMenuItem(mNavigationView, R.id.nav_remove_ads);
+            hideRemoveAdsMenuItem(mNavigationView, R.id.nav_subscribe);
         }
     }
     /*@Override

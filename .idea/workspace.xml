@@ -95,10 +95,17 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c839e087-9cd3-47f3-8654-5d49f61872cc" name="Default" comment="Added sub premium">
+    <list default="true" id="c839e087-9cd3-47f3-8654-5d49f61872cc" name="Default" comment="Bug fixed">
+      <change afterPath="$PROJECT_DIR$/.idea/modules/app/PortadasRevistas.app.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.4/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/executionHistory/executionHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.4/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.4/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.4/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.4/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/fileHashes/resourceHashesCache.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/GetPortadas.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/GetPortadas.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Portadas.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Portadas.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -108,7 +115,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[adb-7ffddc19-RebSOK._adb-tls-connect._tcp]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Sergio\.android\avd\Pixel_8_Pro_API_34.avd]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -729,14 +736,6 @@
       <option name="project" value="LOCAL" />
       <updated>1619649312556</updated>
     </task>
-    <task id="LOCAL-00005" summary="Added MaterialDatePicker in Portadas.java&#10;Added rate dialog&#10;Added FB interstitial banner">
-      <option name="closed" value="true" />
-      <created>1715193909249</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1715193909254</updated>
-    </task>
     <task id="LOCAL-00006" summary="Fix MaterialDatePicker in Dark mode Portadas.java&#10;Fixed other styles">
       <option name="closed" value="true" />
       <created>1715274512636</created>
@@ -1113,7 +1112,15 @@
       <option name="project" value="LOCAL" />
       <updated>1718212121411</updated>
     </task>
-    <option name="localTasksCounter" value="53" />
+    <task id="LOCAL-00053" summary="Bug fixed">
+      <option name="closed" value="true" />
+      <created>1718644184958</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1718644184959</updated>
+    </task>
+    <option name="localTasksCounter" value="54" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1181,7 +1188,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$" />
     </ignored-roots>
-    <MESSAGE value="Fecha is passed through params" />
     <MESSAGE value="loadSectionsAdapter on Refresh" />
     <MESSAGE value="Added notification push&#10;Fixed theme mode error" />
     <MESSAGE value="Added pagination on Portada detalle&#10;Fixed add/remove fragment favoritos" />
@@ -1206,7 +1212,8 @@
     <MESSAGE value="Style fixes and minor changes" />
     <MESSAGE value="Changed ads ids" />
     <MESSAGE value="Added sub premium" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added sub premium" />
+    <MESSAGE value="Bug fixed" />
+    <option name="LAST_COMMIT_MESSAGE" value="Bug fixed" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>
