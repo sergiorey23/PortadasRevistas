@@ -59,6 +59,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import sergirex.portadasrevistas.categorias.Cocina;
 import sergirex.portadasrevistas.categorias.Corazon;
 import sergirex.portadasrevistas.categorias.Cultura;
 import sergirex.portadasrevistas.categorias.Deportes;
@@ -239,7 +240,8 @@ public class Portadas extends AppCompatActivity {
     }
 
     private void setFavoriteIconVisible(boolean visible) {
-        menu.findItem(R.id.fav).setVisible(visible);
+        if (menu != null)
+            menu.findItem(R.id.fav).setVisible(visible);
     }
 
 
@@ -263,7 +265,8 @@ public class Portadas extends AppCompatActivity {
         mSectionsPagerAdapter.addFragment(getString(R.string.sixth_tab), new Masculinas());
         mSectionsPagerAdapter.addFragment(getString(R.string.seventh_tab), new Motor());
         mSectionsPagerAdapter.addFragment(getString(R.string.eight_tab), new Tecnologia());
-        mSectionsPagerAdapter.addFragment(getString(R.string.nineth_tav), new Historia());
+        mSectionsPagerAdapter.addFragment(getString(R.string.nineth_tab), new Cocina());
+        mSectionsPagerAdapter.addFragment(getString(R.string.tenth_tab), new Historia());
 
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setOffscreenPageLimit(5);
@@ -567,7 +570,7 @@ public class Portadas extends AppCompatActivity {
                 mSectionsPagerAdapter.notifyItemChanged(0);
                 favsCount = count;
             }
-        } else if (mSectionsPagerAdapter.getItemCount() > 9) {
+        } else if (mSectionsPagerAdapter.getItemCount() > 10) {
             mSectionsPagerAdapter.removeFragment();
             mSectionsPagerAdapter.notifyItemRemoved(0);
             setFavoriteIconVisible(false);

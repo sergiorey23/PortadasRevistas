@@ -22,6 +22,9 @@ public class Revistas {
 
     public static final String [] masculinas = {"ebhh:Men's Health:menshealth.com/es/:124:107", "ebhm:Esquire:esquire.com/es:148:105", "e817:Gentleman::115:100", "ebnr:GQ:revistagq.com", "e565:Icon:elpais.com/icon", "v157:Código Único" };
 
+    public static final String [] cocina = {"ed63:Elle Gourmet:elle.com/es/gourmet/:148:107", "3805:Cocina fácil:lecturas.com/recetas:68:84", "e340:Love Cocina::100:76", "e552:Saber Cocinar:sabercocinar.com:84:109",
+            "ebr8:Hola Cocina:hola.com/cocina:220:112", "e351:Cuina:cuina.cat:140:86", "e914:Beef::170:110", "e553:Lecturas Cocina:lecturas.com/recetas:204:102", "e234:Cocina Diez:diezminutos.es/estilo-de-vida/cocina-recetas/:68:86", "e823:Love Cocina Especiales::100:100" };
+
     public static final String [] motor = {"2492:Coches::116:76", "2005:Auto Bild:autobild.es:100:107", "e646:Motos 2000::84:102", "e064:Car and Driver:caranddriver.com/es/", "e059:Altagama Motor::145:80",
             "2448:Motociclismo:motociclismo.es", "2456:Motor Clásico", "2452:Autopista:autopista.es:122:80", "e815:Revista Car:revistacar.es:130:100", "ecar:Truck:camionactualidad.es:88:99",
             "2450:Moto Verde:motociclismo.es/moto-verde:123:78", "2455:Automóvil::115:78", "2457:Business Car:businesscar.autopista.es", "2453:Coche Actual:autopista.es/tag/coche-actual",
