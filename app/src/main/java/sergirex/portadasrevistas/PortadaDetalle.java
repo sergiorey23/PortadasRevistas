@@ -32,6 +32,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.browser.customtabs.CustomTabColorSchemeParams;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
@@ -81,14 +83,17 @@ public class PortadaDetalle extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String theme = prefs.getString("theme", "default");
+        boolean isDark = false;
         switch (theme) {
             case "default":
                 if ((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
                     setTheme(R.style.AppThemeDark);
+                    isDark = true;
                 }
                 break;
             case "dark":
                 setTheme(R.style.AppThemeDark);
+                isDark = true;
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_portada_detalle);
@@ -111,14 +116,34 @@ public class PortadaDetalle extends AppCompatActivity {
         Animation toBottom = AnimationUtils.loadAnimation(this, R.anim.to_bottom_anim);
 
         FloatingActionButton fabWeb = findViewById(R.id.httpButton);
+        boolean finalIsDark = isDark;
         fabWeb.setOnClickListener(v -> {
             if (portada.getWebRevista().isEmpty()) {
                 Toast.makeText(this, "No existe la página web", Toast.LENGTH_SHORT).show();
                 return;
             }
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("https://www." + portada.getWebRevista()));
-            startActivity(intent);
+            try {
+                int colorResId;
+                if(finalIsDark){
+                    colorResId = R.color.colorPrimaryDark;
+                }else{
+                    colorResId = R.color.colorPrimary;
+                }
+                String url = "https://www." + portada.getWebRevista();
+                CustomTabColorSchemeParams customTabColorSchemeParams = new CustomTabColorSchemeParams.Builder()
+                        .setToolbarColor(getResources().getColor(colorResId)).build();
+                CustomTabsIntent intent = new CustomTabsIntent.Builder()
+                        .setShowTitle(true)
+                        .setDefaultColorSchemeParams(customTabColorSchemeParams)
+                        .build();
+                intent.launchUrl(PortadaDetalle.this, Uri.parse(url));
+            }catch (ActivityNotFoundException e){
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("https://www." + portada.getWebRevista()));
+                startActivity(intent);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         });
 
         FloatingActionButton favfab = findViewById(R.id.favButton);

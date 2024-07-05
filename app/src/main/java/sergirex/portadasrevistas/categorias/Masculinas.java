@@ -23,7 +23,7 @@ public class Masculinas extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.portada_layout, container, false);
-        GetPortadas portadasAsyncTask = new GetPortadas(rootView, null);
+        GetPortadas portadasAsyncTask = new GetPortadas(rootView, getClass().getSimpleName(), null);
         portadasAsyncTask.execute(Revistas.masculinas);
         SwipeRefreshLayout swipeRefreshLayout = rootView.findViewById(R.id.refreshLayout);
         swipeRefreshLayout.setOnRefreshListener(() -> {
@@ -35,7 +35,7 @@ public class Masculinas extends Fragment {
     private void refreshFragment(View rootView, SwipeRefreshLayout swipeRefreshLayout) {
         ViewGroup viewGroup = rootView.findViewById(R.id.linearLayout);
         viewGroup.removeAllViews();
-        GetPortadas getPts = new GetPortadas(rootView, swipeRefreshLayout);
+        GetPortadas getPts = new GetPortadas(rootView, getClass().getSimpleName(), swipeRefreshLayout);
         getPts.execute(Revistas.masculinas);
     }
 }

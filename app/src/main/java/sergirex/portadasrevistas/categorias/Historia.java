@@ -24,7 +24,7 @@ public class Historia extends Fragment {
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              final Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.portada_layout, container, false);
-        GetPortadas getPortadas = new GetPortadas(rootView, null);
+        GetPortadas getPortadas = new GetPortadas(rootView, getClass().getSimpleName(), null);
         getPortadas.execute(Revistas.historia);
         SwipeRefreshLayout swipeRefreshLayout = rootView.findViewById(R.id.refreshLayout);
         swipeRefreshLayout.setOnRefreshListener(() -> {
@@ -38,7 +38,7 @@ public class Historia extends Fragment {
     private void refreshFragment(View rootView, SwipeRefreshLayout swipeRefreshLayout) {
         ViewGroup viewGroup = rootView.findViewById(R.id.linearLayout);
         viewGroup.removeAllViews();
-        GetPortadas getPts = new GetPortadas(rootView, swipeRefreshLayout);
+        GetPortadas getPts = new GetPortadas(rootView, getClass().getSimpleName(), swipeRefreshLayout);
         getPts.execute(Revistas.historia);
     }
 

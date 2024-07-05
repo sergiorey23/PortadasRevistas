@@ -3,6 +3,7 @@ package sergirex.portadasrevistas;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.annotation.SuppressLint;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -25,6 +26,8 @@ import android.widget.Toast;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.browser.customtabs.CustomTabColorSchemeParams;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.preference.PreferenceManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -46,12 +49,14 @@ public class GetPortadas extends AsyncTask<String, ImageButton, Boolean> {
     private int portCont = 0;
     private WeakReference<LinearLayout> ly;
     private WeakReference<ProgressBar> pb;
+    private String Section;
 
     @SuppressLint("StaticFieldLeak")
     private final SwipeRefreshLayout swipeRefreshLayout;
 
-    public GetPortadas(View rootView, SwipeRefreshLayout swipeRefreshLayout) {
+    public GetPortadas(View rootView, String simpleName, SwipeRefreshLayout swipeRefreshLayout) {
         this.rootView = new WeakReference<>(rootView);
+        Section = simpleName;
         context = new WeakReference<>(rootView.getContext());
         this.swipeRefreshLayout = swipeRefreshLayout;
     }
@@ -77,7 +82,7 @@ public class GetPortadas extends AsyncTask<String, ImageButton, Boolean> {
 
         String fecha = formatter.format(new Date());
 
-        boolean descargar = !fecha.equals(prefs.getString("fechaPortadas", ""));
+        boolean descargar = !fecha.equals(prefs.getString("fecha"+Section, ""));
 
         for (String portada : params) {
             String[] portadaArray = portada.split(":");
@@ -170,9 +175,28 @@ public class GetPortadas extends AsyncTask<String, ImageButton, Boolean> {
                             Toast.makeText(context.get(), "No existe la página web", Toast.LENGTH_LONG).show();
                             return true;
                         }
-                        Intent i = new Intent(Intent.ACTION_VIEW);
-                        i.setData(Uri.parse("https://www." + webRevista));
-                        context.get().startActivity(i);
+                        int colorResId;
+                        if(context.get().getTheme().toString().contains("style/AppThemeDark")){
+                            colorResId = R.color.colorPrimaryDark;
+                        }else{
+                            colorResId = R.color.colorPrimary;
+                        }
+                        try {
+                            String urlPortada = "https://www." + webRevista;
+                            CustomTabColorSchemeParams customTabColorSchemeParams = new CustomTabColorSchemeParams.Builder()
+                                    .setToolbarColor(context.get().getResources().getColor(colorResId)).build();
+                            CustomTabsIntent intent = new CustomTabsIntent.Builder()
+                                    .setShowTitle(true)
+                                    .setDefaultColorSchemeParams(customTabColorSchemeParams)
+                                    .build();
+                            intent.launchUrl(context.get(), Uri.parse(urlPortada));
+                        }catch (ActivityNotFoundException e){
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setData(Uri.parse("https://www." + webRevista));
+                            context.get().startActivity(intent);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
                     }
                     return true;
                 });
@@ -187,7 +211,7 @@ public class GetPortadas extends AsyncTask<String, ImageButton, Boolean> {
 
         if (descargar) {
             SharedPreferences.Editor editor = prefs.edit();
-            editor.putString("fechaPortadas", fecha);
+            editor.putString("fecha"+Section, fecha);
             editor.apply();
         }
         return true;

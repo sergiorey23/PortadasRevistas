@@ -24,7 +24,7 @@ public class Cultura extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.portada_layout, container, false);
-        GetPortadas getPortadas = new GetPortadas(rootView, null);
+        GetPortadas getPortadas = new GetPortadas(rootView, getClass().getSimpleName(), null);
         getPortadas.execute(Revistas.cultura);
         SwipeRefreshLayout swipeRefreshLayout = rootView.findViewById(R.id.refreshLayout);
         swipeRefreshLayout.setOnRefreshListener(() -> {
@@ -36,7 +36,7 @@ public class Cultura extends Fragment {
     private void refreshFragment(View rootView, SwipeRefreshLayout swipeRefreshLayout) {
         ViewGroup viewGroup = rootView.findViewById(R.id.linearLayout);
         viewGroup.removeAllViews();
-        GetPortadas getPts = new GetPortadas(rootView, swipeRefreshLayout);
+        GetPortadas getPts = new GetPortadas(rootView, getClass().getSimpleName(), swipeRefreshLayout);
         getPts.execute(Revistas.cultura);
     }
 }
