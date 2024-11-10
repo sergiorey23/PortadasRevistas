@@ -15,6 +15,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,11 +32,14 @@ import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.preference.PreferenceManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.datatransport.runtime.logging.Logging;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -106,8 +110,20 @@ public class GetPortadas extends AsyncTask<String, ImageButton, Boolean> {
                 }
                 try {
                     URL url = new URL(strUrl);
-                    InputStream is = (InputStream) url.getContent();
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setDoInput(true);
+                    connection.connect();
+
+                    int responseCode = connection.getResponseCode();
+                    if (responseCode != HttpURLConnection.HTTP_OK) {
+                        //Log.i("REVISTA "+responseCode,title   );
+                        continue;
+                    }
+                    InputStream is = connection.getInputStream();
                     portadaBM = BitmapFactory.decodeStream(is);
+                    if(portadaBM == null){
+                        continue;
+                    }
                     savePortada.saveFile(context.get().getCacheDir(), title + "t", portadaBM);
                 } catch (FileNotFoundException fne) {
                     fne.printStackTrace();
