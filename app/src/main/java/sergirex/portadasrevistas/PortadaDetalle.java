@@ -17,6 +17,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,6 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -50,7 +52,6 @@ import com.facebook.ads.InterstitialAd;
 import com.facebook.ads.InterstitialAdListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.datepicker.CalendarConstraints;
-import com.google.android.material.datepicker.DateValidatorPointBackward;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -59,13 +60,17 @@ import com.google.android.play.core.review.ReviewInfo;
 import com.google.android.play.core.review.ReviewManager;
 import com.google.android.play.core.review.ReviewManagerFactory;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.text.DateFormat;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 
 public class PortadaDetalle extends AppCompatActivity {
@@ -74,10 +79,11 @@ public class PortadaDetalle extends AppCompatActivity {
     private SharedPreferences prefsPer;
     private AlertDialog alertDialogNoConn;
     private InterstitialAd interstitialAd;
-    private Long today;
     private ViewPager2 mViewPager2;
     private ViewPagerAdapter mSectionsPagerAdapter;
     private boolean clicked = false;
+    private MaterialDatePicker<Long> datePicker;
+    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd", Locale.FRANCE);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,8 +114,6 @@ public class PortadaDetalle extends AppCompatActivity {
 
         prefsPer = getSharedPreferences("revistas", Context.MODE_PRIVATE);
 
-        today = MaterialDatePicker.todayInUtcMilliseconds();
-
         Animation rotateOpen = AnimationUtils.loadAnimation(this, R.anim.rotate_open_anim);
         Animation rotateClose = AnimationUtils.loadAnimation(this, R.anim.rotate_close_anim);
         Animation fromBottom = AnimationUtils.loadAnimation(this, R.anim.from_bottom_anim);
@@ -124,9 +128,9 @@ public class PortadaDetalle extends AppCompatActivity {
             }
             try {
                 int colorResId;
-                if(finalIsDark){
+                if (finalIsDark) {
                     colorResId = R.color.colorPrimaryDark;
-                }else{
+                } else {
                     colorResId = R.color.colorPrimary;
                 }
                 String url = "https://www." + portada.getWebRevista();
@@ -137,11 +141,11 @@ public class PortadaDetalle extends AppCompatActivity {
                         .setDefaultColorSchemeParams(customTabColorSchemeParams)
                         .build();
                 intent.launchUrl(PortadaDetalle.this, Uri.parse(url));
-            }catch (ActivityNotFoundException e){
+            } catch (ActivityNotFoundException e) {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse("https://www." + portada.getWebRevista()));
                 startActivity(intent);
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });
@@ -210,9 +214,7 @@ public class PortadaDetalle extends AppCompatActivity {
                                     // We can get the ReviewInfo object
                                     ReviewInfo reviewInfo = task.getResult();
                                     Task<Void> flow = manager.launchReviewFlow(this, reviewInfo);
-                                    flow.addOnCompleteListener(t -> {
-                                        Toast.makeText(this, "¡Gracias!", Toast.LENGTH_LONG).show();
-                                    });
+                                    flow.addOnCompleteListener(t -> Toast.makeText(this, "¡Gracias!", Toast.LENGTH_LONG).show());
                                 } else {
                                     // There was some problem, log or handle the error code.
                                     Log.e("Review Error", task.getException().getMessage());
@@ -239,7 +241,6 @@ public class PortadaDetalle extends AppCompatActivity {
             bottomBanner.loadAd();
             if (showAd % 3 == 0) {
                 interstitialAd = new InterstitialAd(this, "483584450995789_487598570594377");
-                String TAG = "AD";
                 InterstitialAdListener interstitialAdListener = new InterstitialAdListener() {
 
                     @Override
@@ -255,7 +256,7 @@ public class PortadaDetalle extends AppCompatActivity {
                     @Override
                     public void onError(Ad ad, AdError adError) {
                         // Ad error callback
-                        Log.e(TAG, "Interstitial ad failed to load: " + adError.getErrorMessage());
+                        Log.e("AD", "Interstitial ad failed to load: " + adError.getErrorMessage());
                     }
 
                     @Override
@@ -310,6 +311,7 @@ public class PortadaDetalle extends AppCompatActivity {
                     Portada portada = new Portada(portadaArray[0], portadaArray[1], webRevista, portadas[i]);
                     if (portada.getId().equals(selectedRevistaId)) {
                         pos = i;
+                        this.portada = portada;
                     }
                     mSectionsPagerAdapter.addFragment(PortadaDetalleFragment.newInstance(portada.getId(), portada.getTitle(), pages, scale));
                     mSectionsPagerAdapter.addPortada(portada);
@@ -329,6 +331,12 @@ public class PortadaDetalle extends AppCompatActivity {
             super(fm, lifecycle);
             fm.registerFragmentLifecycleCallbacks(new FragmentManager.FragmentLifecycleCallbacks() {
                 @Override
+                public void onFragmentCreated(@NonNull FragmentManager fm, @NonNull Fragment f, @Nullable Bundle savedInstanceState) {
+                    super.onFragmentCreated(fm, f, savedInstanceState);
+                    getHistoryDates();
+                }
+
+                @Override
                 public void onFragmentResumed(@NonNull FragmentManager fm, @NonNull Fragment f) {
                     super.onFragmentResumed(fm, f);
                     portada = getPortada(mViewPager2.getCurrentItem());
@@ -338,7 +346,9 @@ public class PortadaDetalle extends AppCompatActivity {
                     } else {
                         fabfav.setImageResource(R.drawable.ic_favorite_border_black_24dp);
                     }
-
+                    if (portada.getCurrentDate() != null) {
+                        setMaterialDatePicker();
+                    }
                 }
             }, true);
         }
@@ -365,11 +375,77 @@ public class PortadaDetalle extends AppCompatActivity {
         public Portada getPortada(int pos) {
             return portadas.get(pos);
         }
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+        private void getHistoryDates() {
+            new Thread(() -> {
+                String result;
+                try {
+                    URL url = new URL("https://www.kioskoymas.com/Api_postcalendar/getHistory/" + portada.getId());
+
+                    // Lee la respuesta del servidor
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+                    result = reader.readLine(); // Leer solo la primera línea de respuesta
+                    String[] dates = result.split("\\|");
+                    //portada = getPortada(mViewPager2.getCurrentItem());
+                    portada.setCalendar(dates);
+                    reader.close();
+                    runOnUiThread(() -> mSectionsPagerAdapter.createFragment(mViewPager2.getCurrentItem()).setCoverByDate(portada.getLastDate()));
+                    setMaterialDatePicker();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    result = "Error: " + e.getMessage();
+                    Log.e("HTTP Error", result);
+                    runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Portada no encontrada", Toast.LENGTH_LONG).show());
+                }
+            }).start();
+
+        }
+
+        private void setMaterialDatePicker() {
+            long longCurrentDate;
+            String currentDate = portada.getCurrentDate();
+            try {
+                Date date = currentDate == null || currentDate.isEmpty() ?
+                        new Date() : sdf.parse(currentDate);
+                assert date != null;
+                longCurrentDate = date.getTime();
+            } catch (ParseException e) {
+                longCurrentDate = new Date().getTime();
+            }
+
+            datePicker = MaterialDatePicker.Builder
+                    .datePicker()
+                    .setTitleText("Select date").setSelection(longCurrentDate)
+                    .setCalendarConstraints(new CalendarConstraints.Builder().setValidator(new CalendarConstraints.DateValidator() {
+                        @Override
+                        public int describeContents() {
+                            return 0;
+                        }
+
+                        @Override
+                        public void writeToParcel(@NonNull Parcel dest, int flags) {
+
+                        }
+
+                        @Override
+                        public boolean isValid(long date) {
+                            String dateString = sdf.format(new Date(date));
+                            return portada.getCalendar().contains(dateString);
+                        }
+                    }).build()).build();
+            datePicker.addOnPositiveButtonClickListener(
+                    longSelectedDate -> {
+                        String selectedDate = sdf.format(new Date(longSelectedDate));
+                        if (!Objects.equals(currentDate, selectedDate)) {
+                            mSectionsPagerAdapter.getPortada(mViewPager2.getCurrentItem()).setCurrentDate(selectedDate);
+                            SharedPreferences sp = getSharedPreferences(portada.getId(), MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sp.edit();
+                            editor.remove("currentPage");
+                            editor.apply();
+                            mSectionsPagerAdapter.createFragment(mViewPager2.getCurrentItem()).setCoverByDate(selectedDate);
+                        }
+                    });
+        }
     }
 
     @Override
@@ -377,8 +453,7 @@ public class PortadaDetalle extends AppCompatActivity {
         super.onBackPressed();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (prefs.getBoolean("premium_sub_id", false)) {
-            DateFormat formatter = new SimpleDateFormat("yyyyMMdd", Locale.FRANCE);
-            String date = formatter.format(new Date(today));
+            String date = sdf.format(new Date(portada.getCurrentDate()));
             if (!date.equals(prefs.getString("fechaPortadas", ""))) {
                 SharedPreferences sp = getSharedPreferences(portada.getId(), MODE_PRIVATE);
                 SharedPreferences.Editor editor = sp.edit();
@@ -398,29 +473,14 @@ public class PortadaDetalle extends AppCompatActivity {
     @SuppressLint("NotifyDataSetChanged")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        SavePortada savePortada = new SavePortada(this);
-        today = mSectionsPagerAdapter.createFragment(mViewPager2.getCurrentItem()).getDate();
         int itemId = item.getItemId();
         if (itemId == R.id.date) {
-            MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder
-                    .datePicker()
-                    .setTitleText("Select date").setSelection(today)
-                    .setCalendarConstraints(new CalendarConstraints.Builder()
-                            .setValidator(
-                                    DateValidatorPointBackward.now()).build())
-                    .build();
+            if (datePicker == null) {
+                mSectionsPagerAdapter.setMaterialDatePicker();
+            }
             datePicker.show(getSupportFragmentManager(), "MATERIAL_DATE_PICKER");
-            datePicker.addOnPositiveButtonClickListener(
-                    aLong -> {
-                        today = aLong;
-                        SharedPreferences sp = getSharedPreferences(portada.getId(), MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sp.edit();
-                        editor.remove("currentPage");
-                        editor.apply();
-                        mSectionsPagerAdapter.createFragment(mViewPager2.getCurrentItem()).getCoverByDate(aLong, true);
-                    });
-
         } else if (itemId == R.id.share) {
+            SavePortada savePortada = new SavePortada(this);
             ImageView imageView = findViewById(R.id.imagen_extendida);
             Uri fileURI = savePortada.saveFile(portada.getTitle(), ((BitmapDrawable) imageView.getDrawable()).getBitmap());
             Intent i = new Intent(Intent.ACTION_SEND);
@@ -431,6 +491,7 @@ public class PortadaDetalle extends AppCompatActivity {
             startActivity(chooser);
             return true;
         } else if (itemId == R.id.save) {
+            SavePortada savePortada = new SavePortada(this);
             if (savePortada.isExternalStorageWritable()) {
                 if (!savePortada.checkPermissions())
                     return false;
@@ -504,9 +565,9 @@ public class PortadaDetalle extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         if (interstitialAd != null) {
             interstitialAd.destroy();
         }
-        super.onDestroy();
     }
 }

@@ -49,7 +49,7 @@
       </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/revista_pager_activity.xml">
         <config>
-          <theme>@style/AppThemeDark</theme>
+          <theme>@style/AppTheme</theme>
         </config>
       </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/menu/drawer.xml">
@@ -68,6 +68,11 @@
         </config>
       </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/menu/menu_portada_list.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/menu/menu_portada_pager.xml">
         <config>
           <theme>@style/AppTheme</theme>
         </config>
@@ -95,22 +100,58 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c839e087-9cd3-47f3-8654-5d49f61872cc" name="Default" comment="Added CustomTabsIntent">
+    <list default="true" id="c839e087-9cd3-47f3-8654-5d49f61872cc" name="Default" comment="First commit">
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_annotation_annotation_experimental_1_4_0_aar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_browser_browser_1_8_0_aar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/lint-baseline.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/menu/menu_portada_pager.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.4/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/checksums/checksums.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.4/checksums/md5-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/checksums/md5-checksums.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.4/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/checksums/sha1-checksums.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.4/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.4/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.4/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.4/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.4/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_annotation_annotation_experimental_1_3_0_aar.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_core_core_1_10_1_aar.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_core_core_ktx_1_10_1_aar.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_lifecycle_lifecycle_common_2_6_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_lifecycle_lifecycle_livedata_2_6_1_aar.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_lifecycle_lifecycle_livedata_core_2_6_1_aar.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_lifecycle_lifecycle_livedata_core_ktx_2_6_1_aar.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_lifecycle_lifecycle_runtime_2_6_1_aar.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_lifecycle_lifecycle_runtime_ktx_2_6_1_aar.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_lifecycle_lifecycle_viewmodel_2_6_1_aar.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_lifecycle_lifecycle_viewmodel_ktx_2_6_1_aar.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_lifecycle_lifecycle_viewmodel_savedstate_2_6_1_aar.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_transition_transition_1_2_0_aar.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_transition_transition_1_4_1_aar.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_material_material_1_10_0_aar.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/modules/app/PortadasRevistas.app.androidTest.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/app/PortadasRevistas.app.androidTest.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/modules/app/PortadasRevistas.app.main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/app/PortadasRevistas.app.main.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/modules/app/PortadasRevistas.app.unitTest.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/app/PortadasRevistas.app.unitTest.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/GetPortadas.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/GetPortadas.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Portada.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/Portada.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/PortadaDetalle.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/PortadaDetalle.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/PortadaDetalleFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/PortadaDetalleFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/SavePortada.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/sergirex/portadasrevistas/SavePortada.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-v21/activity_portada_detalle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-v21/activity_portada_detalle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/about.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/about.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_portada_detalle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_portada_detalle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_portada_detalle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_portada_detalle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_revista_page.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_revista_page.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/nav_header.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/nav_header.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/revista_pager_activity.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/revista_pager_activity.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values-en/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values-en/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/dimens.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/dimens.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/styles.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -120,7 +161,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Sergio\.android\avd\Pixel_8_Pro_API_34.avd]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[adb-7ffddc19-RebSOK._adb-tls-connect._tcp]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -250,9 +291,8 @@
       <list>
         <option value="layoutResourceFile_vertical" />
         <option value="valueResourceFile" />
-        <option value="resourceFile" />
-        <option value="layoutResourceFile" />
         <option value="Class" />
+        <option value="resourceFile" />
       </list>
     </option>
   </component>
@@ -301,7 +341,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="get_by_id" />
+        <entry key="$PROJECT_DIR$" value="master" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -435,38 +475,38 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;ApkExportedModule&quot;: &quot;PortadasRevistas.app&quot;,
-    &quot;BundleExportedModule&quot;: &quot;PortadasRevistas.app&quot;,
-    &quot;ExportApk.ApkPathForPortadasPeriodicos.app&quot;: &quot;C:\\Users\\Sergio\\Desktop&quot;,
-    &quot;ExportApk.ApkPathForPortadasRevistas.app&quot;: &quot;C:\\Users\\Sergio\\AndroidStudioProjects\\PortadasRevistas\\app&quot;,
-    &quot;ExportBundle.BundlePathForPortadasPeriodicos.app&quot;: &quot;C:\\Users\\Sergio\\Desktop&quot;,
-    &quot;ExportBundle.BundlePathForPortadasRevistas.app&quot;: &quot;C:\\Users\\Sergio\\AndroidStudioProjects\\PortadasRevistas\\app&quot;,
-    &quot;ResourceManagerPrefKey.ResourceType&quot;: &quot;ANIM&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;revista__detalle&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_directory_selection&quot;: &quot;C:/Users/Sergio/AndroidStudioProjects/PortadasRevistas/app/src/main/res/mipmap-hdpi&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Sergio/AndroidStudioProjects/PortadasRevistas/app/src/main/res/drawable&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;recommended.upgrade.last.time.stamp&quot;: &quot;1714903567187&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ApkExportedModule": "PortadasPeriodicos.app",
+    "BundleExportedModule": "PortadasRevistas.app",
+    "ExportApk.ApkPathForPortadasPeriodicos.app": "C:\\Users\\Sergio\\Desktop",
+    "ExportBundle.BundlePathForPortadasPeriodicos.app": "C:\\Users\\Sergio\\Desktop",
+    "ExportBundle.BundlePathForPortadasRevistas.app": "C:\\Users\\Sergio\\AndroidStudioProjects\\PortadasRevistas\\app",
+    "ResourceManagerPrefKey.ResourceType": "ANIM",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "get__portadas__by__dates",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_directory_selection": "C:/Users/Sergio/StudioProjects/PortadasPeriodicos/app/src/main/res/layout",
+    "last_opened_file_path": "C:/Users/Sergio/AndroidStudioProjects/PortadasRevistas/app/src/main/res/menu",
+    "project.structure.last.edited": "SDK Location",
+    "project.structure.proportion": "0.17",
+    "project.structure.side.proportion": "0.2",
+    "recommended.upgrade.last.time.stamp": "1714903567187",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "memory.settings"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;ExportApk.BuildVariants&quot;: [
-      &quot;release&quot;
+  "keyToStringList": {
+    "ExportApk.BuildVariants": [
+      "release"
     ]
   }
-}</component>
+}]]></component>
   <component name="PsdUISettings">
     <option name="MODULE_TAB" value="Properties" />
     <option name="LAST_EDITED_SIGNING_CONFIG" value="debug" />
@@ -479,7 +519,7 @@
       <recent name="sergirex.portadasrevistas" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Sergio\AndroidStudioProjects\PortadasRevistas\app\src\main\res\drawable" />
+      <recent name="C:\Users\Sergio\AndroidStudioProjects\PortadasRevistas\app\src\main\res\menu" />
       <recent name="C:\Users\Sergio\StudioProjects\PortadasPeriodicos\app\src\main\res\layout" />
       <recent name="C:\Users\sergi\Android Studio Projects\PortadasPeriodicos\app\src\main\res\drawable-nodpi" />
       <recent name="C:\Users\Sergio\AndroidStudioProjects\PortadasPeriodicos\app\src\main\res\drawable" />
@@ -496,9 +536,22 @@
       <recent name="sergirex.portadasrevistas" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="sergirex.portadasrevistas.categorias" />
       <recent name="sergirex.portadasrevistas" />
     </key>
+  </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="dependencies" />
+      <command value="gradle dependencies" />
+      <command value="gradle androidDependencies" />
+      <command value="gradelw tasks" />
+      <command value="gradlew tasks" />
+      <command value="gradlew updateLintBaseline" />
+      <command value="gradlew lintDebug --output app/build" />
+      <command value="gradlew lintDebug --output /app/build" />
+      <command value="gradle lintDebug --output /app/build" />
+      <command value="gradlew lintDebug --full-stacktrace" />
+    </option>
   </component>
   <component name="RunManager" selected="Android App.app">
     <configuration default="true" type="AndroidJUnit" factoryName="Android JUnit">
@@ -587,12 +640,34 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="PortadasPeriodicos [clean]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="PortadasRevistas [lintDebug]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
+        <option name="scriptParameters" value="--full-stacktrace" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="lintDebug" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="PortadasRevistas:app [clean]" type="GradleRunConfiguration" factoryName="Gradle">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/app" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
         <option name="taskDescriptions">
           <list />
         </option>
@@ -609,18 +684,18 @@
       <RunAsTest>false</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="PortadasPeriodicos:app [cleanBuildCache]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="PortadasRevistas:app [tasks]" type="GradleRunConfiguration" factoryName="Gradle">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$/app" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
+        <option name="scriptParameters" value="" />
         <option name="taskDescriptions">
           <list />
         </option>
         <option name="taskNames">
           <list>
-            <option value="cleanBuildCache" />
+            <option value="tasks" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -631,41 +706,17 @@
       <RunAsTest>false</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="PortadasPeriodicos:app [clean]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration default="true" type="GradleRunConfiguration" factoryName="Gradle">
       <ExternalSystemSettings>
         <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/app" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
+        <option name="scriptParameters" value="" />
         <option name="taskDescriptions">
           <list />
         </option>
         <option name="taskNames">
-          <list>
-            <option value="clean" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>false</RunAsTest>
-      <method v="2" />
-    </configuration>
-    <configuration name="PortadasPeriodicos:app [lintFix]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/app" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
-        <option name="taskDescriptions">
           <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value="lintFix" />
-          </list>
         </option>
         <option name="vmOptions" />
       </ExternalSystemSettings>
@@ -713,13 +764,15 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue="Android App.app" />
+      <item itemvalue="Gradle.PortadasRevistas:app [tasks]" />
+      <item itemvalue="Gradle.PortadasRevistas:app [clean]" />
+      <item itemvalue="Gradle.PortadasRevistas [lintDebug]" />
+    </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.PortadasPeriodicos:app [lintFix]" />
-        <item itemvalue="Gradle.PortadasPeriodicos:app [cleanBuildCache]" />
-        <item itemvalue="Gradle.PortadasPeriodicos:app [clean]" />
-        <item itemvalue="Gradle.PortadasPeriodicos [clean]" />
-        <item itemvalue="Gradle.PortadasPeriodicos:app [lintFix]" />
+        <item itemvalue="Gradle.PortadasRevistas [lintDebug]" />
       </list>
     </recent_temporary>
   </component>
@@ -741,6 +794,62 @@
       <option name="presentableId" value="LOCAL-00001" />
       <option name="project" value="LOCAL" />
       <updated>1619649312556</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Fix new target version and Facebook banner">
+      <option name="closed" value="true" />
+      <created>1714953769293</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1714953769293</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Fix error while building release apk">
+      <option name="closed" value="true" />
+      <created>1714955601444</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1714955601444</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Added MaterialDatePicker&#10;Fixed styles">
+      <option name="closed" value="true" />
+      <created>1715037016396</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1715037016396</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Added MaterialDatePicker in Portadas.java&#10;Added rate dialog&#10;Added FB interstitial banner">
+      <option name="closed" value="true" />
+      <created>1715193909249</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1715193909254</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Fix MaterialDatePicker in Dark mode Portadas.java&#10;Fixed other styles">
+      <option name="closed" value="true" />
+      <created>1715274512636</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1715274512637</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Added default system theme mode">
+      <option name="closed" value="true" />
+      <created>1715282033898</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1715282033898</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Added option to remove ads">
+      <option name="closed" value="true" />
+      <created>1715367556641</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1715367556646</updated>
     </task>
     <task id="LOCAL-00009" summary="Changed protocol from http to https&#10;Remove ads when purchase">
       <option name="closed" value="true" />
@@ -990,143 +1099,7 @@
       <option name="project" value="LOCAL" />
       <updated>1717074187446</updated>
     </task>
-    <task id="LOCAL-00040" summary="Minor changes">
-      <option name="closed" value="true" />
-      <created>1717236473603</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
-      <option name="project" value="LOCAL" />
-      <updated>1717236473603</updated>
-    </task>
-    <task id="LOCAL-00041" summary="First commit">
-      <option name="closed" value="true" />
-      <created>1717242914323</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
-      <option name="project" value="LOCAL" />
-      <updated>1717242914323</updated>
-    </task>
-    <task id="LOCAL-00042" summary="Added search portadas by date">
-      <option name="closed" value="true" />
-      <created>1717247227766</created>
-      <option name="number" value="00042" />
-      <option name="presentableId" value="LOCAL-00042" />
-      <option name="project" value="LOCAL" />
-      <updated>1717247227766</updated>
-    </task>
-    <task id="LOCAL-00043" summary="Revista detalle navigation">
-      <option name="closed" value="true" />
-      <created>1717419107752</created>
-      <option name="number" value="00043" />
-      <option name="presentableId" value="LOCAL-00043" />
-      <option name="project" value="LOCAL" />
-      <updated>1717419107752</updated>
-    </task>
-    <task id="LOCAL-00044" summary="Major changes">
-      <option name="closed" value="true" />
-      <created>1717443130432</created>
-      <option name="number" value="00044" />
-      <option name="presentableId" value="LOCAL-00044" />
-      <option name="project" value="LOCAL" />
-      <updated>1717443130432</updated>
-    </task>
-    <task id="LOCAL-00045" summary="Minor change">
-      <option name="closed" value="true" />
-      <created>1717443385799</created>
-      <option name="number" value="00045" />
-      <option name="presentableId" value="LOCAL-00045" />
-      <option name="project" value="LOCAL" />
-      <updated>1717443385799</updated>
-    </task>
-    <task id="LOCAL-00046" summary="Minor change">
-      <option name="closed" value="true" />
-      <created>1717443391401</created>
-      <option name="number" value="00046" />
-      <option name="presentableId" value="LOCAL-00046" />
-      <option name="project" value="LOCAL" />
-      <updated>1717443391401</updated>
-    </task>
-    <task id="LOCAL-00047" summary="Major changes">
-      <option name="closed" value="true" />
-      <created>1717457240837</created>
-      <option name="number" value="00047" />
-      <option name="presentableId" value="LOCAL-00047" />
-      <option name="project" value="LOCAL" />
-      <updated>1717457240837</updated>
-    </task>
-    <task id="LOCAL-00048" summary="Some changes">
-      <option name="closed" value="true" />
-      <created>1717461014689</created>
-      <option name="number" value="00048" />
-      <option name="presentableId" value="LOCAL-00048" />
-      <option name="project" value="LOCAL" />
-      <updated>1717461014690</updated>
-    </task>
-    <task id="LOCAL-00049" summary="Some changes">
-      <option name="closed" value="true" />
-      <created>1717514354766</created>
-      <option name="number" value="00049" />
-      <option name="presentableId" value="LOCAL-00049" />
-      <option name="project" value="LOCAL" />
-      <updated>1717514354766</updated>
-    </task>
-    <task id="LOCAL-00050" summary="Style fixes and minor changes">
-      <option name="closed" value="true" />
-      <created>1717618581362</created>
-      <option name="number" value="00050" />
-      <option name="presentableId" value="LOCAL-00050" />
-      <option name="project" value="LOCAL" />
-      <updated>1717618581364</updated>
-    </task>
-    <task id="LOCAL-00051" summary="Changed ads ids">
-      <option name="closed" value="true" />
-      <created>1717878764684</created>
-      <option name="number" value="00051" />
-      <option name="presentableId" value="LOCAL-00051" />
-      <option name="project" value="LOCAL" />
-      <updated>1717878764685</updated>
-    </task>
-    <task id="LOCAL-00052" summary="Added sub premium">
-      <option name="closed" value="true" />
-      <created>1718212121410</created>
-      <option name="number" value="00052" />
-      <option name="presentableId" value="LOCAL-00052" />
-      <option name="project" value="LOCAL" />
-      <updated>1718212121411</updated>
-    </task>
-    <task id="LOCAL-00053" summary="Bug fixed">
-      <option name="closed" value="true" />
-      <created>1718644184958</created>
-      <option name="number" value="00053" />
-      <option name="presentableId" value="LOCAL-00053" />
-      <option name="project" value="LOCAL" />
-      <updated>1718644184959</updated>
-    </task>
-    <task id="LOCAL-00054" summary="Bug fixed">
-      <option name="closed" value="true" />
-      <created>1718823949208</created>
-      <option name="number" value="00054" />
-      <option name="presentableId" value="LOCAL-00054" />
-      <option name="project" value="LOCAL" />
-      <updated>1718823949217</updated>
-    </task>
-    <task id="LOCAL-00055" summary="Added Cocina category">
-      <option name="closed" value="true" />
-      <created>1719080392923</created>
-      <option name="number" value="00055" />
-      <option name="presentableId" value="LOCAL-00055" />
-      <option name="project" value="LOCAL" />
-      <updated>1719080392925</updated>
-    </task>
-    <task id="LOCAL-00056" summary="Added CustomTabsIntent">
-      <option name="closed" value="true" />
-      <created>1720181981761</created>
-      <option name="number" value="00056" />
-      <option name="presentableId" value="LOCAL-00056" />
-      <option name="project" value="LOCAL" />
-      <updated>1720181981763</updated>
-    </task>
-    <option name="localTasksCounter" value="57" />
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1183,7 +1156,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="get_portadas_by_dates" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
@@ -1194,6 +1179,18 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$" />
     </ignored-roots>
+    <MESSAGE value="Initial commit" />
+    <MESSAGE value="Fix new target version and Facebook banner" />
+    <MESSAGE value="Fix error while building release apk" />
+    <MESSAGE value="Added MaterialDatePicker&#10;Fixed styles" />
+    <MESSAGE value="Added MaterialDatePicker in Portadas.java&#10;Added rate dialog&#10;Added FB interstitial banner" />
+    <MESSAGE value="Fix MaterialDatePicker in Dark mode Portadas.java&#10;Fixed other styles" />
+    <MESSAGE value="Added default system theme mode" />
+    <MESSAGE value="Added option to remove ads" />
+    <MESSAGE value="Changed protocol from http to https&#10;Remove ads when purchase" />
+    <MESSAGE value="Fecha is passed through params" />
+    <MESSAGE value="loadSectionsAdapter on Refresh" />
+    <MESSAGE value="Added notification push&#10;Fixed theme mode error" />
     <MESSAGE value="Added pagination on Portada detalle&#10;Fixed add/remove fragment favoritos" />
     <MESSAGE value="Fixed notification AlarmBroadcastReceiver" />
     <MESSAGE value="Added SET_ALARM permission" />
@@ -1201,25 +1198,13 @@
     <MESSAGE value="Added animation on floating action button" />
     <MESSAGE value="Added refresh option" />
     <MESSAGE value="Added old portadas info" />
+    <MESSAGE value="Minor changes" />
     <MESSAGE value="Added new covers" />
     <MESSAGE value="Fix buttons height" />
     <MESSAGE value="Third commit" />
     <MESSAGE value="Organise imports" />
-    <MESSAGE value="Minor changes" />
     <MESSAGE value="First commit" />
-    <MESSAGE value="Added search portadas by date" />
-    <MESSAGE value="Improved image quality" />
-    <MESSAGE value="Revista detalle navigation" />
-    <MESSAGE value="Minor change" />
-    <MESSAGE value="Major changes" />
-    <MESSAGE value="Some changes" />
-    <MESSAGE value="Style fixes and minor changes" />
-    <MESSAGE value="Changed ads ids" />
-    <MESSAGE value="Added sub premium" />
-    <MESSAGE value="Bug fixed" />
-    <MESSAGE value="Added Cocina category" />
-    <MESSAGE value="Added CustomTabsIntent" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added CustomTabsIntent" />
+    <option name="LAST_COMMIT_MESSAGE" value="First commit" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,14 +19,12 @@ import androidx.preference.PreferenceManager;
 import com.android.billingclient.api.BillingClient;
 import com.github.chrisbanes.photoview.PhotoView;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -47,14 +46,8 @@ public class PortadaDetalleFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String id;
     private String title;
-    private Long date;
     private int pages;
     private String scale;
-    private int tries = 0;
-
-    public PortadaDetalleFragment() {
-        // Required empty public constructor
-    }
 
     /**
      * Use this factory method to create a new instance of
@@ -94,86 +87,68 @@ public class PortadaDetalleFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_portada_detalle, container, false);
-        getCover();
+        setCacheCover();
         return rootView;
     }
 
-    public void getCover() {
+    public void setCacheCover() {
         SavePortada savePortada = new SavePortada(rootView.getContext());
         Bitmap portadaBM = savePortada.getFile(title + 't');
         photoView = rootView.findViewById(R.id.imagen_extendida);
         photoView.setImageBitmap(portadaBM);
-        getCoverByDate(new Date().getTime(), false);
     }
 
-    public void getCoverByDate(Long date, boolean showToast) {
+    public void setCoverByDate(String date) {
+
         ProgressBar progressBar = rootView.findViewById(R.id.progressBar);
         progressBar.setIndeterminate(true);
         progressBar.setVisibility(View.VISIBLE);
-
-        getThread(date, progressBar, showToast);
-    }
-
-    private void getThread(Long longDate, ProgressBar pb, boolean showToast) {
-
-        DateFormat formatter = new SimpleDateFormat("yyyyMMdd", Locale.FRANCE);
-        Date date = new Date(longDate);
-        String dateStr = formatter.format(date);
-        String strUrl = "https://t.prcdn.co/img?file=" + id + dateStr + "00000000001001&scale=171";
+        String strUrl = "https://t.prcdn.co/img?file=" + id + date + "00000000001001&scale=171";
 
         new Thread(() -> {
             try {
                 URL url = new URL(strUrl);
-                InputStream is;
-                is = (InputStream) url.getContent();
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setDoInput(true);
+                connection.connect();
+                InputStream is = connection.getInputStream();
                 Bitmap portadaBM = BitmapFactory.decodeStream(is);
-                this.date = longDate;
                 if (isAdded()) {
                     requireActivity().runOnUiThread(() -> {
                         photoView.setImageBitmap(portadaBM);
                         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.requireActivity());
                         photoView.setOnClickListener(v -> {
-                            if(prefs.getBoolean("premium_sub_id", false)) {
+                            if (prefs.getBoolean("premium_sub_id", false)) {
                                 Intent intent = new Intent(getActivity(), RevistaPagerActivity.class);
                                 intent.putExtra("id", id);
-                                intent.putExtra("date", dateStr);
+                                intent.putExtra("date", date);
                                 intent.putExtra("title", title);
                                 intent.putExtra("pages", pages);
                                 intent.putExtra("scale", scale);
                                 startActivity(intent);
-                            }else{
-                                PurchaseInAppProduct purchaseInAppProduct = new PurchaseInAppProduct(getActivity(),"premium_sub_id", BillingClient.ProductType.SUBS, getString(R.string.subscribe), requireActivity().findViewById(R.id.bannerContainerDetail));
+                            } else {
+                                PurchaseInAppProduct purchaseInAppProduct = new PurchaseInAppProduct(getActivity(), "premium_sub_id", BillingClient.ProductType.SUBS, getString(R.string.subscribe), requireActivity().findViewById(R.id.bannerContainerDetail));
                                 purchaseInAppProduct.launchInAppProduct();
                             }
                         });
 
-                        pb.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
                     });
                 }
             } catch (IOException e) {
-                if (tries > 31) {
-                    if(isAdded()) {
-                        requireActivity().runOnUiThread(() -> {
-                            if(showToast) {
-                                Toast.makeText(getActivity(), "Portada no encontrada", Toast.LENGTH_LONG).show();
-                            }
-                            pb.setVisibility(View.GONE);
-                        });
-                    }
-                    tries = 0;
-                } else {
-                    tries++;
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(date);
-                    calendar.add(Calendar.DATE, -1);
-                    getThread(calendar.getTimeInMillis(), pb, showToast);
+                if (isAdded()) {
+                    requireActivity().runOnUiThread(() -> {
+                        Toast.makeText(getActivity(), "Portada no encontrada", Toast.LENGTH_LONG).show();
+                        progressBar.setVisibility(View.GONE);
+                    });
                 }
             }
         }).start();
     }
 
-    public Long getDate(){
-        return date;
+
+    public String getCoverId() {
+        return id;
     }
 
     @Override

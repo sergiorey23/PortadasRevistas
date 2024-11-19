@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ads="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -38,10 +37,10 @@
             android:layout_marginEnd="15dp"
             android:clickable="true"
             android:focusable="true"
-            android:src="@drawable/ic_favorite_border_black_24dp"
+            app:srcCompat="@drawable/ic_favorite_border_black_24dp"
             android:tooltipText="@string/action_fav"
             android:visibility="invisible"
-            ads:maxImageSize="40dp"
+            app:maxImageSize="40dp"
             app:tint="?attr/actionMenuTextColor"
             android:contentDescription="@string/action_fav" />
 
@@ -55,11 +54,11 @@
             android:clickable="true"
             android:contentDescription="Página web"
             android:focusable="true"
-            android:src="@drawable/ic_language_black_24dp"
+            app:srcCompat="@drawable/ic_language_black_24dp"
             android:tooltipText="Página web"
             app:tint="?attr/actionMenuTextColor"
             android:visibility="invisible"
-            ads:maxImageSize="40dp" />
+            app:maxImageSize="40dp" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/addFab"
@@ -70,8 +69,8 @@
             android:clickable="true"
             android:contentDescription="Add"
             android:focusable="true"
-            ads:maxImageSize="30dp"
-            ads:srcCompat="@drawable/baseline_add_24"
+            app:maxImageSize="30dp"
+            app:srcCompat="@drawable/baseline_add_24"
             app:tint="?attr/actionMenuTextColor" />
 
     </FrameLayout>

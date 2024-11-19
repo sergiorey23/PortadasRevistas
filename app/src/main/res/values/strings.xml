@@ -43,7 +43,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="notification_name">Portadas</string>
     <string name="notification_description">Echa un vistazo a las portadas de hoy!</string>
-    <string name="loading">Cargando…</string>
+    <string name="loading">Cargando&#8230;</string>
     <string name="app_full_name">Portadas Revistas</string>
     <string name="sixth_tab">Masculinas</string>
     <string name="seventh_tab">Motor</string>
@@ -61,5 +61,6 @@
     <string name="cancel">Cancelar</string>
     <string name="purchase">Comprar</string>
     <string name="subscribe">Suscribirse</string>
+    <string name="pdf">Descargar revista</string>
 
 </resources>

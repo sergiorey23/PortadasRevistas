@@ -73,7 +73,7 @@
 
 
     <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="colorAccent">@color/background_footer</item>
+        <item name="colorAccent">@android:color/black</item>
         <item name="android:background">@color/colorPrimaryDark</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
     </style>

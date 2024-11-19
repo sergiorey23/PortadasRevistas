@@ -114,7 +114,7 @@ class DownloadPortada extends AsyncTask<String, FileOutputStream, FileOutputStre
 
     private ProgressDialog pd;
     private File file;
-    private Context ctx;
+    private final Context ctx;
     private SavePortada sp;
     private String fileName;
 
