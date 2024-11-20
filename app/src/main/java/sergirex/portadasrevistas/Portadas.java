@@ -590,9 +590,11 @@ public class Portadas extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        AdView adView = (AdView) adContainer.getChildAt(0);
-        if (adView != null) {
-            adView.destroy();
+        if(adContainer.getChildCount() > 0) {
+            AdView adView = (AdView) adContainer.getChildAt(0);
+            if (adView != null) {
+                adView.destroy();
+            }
         }
         super.onDestroy();
     }

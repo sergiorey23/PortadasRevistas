@@ -15,14 +15,18 @@ public class Portada implements Serializable {
     private final String title;
     private final String webRevista;
     private final String revista;
+    private final int pages;
+    private final String scale;
     private List<String> calendar;
     private String currentDate;
 
-    Portada(String id, String title, String webRevista, String revista) {
+    Portada(String id, String title, String webRevista, String revista, int pages, String scale) {
         this.id = id;
         this.title = title;
         this.webRevista = webRevista;
         this.revista = revista;
+        this.pages = pages;
+        this.scale = scale;
     }
 
     public String getId() {
@@ -39,6 +43,14 @@ public class Portada implements Serializable {
 
     public String getRevista() {
         return revista;
+    }
+
+    public int getPages() {
+        return pages;
+    }
+
+    public String getScale() {
+        return scale;
     }
 
     public List<String> getCalendar() {

@@ -27,31 +27,22 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Objects;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link PortadaDetalleFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class PortadaDetalleFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private View rootView;
-    private PhotoView photoView;
     private static final String ARG_ID = "id";
     private static final String ARG_TITLE = "title";
     private static final String ARG_PAGES = "pages";
     private static final String ARG_SCALE = "scale";
 
-    // TODO: Rename and change types of parameters
     private String id;
     private String title;
     private int pages;
     private String scale;
+    private View rootView;
+    private PhotoView photoView;
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
+     * Crea una nueva instancia del fragmento usando los parámetros proporcionados.
      *
      * @param id    Parameter 1.
      * @param title Parameter 2.
@@ -59,7 +50,6 @@ public class PortadaDetalleFragment extends Fragment {
      * @param scale Parameter 4.
      * @return A new instance of fragment PortadaDetalleFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static PortadaDetalleFragment newInstance(String id, String title, int pages, String scale) {
         PortadaDetalleFragment fragment = new PortadaDetalleFragment();
         Bundle args = new Bundle();
@@ -85,75 +75,132 @@ public class PortadaDetalleFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_portada_detalle, container, false);
-        setCacheCover();
+        initializeViews();
         return rootView;
     }
 
-    public void setCacheCover() {
-        SavePortada savePortada = new SavePortada(rootView.getContext());
-        Bitmap portadaBM = savePortada.getFile(title + 't');
+    private void initializeViews() {
         photoView = rootView.findViewById(R.id.imagen_extendida);
-        photoView.setImageBitmap(portadaBM);
+        setCacheCover();
     }
 
-    public void setCoverByDate(String date) {
+    /**
+     * Carga la portada desde el caché local, si está disponible.
+     */
+    private void setCacheCover() {
+        SavePortada savePortada = new SavePortada(requireContext());
+        Bitmap portadaBM = savePortada.getFile(title + 't');
+        if (portadaBM != null) {
+            photoView.setImageBitmap(portadaBM);
+        }
+    }
 
+    /**
+     * Descarga y establece la portada según la fecha seleccionada.
+     *
+     * @param date Fecha de la portada en formato `yyyyMMdd`.
+     */
+    public void setCoverByDate(String date) {
         ProgressBar progressBar = rootView.findViewById(R.id.progressBar);
         progressBar.setIndeterminate(true);
         progressBar.setVisibility(View.VISIBLE);
-        String strUrl = "https://t.prcdn.co/img?file=" + id + date + "00000000001001&scale=171";
+
+        String imageUrl = String.format("https://t.prcdn.co/img?file=%s%s00000000001001&scale=171", id, date);
 
         new Thread(() -> {
-            try {
-                URL url = new URL(strUrl);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setDoInput(true);
-                connection.connect();
-                InputStream is = connection.getInputStream();
-                Bitmap portadaBM = BitmapFactory.decodeStream(is);
-                if (isAdded()) {
-                    requireActivity().runOnUiThread(() -> {
-                        photoView.setImageBitmap(portadaBM);
-                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.requireActivity());
-                        photoView.setOnClickListener(v -> {
-                            if (prefs.getBoolean("premium_sub_id", false)) {
-                                Intent intent = new Intent(getActivity(), RevistaPagerActivity.class);
-                                intent.putExtra("id", id);
-                                intent.putExtra("date", date);
-                                intent.putExtra("title", title);
-                                intent.putExtra("pages", pages);
-                                intent.putExtra("scale", scale);
-                                startActivity(intent);
-                            } else {
-                                PurchaseInAppProduct purchaseInAppProduct = new PurchaseInAppProduct(getActivity(), "premium_sub_id", BillingClient.ProductType.SUBS, getString(R.string.subscribe), requireActivity().findViewById(R.id.bannerContainerDetail));
-                                purchaseInAppProduct.launchInAppProduct();
-                            }
-                        });
-
-                        progressBar.setVisibility(View.GONE);
-                    });
+            Bitmap portadaBM = downloadImage(imageUrl);
+            requireActivity().runOnUiThread(() -> {
+                if (portadaBM != null) {
+                    updatePhotoView(portadaBM, date);
+                } else {
+                    showError("Portada no encontrada");
                 }
-            } catch (IOException e) {
-                if (isAdded()) {
-                    requireActivity().runOnUiThread(() -> {
-                        Toast.makeText(getActivity(), "Portada no encontrada", Toast.LENGTH_LONG).show();
-                        progressBar.setVisibility(View.GONE);
-                    });
-                }
-            }
+                progressBar.setVisibility(View.GONE);
+            });
         }).start();
     }
 
+    /**
+     * Descarga una imagen desde una URL.
+     *
+     * @param imageUrl URL de la imagen.
+     * @return Bitmap de la imagen descargada o `null` si ocurre un error.
+     */
+    private Bitmap downloadImage(String imageUrl) {
+        try {
+            HttpURLConnection connection = (HttpURLConnection) new URL(imageUrl).openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            try (InputStream inputStream = connection.getInputStream()) {
+                return BitmapFactory.decodeStream(inputStream);
+            }
+        } catch (IOException e) {
+            Log.e("PortadaDetalleFragment", "Error descargando imagen: " + e.getMessage());
+            return null;
+        }
+    }
 
-    public String getCoverId() {
-        return id;
+    /**
+     * Actualiza el `PhotoView` con la imagen descargada.
+     *
+     * @param portadaBM Imagen descargada.
+     * @param date      Fecha de la portada.
+     */
+    private void updatePhotoView(Bitmap portadaBM, String date) {
+        photoView.setImageBitmap(portadaBM);
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        photoView.setOnClickListener(v -> {
+            if (prefs.getBoolean("premium_sub_id", false)) {
+                openMagazineViewer(date);
+            } else {
+                launchSubscriptionFlow();
+            }
+        });
+    }
+
+    /**
+     * Muestra un mensaje de error al usuario.
+     *
+     * @param message Mensaje de error.
+     */
+    private void showError(String message) {
+        Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+    }
+
+    /**
+     * Abre la actividad del visor de revistas.
+     *
+     * @param date Fecha de la portada.
+     */
+    private void openMagazineViewer(String date) {
+        Intent intent = new Intent(getActivity(), RevistaPagerActivity.class);
+        intent.putExtra("id", id);
+        intent.putExtra("date", date);
+        intent.putExtra("title", title);
+        intent.putExtra("pages", pages);
+        intent.putExtra("scale", scale);
+        startActivity(intent);
+    }
+
+    /**
+     * Inicia el flujo de compra de suscripción.
+     */
+    private void launchSubscriptionFlow() {
+        PurchaseInAppProduct purchaseInAppProduct = new PurchaseInAppProduct(
+                getActivity(),
+                "premium_sub_id",
+                BillingClient.ProductType.SUBS,
+                getString(R.string.subscribe),
+                rootView.findViewById(R.id.bannerContainerDetail)
+        );
+        purchaseInAppProduct.launchInAppProduct();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle(title);
+        ((AppCompatActivity) requireActivity()).getSupportActionBar().setTitle(title);
     }
 }
