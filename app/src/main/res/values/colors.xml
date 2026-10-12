@@ -1,9 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Material 3 color roles for the light scheme (seed: the app's pink). The dark scheme is in values-night/colors.xml
+     with the same names, so the theme refers to each role once. -->
 <resources>
-    <color name="colorPrimary">#FF4F87</color>
-    <color name="colorSecondary">#CF34DA</color>
-    <color name="colorPrimaryDark">#4A4A4A</color>
-    <!--<color name="background_footer">#90000000</color>-->
-    <color name="whiteAlpha">#B3FFFFFF</color>
+    <color name="primary">#B0125B</color>
+    <color name="on_primary">#FFFFFF</color>
+    <color name="primary_container">#FFD9E2</color>
+    <color name="on_primary_container">#3E001D</color>
+    <color name="secondary">#74565F</color>
+    <color name="on_secondary">#FFFFFF</color>
+    <color name="secondary_container">#FFD9E2</color>
+    <color name="on_secondary_container">#2B151C</color>
+    <color name="tertiary">#7C5635</color>
+    <color name="on_tertiary">#FFFFFF</color>
+    <color name="tertiary_container">#FFDCC2</color>
+    <color name="on_tertiary_container">#2E1500</color>
+    <color name="error">#BA1A1A</color>
+    <color name="on_error">#FFFFFF</color>
+    <color name="error_container">#FFDAD6</color>
+    <color name="on_error_container">#410002</color>
 
+    <color name="background">#FFF8F8</color>
+    <color name="on_background">#201A1B</color>
+    <color name="surface">#FFF8F8</color>
+    <color name="on_surface">#201A1B</color>
+    <color name="surface_variant">#F2DDE1</color>
+    <color name="on_surface_variant">#514347</color>
+    <color name="outline">#837377</color>
+    <color name="outline_variant">#D5C2C6</color>
+    <color name="inverse_surface">#362F30</color>
+    <color name="inverse_on_surface">#FAEEEF</color>
+    <color name="inverse_primary">#FFB1C8</color>
+    <color name="surface_dim">#E4D6D8</color>
+    <color name="surface_bright">#FFF8F8</color>
+    <color name="surface_container_lowest">#FFFFFF</color>
+    <color name="surface_container_low">#FFF0F2</color>
+    <color name="surface_container">#F9EAEC</color>
+    <color name="surface_container_high">#F3E4E6</color>
+    <color name="surface_container_highest">#EDDFE0</color>
+
+    <!-- App-specific: the pink app bar keeps the app's identity in light mode. -->
+    <color name="app_bar">#D81B60</color>
+    <color name="on_app_bar">#FFFFFF</color>
 </resources>

@@ -1,61 +1,100 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Magazines</string>
-    <string name="help">Help</string>
-    <string name="rate">Rate</string>
-    <string name="action_share">Share</string>
-    <string name="help_description">Press and hold on the cover to share it, save it or visit its website.</string>
-    <string name="about">About</string>
-    <string name="rate_app">If you like the app, please leave a feedback</string>
+    <string name="portada">Cover</string>
+
+    <!-- Home tabs, in tab order -->
+    <string name="fav_tab">Favorites</string>
+    <string name="first_tab">Celebrity</string>
     <string name="second_tab">Culture</string>
     <string name="third_tab">Sports</string>
-    <string name="fifth_tab">Femenine</string>
-    <string name="close">Close</string>
     <string name="fourth_tab">Life style</string>
-    <string name="contact">Contact</string>
-    <string name="save">Save</string>
-    <string name="refresh">Refresh</string>
-    <string name="settings">Settings</string>
-    <string name="mode">Night mode</string>
-    <string name="tema">Theme</string>
-    <string name="action_fav">Add to favourites</string>
-    <string name="fav_tab">Favorites</string>
-    <string name="help_description2">You can also see the covers in the home screen widget.</string>
-    <string name="about_desc">\tDo you have any suggestion? Is it any cover left?\n\tDon\'t hesitate to tell me!</string>
-    <string name="copyright">"All images are copyrighted to their respective owners. "</string>
-    <string name="freeApp">This app is free of adds. I wouold apprecieate so much if you invite me a coffe</string>
-    <string name="appSource">An app from lasportadas.es</string>
-    <string name="supportDeveloper">Inviteme a coffe</string>
-    <string name="privacy_policy">Privacy Policy</string>
-    <string name="date">Date</string>
-    <string name="rateTitle">Rate Portadas</string>
-    <string name="rateDescription">If you are enjoying the app. Would you mind rating it on the Play Store?</string>
-    <string name="later">Later</string>
-    <string name="sure">Sure!</string>
-    <string name="default_system">Default system</string>
-    <string name="light">Light</string>
-    <string name="dark">Dark</string>
-    <string name="categories">Categories</string>
-    <string name="removeAds">Remove ads</string>
-    <string name="notification_name">Covers</string>
-    <string name="notification_description">Check out today\'s covers!</string>
-    <string name="loading">Loading&#8230;</string>
-    <string name="app_full_name">Magazine Covers</string>
-    <string name="sixth_tab">Male</string>
+    <string name="fifth_tab">Women</string>
+    <string name="sixth_tab">Men</string>
     <string name="seventh_tab">Automotive</string>
     <string name="eight_tab">Technology</string>
-    <string name="nineth_tab">Kitchen</string>
+    <string name="nineth_tab">Cooking</string>
     <string name="tenth_tab">Travel and History</string>
-    <string name="portadas_periodicos">News Covers</string>
-    <string name="mas_apps">More apps:</string>
-    <string name="fav_covers">Fav covers</string>
+
+    <!-- Navigation drawer -->
+    <string name="settings">Settings</string>
+    <string name="premium_sub">Premium subscription</string>
+    <string name="removeAds">Remove ads</string>
+    <string name="rate">Rate</string>
+    <string name="help">Help</string>
+    <string name="about">About</string>
+    <string name="action_share">Share</string>
     <string name="open_menu">Open menu</string>
     <string name="close_menu">Close menu</string>
     <string name="back">Back</string>
-    <string name="premium_sub">Premium subscription</string>
-    <string name="restore_purchase">Restore purchase</string>
-    <string name="cancel">Cancel</string>
-    <string name="purchase">Buy</string>
-    <string name="subscribe">Subscribe</string>
-    <string name="pdf">Download magazine</string>
+
+    <!-- Help dialog -->
+    <string name="close">Close</string>
+    <string name="help_description">Swipe between the tabs to see the covers of each category. Press and hold a cover to share it, save it or visit its website.</string>
+    <string name="help_description2">Tap a cover to see it full size and pick another issue, and mark your favorite magazines to find them quickly in the Favorites tab. With the premium subscription you can also read the magazines.</string>
+    <string name="rate_app">If you like the app, please rate it on Google Play. It helps a lot!</string>
+
+    <!-- Menu actions -->
+    <string name="date">Date</string>
+    <string name="save">Save</string>
+    <string name="action_fav">Favorite</string>
+    <string name="fav_covers">Favorite covers</string>
+    <string name="website">Website</string>
+    <string name="add">Add</string>
+    <string name="select_date">Select date</string>
+    <string name="no_favorites">You don\'t have any favorite magazine yet</string>
+
+    <!-- Settings screen -->
+    <string name="tema">Theme</string>
+    <string name="theme_mode">Mode</string>
+    <string name="categories">Categories</string>
+    <string name="initial_category">Initial category</string>
+    <string name="default_system">System default</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="notifications">Notifications</string>
+    <string name="daily_notification_title">Daily cover reminder</string>
+    <string name="daily_notification_summary">Get a notification every morning at 9:00</string>
+    <string name="notifications_permission_denied">The daily reminder needs the notification permission. You can grant it in the system settings.</string>
+
+    <!-- Daily reminder notification -->
+    <string name="notification_name">The covers are out!</string>
+    <string name="notification_description">Tap to see the magazine covers.</string>
+
+    <!-- About screen -->
+    <string name="app_full_name">Magazine Covers</string>
+    <string name="about_desc">Browse the covers of the main magazines, save or share them, and mark your favorites to keep them at hand.</string>
+    <string name="contact">Contact</string>
+    <string name="mas_apps">More apps</string>
+    <string name="portadas_periodicos">News Covers</string>
+    <string name="copyright">All images are copyrighted to their respective owners.</string>
+    <string name="privacy_policy">Privacy Policy</string>
+
+    <!-- Covers and reader -->
+    <string name="covers_load_failed">The covers could not be loaded. Pull down to retry.</string>
+    <string name="cover_not_found">Cover not found</string>
+    <string name="cover_already_saved">The cover has already been saved.</string>
+    <string name="issues_not_loaded">This magazine\'s issues haven\'t loaded yet</string>
+    <string name="no_website">This magazine has no website</string>
+    <string name="page">Magazine page</string>
+    <string name="page_load_failed">The page could not be loaded</string>
+
+    <!-- Storage permission (Android 9 and older) -->
+    <string name="storage_permission_granted">Permission granted. Please try again.</string>
+    <string name="storage_permission_denied">Permission denied. The cover can\'t be saved or shared.</string>
+    <string name="storage_unavailable">Storage is not accessible</string>
+
+    <!-- Purchases -->
+    <string name="billing_remove_ads_message">Get rid of the ads for %1$s, for life</string>
+    <string name="billing_premium_message">Subscribe for %1$s a week:\n\n- No ads\n- Read the full magazines</string>
+    <string name="billing_cancel">Cancel</string>
+    <string name="billing_restore">Restore purchase</string>
+    <string name="billing_buy">Buy</string>
+    <string name="billing_no_products">No products are available right now. Please try again later.</string>
+    <string name="billing_restored">Purchase restored</string>
+    <string name="billing_nothing_to_restore">No purchase found</string>
+    <string name="billing_purchase_pending">Your purchase is pending. It will be activated once it completes.</string>
+    <string name="billing_error">The operation with Google Play could not be completed</string>
+
+    <string name="no_app_found">There is no app to open this link</string>
+    <string name="share_failed">The cover could not be shared</string>
 </resources>

@@ -1,32 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".RevistaPagerActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".RevistaPagerActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        app:titleTextAppearance="@style/ActionBar.detalle">
+        android:fitsSystemWindows="true">
 
-        <TextView
-            android:id="@+id/pageCounter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginEnd="30dp"
-            
-            android:textStyle="bold" />
-    </androidx.appcompat.widget.Toolbar>
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            style="@style/Widget.Portadas.Toolbar.Detail"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+            <TextView
+                android:id="@+id/pageCounter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginEnd="30dp"
+                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                android:textColor="?attr/colorOnAppBar"
+                android:textStyle="bold"
+                tools:text="1/108" />
+        </com.google.android.material.appbar.MaterialToolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewPagerRevista"
@@ -37,9 +45,9 @@
             android:id="@+id/seekBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="45dp"
-            android:layout_gravity="bottom" />
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="45dp" />
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </FrameLayout>
 
 </LinearLayout>
