@@ -24,8 +24,8 @@ class IssueCalendarRepositoryImpl @Inject constructor(
 
     private val cache = ConcurrentHashMap<String, List<String>>()
 
-    override suspend fun getIssueDates(magazineId: String): Result<List<String>> {
-        cache[magazineId]?.let { return Result.success(it) }
+    override suspend fun getIssueDates(magazineId: String, forceRefresh: Boolean): Result<List<String>> {
+        if (!forceRefresh) cache[magazineId]?.let { return Result.success(it) }
         return withContext(Dispatchers.IO) {
             try {
                 client.newCall(Request.Builder().url(CoverUrls.history(magazineId)).build()).await().use { response ->

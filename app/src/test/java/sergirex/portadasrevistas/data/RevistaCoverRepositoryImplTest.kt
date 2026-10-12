@@ -30,7 +30,7 @@ class RevistaCoverRepositoryImplTest {
     }).build()
 
     private val calendar = object : IssueCalendarRepository {
-        override suspend fun getIssueDates(magazineId: String) = when (magazineId) {
+        override suspend fun getIssueDates(magazineId: String, forceRefresh: Boolean) = when (magazineId) {
             "3845" -> Result.success(listOf("20261007", "20260930"))
             else -> Result.failure(java.io.IOException("offline"))
         }

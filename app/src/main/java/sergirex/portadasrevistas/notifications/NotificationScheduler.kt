@@ -1,62 +1,78 @@
 package sergirex.portadasrevistas.notifications
 
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import androidx.core.app.NotificationManagerCompat
+import androidx.work.BackoffPolicy
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import sergirex.portadasrevistas.AlarmBroadcastReceiver
 import sergirex.portadasrevistas.domain.repository.SettingsRepository
 import java.util.Calendar
+import java.util.UUID
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Keeps the daily 09:00 reminder alarm in line with the setting and the system permission:
- * scheduled only when the user wants it AND notifications can actually be shown, cancelled
- * otherwise. Call [sync] whenever either could have changed (app start, setting toggled,
- * permission result, device reboot or app update — alarms don't survive those).
+ * Keeps the daily new-issue check scheduled exactly while the user wants it AND notifications can
+ * actually be shown, and cancelled otherwise. Call [sync] whenever either could have changed (app
+ * start, setting toggled, permission result).
  */
 @Singleton
 class NotificationScheduler @Inject constructor(
     @ApplicationContext private val context: Context,
     private val settings: SettingsRepository
 ) {
-    private val alarmManager get() = context.getSystemService(AlarmManager::class.java)
+    private val workManager get() = WorkManager.getInstance(context)
 
-    private val alarmIntent: PendingIntent
-        get() = PendingIntent.getBroadcast(
-            context,
-            REQUEST_CODE,
-            Intent(context, AlarmBroadcastReceiver::class.java),
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
-
-    /** @param afterFiring true when called from the alarm itself, so the next one is tomorrow's. */
-    suspend fun sync(afterFiring: Boolean = false) {
+    suspend fun sync() {
         val wanted = settings.dailyNotificationEnabled.first() &&
             NotificationManagerCompat.from(context).areNotificationsEnabled()
-        if (wanted) schedule(afterFiring) else alarmManager.cancel(alarmIntent)
+        if (wanted) schedule() else workManager.cancelUniqueWork(WORK_NAME)
     }
 
-    private fun schedule(afterFiring: Boolean) {
+    private fun schedule() {
+        val request = PeriodicWorkRequestBuilder<NewIssuesWorker>(1, TimeUnit.DAYS)
+            .setInitialDelay(millisUntilNextRun(), TimeUnit.MILLISECONDS)
+            .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
+            .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 30, TimeUnit.MINUTES)
+            .build()
+        // KEEP: calling this at every app start must not push back a run that is already scheduled.
+        workManager.enqueueUniquePeriodicWork(WORK_NAME, ExistingPeriodicWorkPolicy.KEEP, request)
+    }
+
+    /** Runs a check right away, outside the daily schedule (used by the debug tools). Returns the work's id. */
+    fun checkNow(): UUID {
+        val request = OneTimeWorkRequestBuilder<NewIssuesWorker>().build()
+        workManager.enqueue(request)
+        return request.id
+    }
+
+    /** The state of a work enqueued with [checkNow]. */
+    fun observe(workId: UUID): Flow<WorkInfo?> = workManager.getWorkInfoByIdFlow(workId)
+
+    private fun millisUntilNextRun(): Long {
         val now = System.currentTimeMillis()
-        val trigger = Calendar.getInstance().apply {
+        val next = Calendar.getInstance().apply {
             timeInMillis = now
             set(Calendar.HOUR_OF_DAY, HOUR)
             set(Calendar.MINUTE, 0)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
-            if (afterFiring || timeInMillis <= now) add(Calendar.DATE, 1)
+            if (timeInMillis <= now) add(Calendar.DATE, 1)
         }.timeInMillis
-        // Inexact on purpose (no exact-alarm permission needed); allowed in Doze so it isn't held back all day.
-        alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, trigger, alarmIntent)
+        return next - now
     }
 
     private companion object {
-        const val REQUEST_CODE = 0
+        const val WORK_NAME = "new_issues_check"
         const val HOUR = 9
     }
 }

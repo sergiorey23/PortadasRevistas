@@ -73,6 +73,7 @@ class SettingsActivity : AppCompatActivity() {
             setPreferencesFromResource(R.xml.preferences, rootKey)
             // Developer switches: a real screen in debug builds, an empty one in release (see DebugOptions).
             addPreferencesFromResource(R.xml.preferences_debug)
+            DebugOptions.bindPreferences(this)
 
             // All three are stored through repositories (DataStore), not Preference's own
             // default SharedPreferences file: the views below are kept in sync from the

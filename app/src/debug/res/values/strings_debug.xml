@@ -2,4 +2,6 @@
     <string name="debug_category" translatable="false">Desarrollo (solo debug)</string>
     <string name="debug_premium_title" translatable="false">Simular suscripción premium</string>
     <string name="debug_premium_summary" translatable="false">Sin anuncios y con lector de revistas, sin pasar por Google Play</string>
+    <string name="debug_simulate_new_issue_title" translatable="false">Simular número nuevo ahora</string>
+    <string name="debug_simulate_new_issue_summary" translatable="false">Hace que cada favorita parezca tener un número nuevo y lanza la comprobación diaria ya</string>
 </resources>

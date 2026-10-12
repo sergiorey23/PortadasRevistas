@@ -85,6 +85,9 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0'
     implementation 'androidx.datastore:datastore-preferences:1.2.1'
 
+    // Background work: the daily check for new issues of the favorites
+    implementation 'androidx.work:work-runtime:2.11.2'
+
     // Dependency injection
     implementation 'com.google.dagger:hilt-android:2.60.1'
     ksp 'com.google.dagger:hilt-android-compiler:2.60.1'

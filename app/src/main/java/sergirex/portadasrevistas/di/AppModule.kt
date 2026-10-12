@@ -8,6 +8,7 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
+import sergirex.portadasrevistas.data.local.DataStoreIssueSeenRepository
 import sergirex.portadasrevistas.data.local.DataStoreScaleStore
 import sergirex.portadasrevistas.data.local.ScaleStore
 import sergirex.portadasrevistas.data.network.CoverCacheControlInterceptor
@@ -25,6 +26,7 @@ import sergirex.portadasrevistas.domain.repository.EngagementRepository
 import sergirex.portadasrevistas.domain.repository.EntitlementsRepository
 import sergirex.portadasrevistas.domain.repository.FavoriteRevistasRepository
 import sergirex.portadasrevistas.domain.repository.IssueCalendarRepository
+import sergirex.portadasrevistas.domain.repository.IssueSeenRepository
 import sergirex.portadasrevistas.domain.repository.PageScaleRepository
 import sergirex.portadasrevistas.domain.repository.ReadingProgressRepository
 import sergirex.portadasrevistas.domain.repository.RevistaCoverRepository
@@ -82,6 +84,10 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun bindPageScaleRepository(impl: PageScaleRepositoryImpl): PageScaleRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindIssueSeenRepository(impl: DataStoreIssueSeenRepository): IssueSeenRepository
 
     @Binds
     @Singleton

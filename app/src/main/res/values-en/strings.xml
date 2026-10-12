@@ -52,13 +52,14 @@
     <string name="light">Light</string>
     <string name="dark">Dark</string>
     <string name="notifications">Notifications</string>
-    <string name="daily_notification_title">Daily cover reminder</string>
-    <string name="daily_notification_summary">Get a notification every morning at 9:00</string>
-    <string name="notifications_permission_denied">The daily reminder needs the notification permission. You can grant it in the system settings.</string>
+    <string name="daily_notification_title">New issue alerts</string>
+    <string name="daily_notification_summary">Once a day we tell you if any of your favorite magazines has a new issue</string>
+    <string name="notifications_permission_denied">The alerts need the notification permission. You can grant it in the system settings.</string>
 
-    <!-- Daily reminder notification -->
-    <string name="notification_name">The covers are out!</string>
-    <string name="notification_description">Tap to see the magazine covers.</string>
+    <!-- New issue notification -->
+    <string name="notification_channel_name">New issues</string>
+    <string name="new_issue_title">%1$s: new issue</string>
+    <string name="new_issue_text">The issue of %1$s is now available.</string>
 
     <!-- About screen -->
     <string name="app_full_name">Magazine Covers</string>

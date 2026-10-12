@@ -10,5 +10,10 @@
             android:summary="@string/debug_premium_summary"
             android:title="@string/debug_premium_title"
             app:iconSpaceReserved="false" />
+        <Preference
+            android:key="debug_simulate_new_issue"
+            android:summary="@string/debug_simulate_new_issue_summary"
+            android:title="@string/debug_simulate_new_issue_title"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 </androidx.preference.PreferenceScreen>

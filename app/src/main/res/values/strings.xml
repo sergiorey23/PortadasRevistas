@@ -52,13 +52,14 @@
     <string name="light">Claro</string>
     <string name="dark">Oscuro</string>
     <string name="notifications">Notificaciones</string>
-    <string name="daily_notification_title">Aviso diario de portadas</string>
-    <string name="daily_notification_summary">Recibe una notificación cada mañana a las 9:00</string>
-    <string name="notifications_permission_denied">Sin permiso de notificaciones no se puede activar el aviso diario. Puedes concederlo en los ajustes del sistema.</string>
+    <string name="daily_notification_title">Avisos de nuevos números</string>
+    <string name="daily_notification_summary">Una vez al día te avisamos si alguna de tus revistas favoritas tiene un número nuevo</string>
+    <string name="notifications_permission_denied">Sin permiso de notificaciones no se pueden activar los avisos. Puedes concederlo en los ajustes del sistema.</string>
 
-    <!-- Daily reminder notification -->
-    <string name="notification_name">¡Ya están las portadas!</string>
-    <string name="notification_description">Toca para ver las portadas de las revistas.</string>
+    <!-- New issue notification -->
+    <string name="notification_channel_name">Nuevos números</string>
+    <string name="new_issue_title">%1$s: nuevo número</string>
+    <string name="new_issue_text">Ya está disponible el número del %1$s.</string>
 
     <!-- About screen -->
     <string name="app_full_name">Portadas Revistas</string>
