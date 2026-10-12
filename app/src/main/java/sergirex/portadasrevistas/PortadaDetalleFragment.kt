@@ -11,6 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import coil3.load
+import coil3.request.Disposable
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import sergirex.portadasrevistas.databinding.FragmentPortadaDetalleBinding
@@ -44,8 +45,11 @@ class PortadaDetalleFragment : Fragment() {
     private var _binding: FragmentPortadaDetalleBinding? = null
     private val binding get() = _binding!!
 
-    /** The issue date whose full-size cover is on screen (or being loaded). */
+    /** The issue date whose full-size cover is on screen (or being loaded). Belongs to the current view: a new view starts without one. */
     private var shownDate: String? = null
+
+    /** The request for the grid's cover that stands in until the full-size one arrives. */
+    private var preview: Disposable? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPortadaDetalleBinding.inflate(inflater, container, false)
@@ -54,7 +58,7 @@ class PortadaDetalleFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.cover.load(CoverUrls.latest(magazineId))
+        preview = binding.cover.load(CoverUrls.latest(magazineId))
         binding.cover.setOnClickListener { (activity as? PortadaDetalleHost)?.onCoverClicked(magazineId) }
 
         viewModel.loadIssues(magazineId)
@@ -73,7 +77,7 @@ class PortadaDetalleFragment : Fragment() {
                 binding.loadingProgressBar.visibility = View.GONE
                 Toast.makeText(requireContext(), R.string.cover_not_found, Toast.LENGTH_LONG).show()
             }
-            selected != null -> renderDateLabel(issue)
+            selected != null -> renderRibbon(issue)
         }
     }
 
@@ -88,16 +92,18 @@ class PortadaDetalleFragment : Fragment() {
                 shownDate = null
                 Toast.makeText(requireContext(), R.string.cover_not_found, Toast.LENGTH_LONG).show()
             } else {
+                // The preview is a separate request that, with everything cached, can finish after this
+                // one and paint over the sharp cover: cancel it before showing the real thing.
+                preview?.dispose()
                 binding.cover.setImageBitmap(bitmap)
-                renderDateLabel(issue)
+                renderRibbon(issue)
             }
         }
     }
 
-    private fun renderDateLabel(issue: IssueState) {
+    /** The ribbon carries the issue's date, and only shows when the issue is out of date. */
+    private fun renderRibbon(issue: IssueState) {
         val selected = issue.selected
-        binding.issueDate.visibility = if (selected != null && !issue.isLatestSelected) View.VISIBLE else View.GONE
-        if (selected != null) binding.issueDate.text = IssueDate.toDisplay(selected)
         val old = selected != null && OldIssuePolicy.isOld(selected, category)
         binding.oldRibbon.visibility = if (old) View.VISIBLE else View.GONE
         if (old) binding.oldRibbon.text = IssueDate.toRibbonLabel(selected.orEmpty())
@@ -105,6 +111,10 @@ class PortadaDetalleFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        preview?.dispose()
+        preview = null
+        // Whatever was shown went away with the view; the next view has to load its cover again.
+        shownDate = null
         // Avoid memory leaks by nullifying the binding reference.
         _binding = null
     }

@@ -15,7 +15,7 @@
         android:adjustViewBounds="true"
         android:contentDescription="@string/portada" />
 
-    <!-- Shown over covers whose issue is more than a week old, labelled with the issue date. -->
+    <!-- Shown, with the issue date, over covers whose issue is out of date for their category. -->
     <sergirex.portadasrevistas.CornerRibbonView
         android:id="@+id/oldRibbon"
         android:layout_width="84dp"

@@ -23,28 +23,7 @@
         app:zoomage_minScale="0.6"
         app:zoomage_restrictBounds="false" />
 
-    <!-- The issue date; shown only when it isn't the magazine's current issue. -->
-    <TextView
-        android:id="@+id/issueDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="#80000000"
-        android:paddingStart="16dp"
-        android:paddingTop="8dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="8dp"
-        android:textColor="@android:color/white"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="07/10/2026"
-        tools:visibility="visible" />
-
-    <!-- Shown when the selected issue is more than a week old. -->
+    <!-- Shown, with the issue date, when the selected issue is out of date for its category. -->
     <sergirex.portadasrevistas.CornerRibbonView
         android:id="@+id/oldRibbon"
         android:layout_width="120dp"

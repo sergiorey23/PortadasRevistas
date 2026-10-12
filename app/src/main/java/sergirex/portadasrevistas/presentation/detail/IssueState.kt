@@ -9,7 +9,4 @@ data class IssueState(
     val selected: String? = null,
     val isLoading: Boolean = true,
     val failed: Boolean = false
-) {
-    /** The newest issue is the magazine's current one; anything older is worth labelling with its date. */
-    val isLatestSelected: Boolean get() = selected != null && selected == dates.firstOrNull()
-}
+)
