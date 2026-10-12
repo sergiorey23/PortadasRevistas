@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Release has no developer switches; the debug source set has the real screen. -->
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" />

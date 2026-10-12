@@ -4,4 +4,12 @@
     <attr name="colorAppBar" format="color" />
     <!-- Content (title, icons, tab labels) drawn on [colorAppBar]. -->
     <attr name="colorOnAppBar" format="color" />
+
+    <!-- The diagonal tag in the top-right corner of covers whose issue is out of date. -->
+    <declare-styleable name="CornerRibbonView">
+        <attr name="ribbonColor" format="color" />
+        <attr name="ribbonTextColor" format="color" />
+        <attr name="ribbonTextSize" format="dimension" />
+        <attr name="ribbonText" format="string" />
+    </declare-styleable>
 </resources>

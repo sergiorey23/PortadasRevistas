@@ -15,4 +15,15 @@
         android:adjustViewBounds="true"
         android:contentDescription="@string/portada" />
 
+    <!-- Shown over covers whose issue is more than a week old, labelled with the issue date. -->
+    <sergirex.portadasrevistas.CornerRibbonView
+        android:id="@+id/oldRibbon"
+        android:layout_width="84dp"
+        android:layout_height="84dp"
+        android:layout_gravity="top|end"
+        android:visibility="gone"
+        app:ribbonColor="@color/ribbon_old"
+        app:ribbonTextColor="@color/on_ribbon_old"
+        app:ribbonTextSize="10sp" />
+
 </androidx.cardview.widget.CardView>

@@ -44,6 +44,19 @@
         tools:text="07/10/2026"
         tools:visibility="visible" />
 
+    <!-- Shown when the selected issue is more than a week old. -->
+    <sergirex.portadasrevistas.CornerRibbonView
+        android:id="@+id/oldRibbon"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:ribbonColor="@color/ribbon_old"
+        app:ribbonTextColor="@color/on_ribbon_old"
+        app:ribbonTextSize="14sp"
+        tools:visibility="visible" />
+
     <ProgressBar
         android:id="@+id/loadingProgressBar"
         style="?android:attr/progressBarStyle"

@@ -1,55 +1,105 @@
 apply plugin: 'com.android.application'
+apply plugin: 'org.jetbrains.kotlin.android'
+apply plugin: 'org.jetbrains.kotlin.plugin.serialization'
+apply plugin: 'org.jetbrains.kotlin.plugin.parcelize'
+apply plugin: 'com.google.devtools.ksp'
+apply plugin: 'com.google.dagger.hilt.android'
+
+def keystorePropertiesFile = rootProject.file('keystore.properties')
+def keystoreProperties = new Properties()
+def hasKeystoreProperties = keystorePropertiesFile.exists()
+if (hasKeystoreProperties) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
 
 android {
-    compileSdk 34
+    compileSdk = 37
     defaultConfig {
         applicationId "sergirex.portadasrevistas"
-        minSdkVersion 19
-        targetSdkVersion 34
-        versionCode 19
-        versionName "2.3.0"
-        vectorDrawables.useSupportLibrary = true
-        multiDexEnabled true
+        minSdkVersion 23
+        targetSdkVersion 36
+        versionCode 20
+        versionName "3.0.0"
     }
-    buildFeatures {
-        buildConfig = true
+    signingConfigs {
+        if (hasKeystoreProperties) {
+            release {
+                storeFile rootProject.file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            }
+        }
     }
     buildTypes {
         release {
             shrinkResources true
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
                     'proguard-rules.pro'
+            if (hasKeystoreProperties) {
+                signingConfig signingConfigs.release
+            }
         }
     }
+    buildFeatures {
+        viewBinding = true
+    }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     namespace 'sergirex.portadasrevistas'
-    lint {
-        disable 'RestrictedApi'
-        baseline = file("lint-baseline.xml")
+    kotlinOptions {
+        jvmTarget = '17'
+        freeCompilerArgs += ['-Xannotation-default-target=param-property']
     }
-    buildToolsVersion '34.0.0'
+    /*lint {
+        disable 'RestrictedApi'
+    }*/
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.12.0'
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-    implementation 'androidx.core:core:1.10.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.appcompat:appcompat:1.8.0'
+    implementation 'com.google.android.material:material:1.14.0'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.2.0'
+    implementation 'androidx.core:core:1.19.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.2'
     implementation 'androidx.preference:preference:1.2.1'
-    implementation 'androidx.browser:browser:1.8.0'
-    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
-    implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'com.android.billingclient:billing:6.0.1'
-    implementation 'com.google.guava:guava:27.0.1-jre'
-    implementation 'com.google.android.play:review:2.0.1'
+    implementation 'androidx.browser:browser:1.10.0'
+    implementation 'com.jsibbold:zoomage:1.3.1'
+    implementation 'com.android.billingclient:billing-ktx:9.1.0'
+    implementation 'com.google.android.play:review:2.0.2'
+    implementation 'androidx.activity:activity:1.13.0'
+    implementation 'androidx.core:core-ktx:1.19.1'
+    implementation 'androidx.core:core-splashscreen:1.2.0'
+    // Forces a modern Fragment version: androidx.preference:1.2.1 transitively
+    // pulls fragment 1.5.4, which predates the CreationExtras-based
+    // SavedStateHandle wiring that Hilt's ViewModelFactory + lifecycle-viewmodel
+    // 2.11.0 require for activityViewModels()/@HiltViewModel to work at all.
+    implementation 'androidx.fragment:fragment-ktx:1.9.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.11.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.11.0'
+
+    // Clean Architecture: domain/data layers
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0'
+    implementation 'androidx.datastore:datastore-preferences:1.2.1'
+
+    // Dependency injection
+    implementation 'com.google.dagger:hilt-android:2.60.1'
+    ksp 'com.google.dagger:hilt-android-compiler:2.60.1'
+
+    // Image loading app-wide (replaces the manual Bitmap fetching in GetPortadas and the Thread +
+    // BitmapFactory code in the detail and reader screens — one image-loading library for the whole app).
+    // Pinned to 3.3.0, not the latest 3.6.x: newer Coil3 releases require
+    // kotlin-stdlib 2.4.10, which KSP (needed for Hilt's codegen) doesn't support
+    // building against yet.
+    implementation 'io.coil-kt.coil3:coil:3.3.0'
+    implementation 'io.coil-kt.coil3:coil-network-okhttp:3.3.0'
+
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    implementation 'com.facebook.android:audience-network-sdk:6.17.0'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
+    implementation 'com.facebook.android:audience-network-sdk:6.22.0'
     compileOnly "com.facebook.infer.annotation:infer-annotation:0.18.0"
 }

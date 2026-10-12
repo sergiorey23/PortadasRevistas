@@ -1,0 +1,584 @@
+[
+  {
+    "id": "3845",
+    "name": "Semana",
+    "category": "CORAZON",
+    "web": "semana.es",
+    "pages": 108,
+    "scale": "76"
+  },
+  {
+    "id": "e061",
+    "name": "Diez Minutos",
+    "category": "CORAZON",
+    "web": "diezminutos.es",
+    "pages": 100,
+    "scale": "75"
+  },
+  {
+    "id": "3741",
+    "name": "Lecturas",
+    "category": "CORAZON",
+    "web": "lecturas.com",
+    "pages": 100,
+    "scale": "74"
+  },
+  {
+    "id": "ebkm",
+    "name": "Hola",
+    "category": "CORAZON",
+    "web": "hola.com",
+    "pages": 108,
+    "scale": "91"
+  },
+  {
+    "id": "ebmj",
+    "name": "Hello",
+    "category": "CORAZON",
+    "web": "hellomagazine.com",
+    "pages": 108,
+    "scale": "94"
+  },
+  {
+    "id": "ebma",
+    "name": "Lux",
+    "category": "CORAZON",
+    "web": "lux.iol.pt",
+    "pages": 84,
+    "scale": "101"
+  },
+  {
+    "id": "3792",
+    "name": "Muy Interesante",
+    "category": "CULTURA",
+    "web": "muyinteresante.com",
+    "pages": 116,
+    "scale": "85"
+  },
+  {
+    "id": "3813",
+    "name": "National Geographic",
+    "category": "CULTURA",
+    "web": "nationalgeographic.com.es",
+    "pages": 132,
+    "scale": "90"
+  },
+  {
+    "id": "ebmf",
+    "name": "Selecciones Reader´s Digest",
+    "category": "CULTURA",
+    "web": "selecciones.es",
+    "pages": 132,
+    "scale": "163"
+  },
+  {
+    "id": "3880",
+    "name": "Año Cero",
+    "category": "CULTURA",
+    "pages": 116,
+    "scale": "80"
+  },
+  {
+    "id": "ebp9",
+    "name": "Revista Literaria El Gato Negro",
+    "category": "CULTURA",
+    "web": "revistaliterariaelgatonegro.com",
+    "pages": 44,
+    "scale": "107"
+  },
+  {
+    "id": "ebkk",
+    "name": "Crítica",
+    "category": "CULTURA",
+    "web": "revista-critica.es",
+    "pages": 62,
+    "scale": "101"
+  },
+  {
+    "id": "eca2",
+    "name": "Muy Preguntas y Respuestas",
+    "category": "CULTURA"
+  },
+  {
+    "id": "eca3",
+    "name": "Muy Extra",
+    "category": "CULTURA"
+  },
+  {
+    "id": "2439",
+    "name": "Sport Life",
+    "category": "DEPORTES",
+    "web": "sportlife.es",
+    "pages": 132,
+    "scale": "78"
+  },
+  {
+    "id": "2443",
+    "name": "Bike",
+    "category": "DEPORTES",
+    "pages": 116,
+    "scale": "78"
+  },
+  {
+    "id": "2442",
+    "name": "Ciclismo a fondo",
+    "category": "DEPORTES",
+    "web": "ciclismoafondo.es",
+    "pages": 116,
+    "scale": "78"
+  },
+  {
+    "id": "ebhf",
+    "name": "Runner's World",
+    "category": "DEPORTES",
+    "web": "runnersworld.com/es"
+  },
+  {
+    "id": "e571",
+    "name": "Sport Training",
+    "category": "DEPORTES",
+    "web": "sportraining.es"
+  },
+  {
+    "id": "e627",
+    "name": "Trail Run",
+    "category": "DEPORTES",
+    "web": "trailrun.es"
+  },
+  {
+    "id": "3814",
+    "name": "Saber Vivir",
+    "category": "ESTILO_DE_VIDA",
+    "web": "sabervivirtv.com",
+    "pages": 100,
+    "scale": "84"
+  },
+  {
+    "id": "2407",
+    "name": "Quercus",
+    "category": "ESTILO_DE_VIDA",
+    "web": "diariodesevilla.es",
+    "pages": 68,
+    "scale": "80"
+  },
+  {
+    "id": "3804",
+    "name": "Clara",
+    "category": "ESTILO_DE_VIDA",
+    "web": "informacion.es",
+    "pages": 132,
+    "scale": "84"
+  },
+  {
+    "id": "3808",
+    "name": "Cuerpo Mente",
+    "category": "ESTILO_DE_VIDA",
+    "web": "cuerpomente.com",
+    "pages": 100,
+    "scale": "84"
+  },
+  {
+    "id": "ebns",
+    "name": "Vanity Fair",
+    "category": "ESTILO_DE_VIDA",
+    "web": "revistavanityfair.es"
+  },
+  {
+    "id": "ecaq",
+    "name": "Vanidad",
+    "category": "ESTILO_DE_VIDA",
+    "web": "vanidad.es"
+  },
+  {
+    "id": "ed91",
+    "name": "Yoga Spirit",
+    "category": "ESTILO_DE_VIDA"
+  },
+  {
+    "id": "e555",
+    "name": "InStyle",
+    "category": "ESTILO_DE_VIDA",
+    "web": "instyle.es",
+    "pages": 132,
+    "scale": "110"
+  },
+  {
+    "id": "ebkd",
+    "name": "Salud y Bienestar",
+    "category": "ESTILO_DE_VIDA",
+    "pages": 44,
+    "scale": "102"
+  },
+  {
+    "id": "3869",
+    "name": "Ser Padres",
+    "category": "ESTILO_DE_VIDA"
+  },
+  {
+    "id": "ebmk",
+    "name": "Hola Living",
+    "category": "ESTILO_DE_VIDA"
+  },
+  {
+    "id": "ebra",
+    "name": "Hola Novias",
+    "category": "ESTILO_DE_VIDA"
+  },
+  {
+    "id": "ebr9",
+    "name": "Hola Modas",
+    "category": "ESTILO_DE_VIDA"
+  },
+  {
+    "id": "e687",
+    "name": "Mía",
+    "category": "FEMENINAS",
+    "web": "miarevista.es",
+    "pages": 64,
+    "scale": "109"
+  },
+  {
+    "id": "2488",
+    "name": "Elle",
+    "category": "FEMENINAS",
+    "web": "elle.com",
+    "pages": 220,
+    "scale": "82"
+  },
+  {
+    "id": "3871",
+    "name": "Marie Claire España",
+    "category": "FEMENINAS",
+    "web": "marie-claire.es",
+    "pages": 148,
+    "scale": "80"
+  },
+  {
+    "id": "3838",
+    "name": "Woman",
+    "category": "FEMENINAS",
+    "web": "woman.elperiodico.com",
+    "pages": 148,
+    "scale": "80"
+  },
+  {
+    "id": "eb15",
+    "name": "Cosmopolitan España",
+    "category": "FEMENINAS",
+    "web": "cosmopolitan.com",
+    "pages": 148,
+    "scale": "107"
+  },
+  {
+    "id": "e688",
+    "name": "Harpers Bazaar",
+    "category": "FEMENINAS",
+    "pages": 196,
+    "scale": "105"
+  },
+  {
+    "id": "v156",
+    "name": "Mujer Hoy",
+    "category": "FEMENINAS",
+    "web": "mujerhoy.com"
+  },
+  {
+    "id": "ebnj",
+    "name": "Vogue",
+    "category": "FEMENINAS",
+    "web": "vogue.es",
+    "pages": 180,
+    "scale": "105"
+  },
+  {
+    "id": "ebnk",
+    "name": "Hola Fashion",
+    "category": "FEMENINAS"
+  },
+  {
+    "id": "ebhh",
+    "name": "Men's Health",
+    "category": "MASCULINAS",
+    "web": "menshealth.com/es/",
+    "pages": 124,
+    "scale": "107"
+  },
+  {
+    "id": "ebhm",
+    "name": "Esquire",
+    "category": "MASCULINAS",
+    "web": "esquire.com/es",
+    "pages": 148,
+    "scale": "105"
+  },
+  {
+    "id": "e817",
+    "name": "Gentleman",
+    "category": "MASCULINAS",
+    "pages": 115,
+    "scale": "100"
+  },
+  {
+    "id": "ebnr",
+    "name": "GQ",
+    "category": "MASCULINAS",
+    "web": "revistagq.com"
+  },
+  {
+    "id": "e565",
+    "name": "Icon",
+    "category": "MASCULINAS",
+    "web": "elpais.com/icon"
+  },
+  {
+    "id": "ed63",
+    "name": "Elle Gourmet",
+    "category": "COCINA",
+    "web": "elle.com/es/gourmet/",
+    "pages": 148,
+    "scale": "107"
+  },
+  {
+    "id": "3805",
+    "name": "Cocina fácil",
+    "category": "COCINA",
+    "web": "lecturas.com/recetas",
+    "pages": 68,
+    "scale": "84"
+  },
+  {
+    "id": "e340",
+    "name": "Love Cocina",
+    "category": "COCINA",
+    "pages": 100,
+    "scale": "76"
+  },
+  {
+    "id": "e552",
+    "name": "Saber Cocinar",
+    "category": "COCINA",
+    "web": "sabercocinar.com",
+    "pages": 84,
+    "scale": "109"
+  },
+  {
+    "id": "ebr8",
+    "name": "Hola Cocina",
+    "category": "COCINA",
+    "web": "hola.com/cocina",
+    "pages": 220,
+    "scale": "112"
+  },
+  {
+    "id": "e351",
+    "name": "Cuina",
+    "category": "COCINA",
+    "web": "cuina.cat",
+    "pages": 140,
+    "scale": "86"
+  },
+  {
+    "id": "e553",
+    "name": "Lecturas Cocina",
+    "category": "COCINA",
+    "web": "lecturas.com/recetas",
+    "pages": 204,
+    "scale": "102"
+  },
+  {
+    "id": "2492",
+    "name": "Coches",
+    "category": "MOTOR",
+    "pages": 116,
+    "scale": "76"
+  },
+  {
+    "id": "2005",
+    "name": "Auto Bild",
+    "category": "MOTOR",
+    "web": "autobild.es",
+    "pages": 100,
+    "scale": "107"
+  },
+  {
+    "id": "e646",
+    "name": "Motos 2000",
+    "category": "MOTOR",
+    "pages": 84,
+    "scale": "102"
+  },
+  {
+    "id": "e064",
+    "name": "Car and Driver",
+    "category": "MOTOR",
+    "web": "caranddriver.com/es/"
+  },
+  {
+    "id": "e059",
+    "name": "Altagama Motor",
+    "category": "MOTOR",
+    "pages": 145,
+    "scale": "80"
+  },
+  {
+    "id": "2448",
+    "name": "Motociclismo",
+    "category": "MOTOR",
+    "web": "motociclismo.es"
+  },
+  {
+    "id": "2456",
+    "name": "Motor Clásico",
+    "category": "MOTOR"
+  },
+  {
+    "id": "2452",
+    "name": "Autopista",
+    "category": "MOTOR",
+    "web": "autopista.es",
+    "pages": 122,
+    "scale": "80"
+  },
+  {
+    "id": "e815",
+    "name": "Revista Car",
+    "category": "MOTOR",
+    "web": "revistacar.es",
+    "pages": 130,
+    "scale": "100"
+  },
+  {
+    "id": "2450",
+    "name": "Moto Verde",
+    "category": "MOTOR",
+    "web": "motociclismo.es/moto-verde",
+    "pages": 123,
+    "scale": "78"
+  },
+  {
+    "id": "2455",
+    "name": "Automóvil",
+    "category": "MOTOR",
+    "pages": 115,
+    "scale": "78"
+  },
+  {
+    "id": "2457",
+    "name": "Business Car",
+    "category": "MOTOR",
+    "web": "businesscar.autopista.es"
+  },
+  {
+    "id": "2453",
+    "name": "Coche Actual",
+    "category": "MOTOR",
+    "web": "autopista.es/tag/coche-actual"
+  },
+  {
+    "id": "eanj",
+    "name": "Solo Moto By MD Scooter",
+    "category": "MOTOR",
+    "web": "mundodeportivo.com/solomoto"
+  },
+  {
+    "id": "eank",
+    "name": "Solo Moto By MD Trail",
+    "category": "MOTOR",
+    "web": "mundodeportivo.com/solomoto"
+  },
+  {
+    "id": "2013",
+    "name": "Computer Hoy",
+    "category": "TECNOLOGIA",
+    "web": "computerhoy.com",
+    "pages": 75,
+    "scale": "85"
+  },
+  {
+    "id": "2496",
+    "name": "Gadget",
+    "category": "TECNOLOGIA",
+    "web": "revista-gadget.es",
+    "pages": 68,
+    "scale": "100"
+  },
+  {
+    "id": "2342",
+    "name": "Hobby Consolas",
+    "category": "TECNOLOGIA",
+    "web": "hobbyconsolas.com",
+    "pages": 100,
+    "scale": "81"
+  },
+  {
+    "id": "e498",
+    "name": "Retrogamer",
+    "category": "TECNOLOGIA"
+  },
+  {
+    "id": "3877",
+    "name": "Muy Historia",
+    "category": "HISTORIA",
+    "pages": 115,
+    "scale": "80"
+  },
+  {
+    "id": "2388",
+    "name": "Viajar",
+    "category": "HISTORIA",
+    "web": "viajar.elperiodico.com",
+    "pages": 164,
+    "scale": "75"
+  },
+  {
+    "id": "eb18",
+    "name": "La Aventura de la Historia",
+    "category": "HISTORIA",
+    "web": "laaventuradelahistoria.es",
+    "pages": 100,
+    "scale": "105"
+  },
+  {
+    "id": "eb19",
+    "name": "Descubrir el Arte",
+    "category": "HISTORIA",
+    "web": "descubrirelarte.es",
+    "pages": 100,
+    "scale": "98"
+  },
+  {
+    "id": "e133",
+    "name": "Historia y Vida",
+    "category": "HISTORIA",
+    "web": "lavanguardia.com/historiayvida",
+    "pages": 99,
+    "scale": "82"
+  },
+  {
+    "id": "3816",
+    "name": "Viajes National Geographic",
+    "category": "HISTORIA",
+    "web": "viajes.nationalgeographic.com.es",
+    "pages": 132,
+    "scale": "84"
+  },
+  {
+    "id": "ebnp",
+    "name": "CN Traveler",
+    "category": "HISTORIA"
+  },
+  {
+    "id": "e349",
+    "name": "Sapiens",
+    "category": "HISTORIA",
+    "pages": 100,
+    "scale": "76"
+  },
+  {
+    "id": "ebr7",
+    "name": "Hola Viajes",
+    "category": "HISTORIA",
+    "pages": 227,
+    "scale": "100"
+  }
+]

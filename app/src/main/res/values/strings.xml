@@ -66,7 +66,7 @@
     <string name="contact">Contacto</string>
     <string name="mas_apps">Más aplicaciones</string>
     <string name="portadas_periodicos">Portadas Periódicos</string>
-    <string name="appSource">lasportadas.es</string>
+    <string name="appSource" translatable="false">lasportadas.es</string>
     <string name="copyright">Todas las imágenes tienen derechos de autor de sus respectivos propietarios.</string>
     <string name="privacy_policy">Política de privacidad</string>
 
@@ -77,7 +77,7 @@
     <string name="issues_not_loaded">Todavía no se han cargado los números de esta revista</string>
     <string name="no_website">Esta revista no tiene página web</string>
     <string name="page">Página de la revista</string>
-    <string name="page_counter">%1$d/%2$d</string>
+    <string name="page_counter" translatable="false">%1$d/%2$d</string>
     <string name="page_load_failed">No se ha podido cargar la página</string>
 
     <!-- Storage permission (Android 9 and older) -->
