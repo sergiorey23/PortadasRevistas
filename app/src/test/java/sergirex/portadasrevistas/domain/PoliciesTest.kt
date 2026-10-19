@@ -46,11 +46,8 @@ class PoliciesTest {
     private fun assertEquals3(shown: List<Int>) = org.junit.Assert.assertEquals(listOf(3, 6), shown)
 
     @Test
-    fun `premium and the remove-ads purchase both hide ads, but only premium reads magazines`() {
+    fun `ads are shown until the remove-ads purchase`() {
         assertTrue(Entitlements().showAds)
         assertFalse(Entitlements(adsRemoved = true).showAds)
-        assertFalse(Entitlements(premium = true).showAds)
-        assertFalse(Entitlements(adsRemoved = true).canReadMagazines)
-        assertTrue(Entitlements(premium = true).canReadMagazines)
     }
 }

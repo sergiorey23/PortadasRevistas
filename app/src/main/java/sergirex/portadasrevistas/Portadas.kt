@@ -105,8 +105,7 @@ class Portadas : AppCompatActivity() {
             binding.drawerLayout.closeDrawers()
             when (menuItem.itemId) {
                 R.id.nav_help -> showDialog().show()
-                R.id.nav_subscribe -> billingManager?.showPurchaseDialog(BillingManager.Product.PREMIUM)
-                R.id.nav_remove_ads -> billingManager?.showPurchaseDialog(BillingManager.Product.REMOVE_ADS)
+                R.id.nav_remove_ads -> billingManager?.showPurchaseDialog()
                 R.id.nav_rate -> launchMarket()
                 R.id.nav_share -> {
                     val intent = Intent(Intent.ACTION_SEND).apply {
@@ -163,9 +162,7 @@ class Portadas : AppCompatActivity() {
 
     /** Ads are shown only to people who haven't bought anything; a purchase takes the banner away at once. */
     private fun onEntitlementsChanged(entitlements: Entitlements) {
-        val menu = binding.navView.menu
-        menu.findItem(R.id.nav_remove_ads).isVisible = !entitlements.adsRemoved && !entitlements.premium
-        menu.findItem(R.id.nav_subscribe).isVisible = !entitlements.premium
+        binding.navView.menu.findItem(R.id.nav_remove_ads).isVisible = !entitlements.adsRemoved
 
         if (entitlements.showAds) {
             binding.bannerContainer.visibility = View.VISIBLE

@@ -27,15 +27,14 @@ import sergirex.portadasrevistas.domain.repository.EntitlementsRepository
 import kotlin.coroutines.resume
 
 /**
- * Google Play Billing for the app's two products: the one-time "remove ads" purchase and the
- * "premium" subscription (no ads + reading the magazines).
+ * The one-time "remove ads" purchase (Google Play Billing).
  *
  * Ownership is what Google Play says it is: [syncOwnership] runs at start-up and after every
- * purchase/restore, granting the entitlement for a completed purchase and revoking it if the
- * purchase is gone (refund, lapsed subscription). A failed query never changes anything, so being
- * offline can't take an entitlement away. Pending purchases (slow payment methods) grant nothing
- * until they complete, and every completed purchase is acknowledged (Play refunds unacknowledged
- * purchases after 3 days).
+ * purchase/restore, granting the entitlement for a completed purchase of [PRODUCT_ID] and revoking
+ * it if the purchase is gone (refund). A failed query never changes anything, so being offline can't
+ * take the entitlement away. Pending purchases (slow payment methods) grant nothing until they
+ * complete, and every completed purchase is acknowledged (Play refunds unacknowledged purchases
+ * after 3 days).
  *
  * The result lands in [entitlements]; screens react to its Flow instead of being called back.
  */
@@ -46,11 +45,6 @@ class BillingManager(
     private val snackbarAnchor: () -> View
 ) {
 
-    enum class Product(val id: String, val type: String) {
-        REMOVE_ADS("remove_ads_id", BillingClient.ProductType.INAPP),
-        PREMIUM("premium_sub_id", BillingClient.ProductType.SUBS)
-    }
-
     private enum class SyncResult { OWNED, NOT_OWNED, ERROR }
 
     private val billingClient = BillingClient.newBuilder(activity)
@@ -59,42 +53,39 @@ class BillingManager(
         .enableAutoServiceReconnection()
         .build()
 
-    private val products = HashMap<Product, ProductDetails>()
+    private var product: ProductDetails? = null
 
     init {
         scope.launch {
             if (connect()) {
-                Product.entries.forEach { syncOwnership(it) }
+                loadProduct()
+                syncOwnership()
             }
         }
     }
 
-    fun showPurchaseDialog(product: Product) {
+    fun showPurchaseDialog() {
         scope.launch {
-            val details = products[product] ?: loadProduct(product)
-            val offer = details?.let(::describePrice)
-            if (details == null || offer == null) {
+            val details = product ?: run { loadProduct(); product }
+            val price = details?.oneTimePurchaseOfferDetails?.formattedPrice
+            if (details == null || price == null) {
                 Toast.makeText(activity, R.string.billing_no_products, Toast.LENGTH_LONG).show()
                 return@launch
             }
-            val message = when (product) {
-                Product.REMOVE_ADS -> activity.getString(R.string.billing_remove_ads_message, offer)
-                Product.PREMIUM -> activity.getString(R.string.billing_premium_message, offer)
-            }
             MaterialAlertDialogBuilder(activity)
                 .setTitle(details.name)
-                .setMessage(message)
+                .setMessage(activity.getString(R.string.billing_remove_ads_message, price))
                 .setIcon(R.mipmap.magazines_icon)
                 .setNegativeButton(R.string.billing_cancel, null)
-                .setNeutralButton(R.string.billing_restore) { _, _ -> restorePurchases(product) }
+                .setNeutralButton(R.string.billing_restore) { _, _ -> restorePurchases() }
                 .setPositiveButton(R.string.billing_buy) { _, _ -> launchPurchaseFlow(details) }
                 .show()
         }
     }
 
-    fun restorePurchases(product: Product) {
+    fun restorePurchases() {
         scope.launch {
-            val message = when (syncOwnership(product)) {
+            val message = when (syncOwnership()) {
                 SyncResult.OWNED -> R.string.billing_restored
                 SyncResult.NOT_OWNED -> R.string.billing_nothing_to_restore
                 SyncResult.ERROR -> R.string.billing_error
@@ -111,10 +102,10 @@ class BillingManager(
     }
 
     private fun launchPurchaseFlow(details: ProductDetails) {
-        val productParams = BillingFlowParams.ProductDetailsParams.newBuilder().setProductDetails(details)
-        details.subscriptionOfferDetails?.firstOrNull()?.let { productParams.setOfferToken(it.offerToken) }
         val params = BillingFlowParams.newBuilder()
-            .setProductDetailsParamsList(listOf(productParams.build()))
+            .setProductDetailsParamsList(
+                listOf(BillingFlowParams.ProductDetailsParams.newBuilder().setProductDetails(details).build())
+            )
             .build()
         val result = billingClient.launchBillingFlow(activity, params)
         if (result.responseCode != BillingResponseCode.OK) {
@@ -125,17 +116,16 @@ class BillingManager(
 
     private suspend fun onPurchasesUpdated(result: BillingResult, purchases: List<Purchase>?) {
         when (result.responseCode) {
-            BillingResponseCode.OK -> purchases.orEmpty().forEach { purchase ->
-                val product = Product.entries.firstOrNull { it.id in purchase.products } ?: return@forEach
+            BillingResponseCode.OK -> purchases.orEmpty().filter { PRODUCT_ID in it.products }.forEach { purchase ->
                 when (purchase.purchaseState) {
-                    Purchase.PurchaseState.PURCHASED -> grantAndAcknowledge(product, purchase)
+                    Purchase.PurchaseState.PURCHASED -> grantAndAcknowledge(purchase)
                     Purchase.PurchaseState.PENDING ->
                         Toast.makeText(activity, R.string.billing_purchase_pending, Toast.LENGTH_LONG).show()
                     else -> Unit
                 }
             }
             // The user already owns it (e.g. bought on another device): just make the app agree.
-            BillingResponseCode.ITEM_ALREADY_OWNED -> Product.entries.forEach { syncOwnership(it) }
+            BillingResponseCode.ITEM_ALREADY_OWNED -> syncOwnership()
             BillingResponseCode.USER_CANCELED -> Unit
             else -> {
                 Log.w(TAG, "Purchase failed: ${result.responseCode} ${result.debugMessage}")
@@ -144,26 +134,26 @@ class BillingManager(
         }
     }
 
-    /** Asks Google Play what the user owns of [product] and makes the stored flag match; see the class comment. */
-    private suspend fun syncOwnership(product: Product): SyncResult {
+    /** Asks Google Play what the user owns and makes the stored flag match; see the class comment. */
+    private suspend fun syncOwnership(): SyncResult {
         if (!ensureConnected()) return SyncResult.ERROR
         val result = billingClient.queryPurchasesAsync(
-            QueryPurchasesParams.newBuilder().setProductType(product.type).build()
+            QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.INAPP).build()
         )
         if (result.billingResult.responseCode != BillingResponseCode.OK) {
-            Log.w(TAG, "queryPurchases(${product.id}) failed: ${result.billingResult.responseCode}")
+            Log.w(TAG, "queryPurchases failed: ${result.billingResult.responseCode}")
             return SyncResult.ERROR
         }
         val owned = result.purchasesList.filter {
-            product.id in it.products && it.purchaseState == Purchase.PurchaseState.PURCHASED
+            PRODUCT_ID in it.products && it.purchaseState == Purchase.PurchaseState.PURCHASED
         }
-        owned.forEach { grantAndAcknowledge(product, it) }
-        if (owned.isEmpty()) setOwned(product, false)
+        owned.forEach { grantAndAcknowledge(it) }
+        if (owned.isEmpty()) entitlements.setAdsRemoved(false)
         return if (owned.isEmpty()) SyncResult.NOT_OWNED else SyncResult.OWNED
     }
 
-    private suspend fun grantAndAcknowledge(product: Product, purchase: Purchase) {
-        setOwned(product, true)
+    private suspend fun grantAndAcknowledge(purchase: Purchase) {
+        entitlements.setAdsRemoved(true)
         if (purchase.isAcknowledged) return
         val result = billingClient.acknowledgePurchase(
             AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchase.purchaseToken).build()
@@ -174,35 +164,25 @@ class BillingManager(
         }
     }
 
-    private suspend fun setOwned(product: Product, owned: Boolean) = when (product) {
-        Product.REMOVE_ADS -> entitlements.setAdsRemoved(owned)
-        Product.PREMIUM -> entitlements.setPremium(owned)
-    }
-
-    private suspend fun loadProduct(product: Product): ProductDetails? {
-        if (!ensureConnected()) return null
+    private suspend fun loadProduct() {
+        if (!ensureConnected()) return
         val params = QueryProductDetailsParams.newBuilder()
             .setProductList(
                 listOf(
                     QueryProductDetailsParams.Product.newBuilder()
-                        .setProductId(product.id)
-                        .setProductType(product.type)
+                        .setProductId(PRODUCT_ID)
+                        .setProductType(BillingClient.ProductType.INAPP)
                         .build()
                 )
             )
             .build()
         val result = billingClient.queryProductDetails(params)
-        if (result.billingResult.responseCode != BillingResponseCode.OK) {
-            Log.w(TAG, "queryProductDetails(${product.id}) failed: ${result.billingResult.responseCode}")
-            return null
+        if (result.billingResult.responseCode == BillingResponseCode.OK) {
+            product = result.productDetailsList?.firstOrNull()
+        } else {
+            Log.w(TAG, "queryProductDetails failed: ${result.billingResult.responseCode}")
         }
-        return result.productDetailsList?.firstOrNull()?.also { products[product] = it }
     }
-
-    /** The price to show: one-time price, or the first pricing phase of the subscription's first offer. */
-    private fun describePrice(details: ProductDetails): String? =
-        details.oneTimePurchaseOfferDetails?.formattedPrice
-            ?: details.subscriptionOfferDetails?.firstOrNull()?.pricingPhases?.pricingPhaseList?.firstOrNull()?.formattedPrice
 
     private suspend fun ensureConnected(): Boolean = billingClient.isReady || connect()
 
@@ -219,5 +199,6 @@ class BillingManager(
 
     private companion object {
         const val TAG = "BillingManager"
+        const val PRODUCT_ID = "remove_ads_id"
     }
 }

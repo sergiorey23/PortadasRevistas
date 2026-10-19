@@ -4,12 +4,6 @@
     <PreferenceCategory
         android:title="@string/debug_category"
         app:iconSpaceReserved="false">
-        <SwitchPreferenceCompat
-            android:defaultValue="true"
-            android:key="debug_premium"
-            android:summary="@string/debug_premium_summary"
-            android:title="@string/debug_premium_title"
-            app:iconSpaceReserved="false" />
         <Preference
             android:key="debug_simulate_new_issue"
             android:summary="@string/debug_simulate_new_issue_summary"

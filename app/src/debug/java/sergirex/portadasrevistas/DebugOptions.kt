@@ -2,7 +2,6 @@ package sergirex.portadasrevistas
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.provider.Settings
 import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
@@ -22,17 +21,13 @@ import sergirex.portadasrevistas.domain.repository.SettingsRepository
 import sergirex.portadasrevistas.notifications.NotificationScheduler
 
 /**
- * Developer switches, present only in debug builds (this file lives in the `debug` source set; the
- * `release` one is an inert twin), so production code carries no "if (debug)" branches and the
- * release APK can't be flipped into premium. The switches are shown in Settings.
+ * Developer tools, present only in debug builds (this file lives in the `debug` source set; the
+ * `release` one is an inert twin), so production code carries no "if (debug)" branches. The
+ * tools are shown in Settings.
  */
 object DebugOptions {
-    const val KEY_PREMIUM = "debug_premium"
     private const val KEY_SIMULATE_NEW_ISSUE = "debug_simulate_new_issue"
     private const val LONG_AGO = "19000101"
-
-    /** Whether the premium subscription is simulated. On by default, so a fresh debug install can read magazines. */
-    fun premiumOverride(prefs: SharedPreferences): Boolean = prefs.getBoolean(KEY_PREMIUM, true)
 
     @EntryPoint
     @InstallIn(SingletonComponent::class)

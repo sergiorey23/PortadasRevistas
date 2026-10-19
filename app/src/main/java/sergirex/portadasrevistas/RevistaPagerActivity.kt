@@ -21,7 +21,7 @@ import sergirex.portadasrevistas.databinding.RevistaPagerActivityBinding
 import sergirex.portadasrevistas.presentation.reader.ReaderViewModel
 import kotlin.math.abs
 
-/** The magazine reader (a subscription perk): swipe through the pages of one issue, or jump with the slider. */
+/** The magazine reader: swipe through the pages of one issue, or jump with the slider. */
 @AndroidEntryPoint
 class RevistaPagerActivity : AppCompatActivity() {
 

@@ -13,5 +13,4 @@ interface EntitlementsRepository {
     suspend fun current(): Entitlements
 
     suspend fun setAdsRemoved(removed: Boolean)
-    suspend fun setPremium(premium: Boolean)
 }

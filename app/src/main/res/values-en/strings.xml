@@ -17,7 +17,6 @@
 
     <!-- Navigation drawer -->
     <string name="settings">Settings</string>
-    <string name="premium_sub">Premium subscription</string>
     <string name="removeAds">Remove ads</string>
     <string name="rate">Rate</string>
     <string name="help">Help</string>
@@ -30,7 +29,7 @@
     <!-- Help dialog -->
     <string name="close">Close</string>
     <string name="help_description">Swipe between the tabs to see the covers of each category. Press and hold a cover to share it, save it or visit its website.</string>
-    <string name="help_description2">Tap a cover to see it full size and pick another issue, and mark your favorite magazines to find them quickly in the Favorites tab. With the premium subscription you can also read the magazines.</string>
+    <string name="help_description2">Tap a cover to see it full size and pick another issue, and mark your favorite magazines to find them quickly in the Favorites tab.</string>
     <string name="rate_app">If you like the app, please rate it on Google Play. It helps a lot!</string>
 
     <!-- Menu actions -->
@@ -86,7 +85,6 @@
 
     <!-- Purchases -->
     <string name="billing_remove_ads_message">Get rid of the ads for %1$s, for life</string>
-    <string name="billing_premium_message">Subscribe for %1$s a week:\n\n- No ads\n- Read the full magazines</string>
     <string name="billing_cancel">Cancel</string>
     <string name="billing_restore">Restore purchase</string>
     <string name="billing_buy">Buy</string>

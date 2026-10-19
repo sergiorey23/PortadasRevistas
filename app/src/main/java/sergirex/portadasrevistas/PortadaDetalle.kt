@@ -33,29 +33,23 @@ import sergirex.portadasrevistas.databinding.ActivityPortadaDetalleBinding
 import sergirex.portadasrevistas.domain.model.CoverUrls
 import sergirex.portadasrevistas.domain.model.Entitlements
 import sergirex.portadasrevistas.domain.model.IssueDate
-import sergirex.portadasrevistas.domain.repository.EntitlementsRepository
 import sergirex.portadasrevistas.presentation.EntitlementsViewModel
 import sergirex.portadasrevistas.presentation.detail.PortadaDetalleViewModel
 import java.io.File
-import javax.inject.Inject
 
 /**
  * The magazine detail screen: a pager of the covers of the tab the user came from, with the
  * actions of the current one (favorite, website, share, save, pick an issue) and the entry to the
- * reader, which is the subscription's perk.
+ * reader of the issue on screen.
  */
 @AndroidEntryPoint
 class PortadaDetalle : AppCompatActivity(), PortadaDetalleHost {
-
-    @Inject
-    lateinit var entitlementsRepository: EntitlementsRepository
 
     private lateinit var binding: ActivityPortadaDetalleBinding
     private val viewModel: PortadaDetalleViewModel by viewModels()
     private val entitlementsViewModel: EntitlementsViewModel by viewModels()
 
     private var pagerAdapter: ViewPagerAdapter? = null
-    private var billingManager: BillingManager? = null
     private var adManager: AdManager? = null
 
     // Must be registered before STARTED (as a field, not inside a click handler) per the Activity
@@ -85,7 +79,6 @@ class PortadaDetalle : AppCompatActivity(), PortadaDetalleHost {
             return
         }
 
-        billingManager = BillingManager(this, lifecycleScope, entitlementsRepository) { binding.root }
         adManager = AdManager(this)
 
         keepBannerAboveNavigationBar()
@@ -190,11 +183,7 @@ class PortadaDetalle : AppCompatActivity(), PortadaDetalleHost {
     override fun onCoverClicked(magazineId: String) {
         val portada = pagerAdapter?.portadas?.firstOrNull { it.id == magazineId } ?: return
         val date = viewModel.currentIssue(magazineId).selected ?: return
-        if (entitlementsViewModel.entitlements.value.canReadMagazines) {
-            startActivity(RevistaPagerActivity.createIntent(this, portada, date))
-        } else {
-            billingManager?.showPurchaseDialog(BillingManager.Product.PREMIUM)
-        }
+        startActivity(RevistaPagerActivity.createIntent(this, portada, date))
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -268,7 +257,6 @@ class PortadaDetalle : AppCompatActivity(), PortadaDetalleHost {
     }
 
     override fun onDestroy() {
-        billingManager?.destroy()
         adManager?.destroy()
         super.onDestroy()
     }

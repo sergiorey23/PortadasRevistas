@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".PortadaDetalleFragment">
 
-    <!-- The cover: zoomable, and tapping it opens the reader (or offers the subscription). -->
+    <!-- The cover: zoomable, and tapping it opens the reader. -->
     <com.jsibbold.zoomage.ZoomageView
         android:id="@+id/cover"
         android:layout_width="0dp"

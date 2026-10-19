@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.withContext
-import sergirex.portadasrevistas.DebugOptions
 import sergirex.portadasrevistas.domain.model.Entitlements
 import sergirex.portadasrevistas.domain.repository.EntitlementsRepository
 import javax.inject.Inject
@@ -23,10 +22,6 @@ import javax.inject.Singleton
  * versions used (the Play product ids), so people who already bought keep their entitlement
  * without a re-sync. Google Play stays the real source of truth: BillingManager rewrites these
  * flags whenever it hears from Play.
- *
- * Debug builds can switch the premium subscription on from Settings ([DebugOptions]), so the
- * reader and the ad-free experience can be developed without a Play account or a purchase. The
- * release build has no such switch: its [DebugOptions] never overrides anything.
  */
 @Singleton
 class EntitlementsRepositoryImpl @Inject constructor(
@@ -46,19 +41,13 @@ class EntitlementsRepositoryImpl @Inject constructor(
 
     override suspend fun setAdsRemoved(removed: Boolean) = write(KEY_ADS_REMOVED, removed)
 
-    override suspend fun setPremium(premium: Boolean) = write(KEY_PREMIUM, premium)
-
     private suspend fun write(key: String, value: Boolean) = withContext(Dispatchers.IO) {
         prefs.edit { putBoolean(key, value) }
     }
 
-    private fun read() = Entitlements(
-        adsRemoved = prefs.getBoolean(KEY_ADS_REMOVED, false),
-        premium = DebugOptions.premiumOverride(prefs) || prefs.getBoolean(KEY_PREMIUM, false)
-    )
+    private fun read() = Entitlements(adsRemoved = prefs.getBoolean(KEY_ADS_REMOVED, false))
 
     private companion object {
         const val KEY_ADS_REMOVED = "remove_ads_id"
-        const val KEY_PREMIUM = "premium_sub_id"
     }
 }

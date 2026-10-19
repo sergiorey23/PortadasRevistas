@@ -24,7 +24,7 @@ import sergirex.portadasrevistas.presentation.detail.PortadaDetalleViewModel
 
 /** What a magazine's page needs from the Activity that hosts the pager. */
 interface PortadaDetalleHost {
-    /** The user tapped the cover of magazine [magazineId]: open the reader, or offer the subscription. */
+    /** The user tapped the cover of magazine [magazineId]: open the reader. */
     fun onCoverClicked(magazineId: String)
 }
 
