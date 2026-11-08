@@ -2,6 +2,7 @@ package sergirex.portadasrevistas
 
 import android.app.Activity
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import com.android.billingclient.api.AcknowledgePurchaseParams
@@ -19,29 +20,30 @@ import com.android.billingclient.api.acknowledgePurchase
 import com.android.billingclient.api.queryProductDetails
 import com.android.billingclient.api.queryPurchasesAsync
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import sergirex.portadasrevistas.databinding.DialogRemoveAdsBinding
+import sergirex.portadasrevistas.domain.repository.AdsEntitlementRepository
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
-import sergirex.portadasrevistas.domain.repository.EntitlementsRepository
 import kotlin.coroutines.resume
 
 /**
  * The one-time "remove ads" purchase (Google Play Billing).
  *
  * Ownership is what Google Play says it is: [syncOwnership] runs at start-up and after every
- * purchase/restore, granting the entitlement for a completed purchase of [PRODUCT_ID] and revoking
- * it if the purchase is gone (refund). A failed query never changes anything, so being offline can't
- * take the entitlement away. Pending purchases (slow payment methods) grant nothing until they
- * complete, and every completed purchase is acknowledged (Play refunds unacknowledged purchases
- * after 3 days).
+ * purchase/restore, granting the entitlement for a completed purchase of [PRODUCT_ID] and
+ * revoking it if the purchase is gone (refund). A failed query never changes anything, so being
+ * offline can't take the entitlement away. Pending purchases (slow payment methods) grant
+ * nothing until they complete, and every completed purchase is acknowledged (Play refunds
+ * unacknowledged purchases after 3 days).
  *
- * The result lands in [entitlements]; screens react to its Flow instead of being called back.
+ * The flag is kept in [entitlement]; screens observe it, so a purchase hides the ads everywhere on its own.
  */
 class BillingManager(
     private val activity: Activity,
     private val scope: CoroutineScope,
-    private val entitlements: EntitlementsRepository,
+    private val entitlement: AdsEntitlementRepository,
     private val snackbarAnchor: () -> View
 ) {
 
@@ -72,14 +74,18 @@ class BillingManager(
                 Toast.makeText(activity, R.string.billing_no_products, Toast.LENGTH_LONG).show()
                 return@launch
             }
-            MaterialAlertDialogBuilder(activity)
-                .setTitle(details.name)
-                .setMessage(activity.getString(R.string.billing_remove_ads_message, price))
-                .setIcon(R.mipmap.magazines_icon)
-                .setNegativeButton(R.string.billing_cancel, null)
-                .setNeutralButton(R.string.billing_restore) { _, _ -> restorePurchases() }
-                .setPositiveButton(R.string.billing_buy) { _, _ -> launchPurchaseFlow(details) }
-                .show()
+            val content = DialogRemoveAdsBinding.inflate(LayoutInflater.from(activity)).apply {
+                this.price.text = price
+                benefitNoAds.text.setText(R.string.billing_benefit_no_ads)
+                benefitOnce.text.setText(R.string.billing_benefit_once)
+                benefitDevices.text.setText(R.string.billing_benefit_devices)
+                benefitSupport.text.setText(R.string.billing_benefit_support)
+            }
+            val dialog = MaterialAlertDialogBuilder(activity).setView(content.root).create()
+            content.buy.setOnClickListener { dialog.dismiss(); launchPurchaseFlow(details) }
+            content.notNow.setOnClickListener { dialog.dismiss() }
+            content.restore.setOnClickListener { dialog.dismiss(); restorePurchases() }
+            dialog.show()
         }
     }
 
@@ -134,7 +140,7 @@ class BillingManager(
         }
     }
 
-    /** Asks Google Play what the user owns and makes the stored flag match; see the class comment. */
+    /** Asks Google Play what the user owns and makes the local flag match; see the class comment. */
     private suspend fun syncOwnership(): SyncResult {
         if (!ensureConnected()) return SyncResult.ERROR
         val result = billingClient.queryPurchasesAsync(
@@ -148,12 +154,12 @@ class BillingManager(
             PRODUCT_ID in it.products && it.purchaseState == Purchase.PurchaseState.PURCHASED
         }
         owned.forEach { grantAndAcknowledge(it) }
-        if (owned.isEmpty()) entitlements.setAdsRemoved(false)
+        if (owned.isEmpty()) setAdsRemoved(false)
         return if (owned.isEmpty()) SyncResult.NOT_OWNED else SyncResult.OWNED
     }
 
     private suspend fun grantAndAcknowledge(purchase: Purchase) {
-        entitlements.setAdsRemoved(true)
+        setAdsRemoved(true)
         if (purchase.isAcknowledged) return
         val result = billingClient.acknowledgePurchase(
             AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchase.purchaseToken).build()
@@ -163,6 +169,8 @@ class BillingManager(
             Log.w(TAG, "acknowledge failed: ${result.responseCode} ${result.debugMessage}")
         }
     }
+
+    private suspend fun setAdsRemoved(removed: Boolean) = entitlement.setAdsRemoved(removed)
 
     private suspend fun loadProduct() {
         if (!ensureConnected()) return
@@ -197,8 +205,8 @@ class BillingManager(
         })
     }
 
-    private companion object {
-        const val TAG = "BillingManager"
-        const val PRODUCT_ID = "remove_ads_id"
+    companion object {
+        private const val TAG = "BillingManager"
+        private const val PRODUCT_ID = "remove_ads_id"
     }
 }

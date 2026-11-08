@@ -13,12 +13,15 @@ data class Portada(
     val web: String,
     val pages: Int,
     val scale: String,
-    val category: RevistaCategory? = null
+    val category: RevistaCategory? = null,
+    /** The image the grid showed for it, displayed while the detail screen loads the full-size cover. */
+    val previewUrl: String? = null
 ) : Parcelable {
     fun toRef() = RevistaRef(id, name, web, pages, scale, category)
 
     companion object {
-        fun from(ref: RevistaRef) = Portada(ref.id, ref.name, ref.web, ref.pages, ref.scale, ref.category)
+        fun from(ref: RevistaRef, previewUrl: String? = null) =
+            Portada(ref.id, ref.name, ref.web, ref.pages, ref.scale, ref.category, previewUrl)
     }
 }
 

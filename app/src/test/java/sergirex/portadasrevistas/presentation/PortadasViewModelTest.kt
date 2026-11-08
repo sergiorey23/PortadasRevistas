@@ -17,7 +17,11 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import sergirex.portadasrevistas.domain.model.CatalogRefreshResult
+import sergirex.portadasrevistas.domain.model.CatalogStatus
 import sergirex.portadasrevistas.domain.model.HomeTab
+import sergirex.portadasrevistas.domain.model.ReminderConfig
+import sergirex.portadasrevistas.domain.model.ReminderFrequency
 import sergirex.portadasrevistas.domain.model.Revista
 import sergirex.portadasrevistas.domain.model.RevistaCategory
 import sergirex.portadasrevistas.domain.model.RevistaCover
@@ -44,6 +48,11 @@ class PortadasViewModelTest {
 
     private val catalog = object : RevistasRepository {
         override suspend fun getById(id: String): Revista? = null
+        override suspend fun getAll(): List<Revista> = emptyList()
+        override val catalogVersion = MutableStateFlow(0)
+        override suspend fun refresh(force: Boolean) = false
+        override suspend fun refreshNow() = CatalogRefreshResult.UP_TO_DATE
+        override suspend fun status() = CatalogStatus(version = 1, entries = 2, lastCheckedAt = 0)
         override suspend fun getByCategory(category: RevistaCategory) = Result.success(
             listOf(
                 Revista(semana.id, semana.name, semana.web, semana.pages, semana.scale, category),
@@ -54,6 +63,7 @@ class PortadasViewModelTest {
     private val favorites = object : FavoriteRevistasRepository {
         override val favorites: Flow<List<RevistaRef>> = favoritesFlow
         override suspend fun toggle(revista: RevistaRef) = Unit
+        override suspend fun clear() = Unit
     }
     private val covers = object : RevistaCoverRepository {
         override fun getCovers(revistas: List<RevistaRef>, forceRefresh: Boolean): Flow<RevistaCover> {
@@ -65,6 +75,16 @@ class PortadasViewModelTest {
         override val initialTab = flowOf(HomeTab.default)
         override val dailyNotificationEnabled = flowOf(true)
         override val notificationPermissionRequested = flowOf(false)
+        override val reminderConfig = flowOf(ReminderConfig())
+        override val gridColumns = flowOf(0)
+        override val pureBlack = flowOf(false)
+        override suspend fun setReminderMinutes(minutes: Int) = Unit
+        override suspend fun setReminderFrequency(frequency: ReminderFrequency) = Unit
+        override suspend fun setReminderDays(days: Set<Int>) = Unit
+        override suspend fun setReminderWeekDay(day: Int) = Unit
+        override suspend fun setReminderMonthDay(day: Int) = Unit
+        override suspend fun setGridColumns(columns: Int) = Unit
+        override suspend fun setPureBlack(enabled: Boolean) = Unit
         override suspend fun setInitialTab(tab: HomeTab) = Unit
         override suspend fun setDailyNotificationEnabled(enabled: Boolean) = Unit
         override suspend fun setNotificationPermissionRequested() = Unit
@@ -81,7 +101,8 @@ class PortadasViewModelTest {
         GetFavoriteRevistasUseCase(favorites),
         GetRevistaCoversUseCase(coverRepository),
         settings,
-        ObserveFavoritesUseCase(favorites)
+        ObserveFavoritesUseCase(favorites),
+        catalog
     )
 
     @Test
@@ -94,6 +115,24 @@ class PortadasViewModelTest {
 
         assertEquals(listOf("3845", "3741"), vm.uiState(corazon).value.covers.map { it.revista.id })
         assertEquals(1, coverRequests)
+    }
+
+    @Test
+    fun `a tab loaded long ago loads again when shown, so new issues appear`() = runTest {
+        var now = 0L
+        val vm = viewModel().also { it.clock = { now } }
+        vm.loadIfNeeded(corazon)
+        advanceUntilIdle()
+
+        now += 29 * 60 * 1000L
+        vm.loadIfNeeded(corazon)
+        advanceUntilIdle()
+        assertEquals(1, coverRequests)
+
+        now += 2 * 60 * 1000L
+        vm.loadIfNeeded(corazon)
+        advanceUntilIdle()
+        assertEquals(2, coverRequests)
     }
 
     @Test

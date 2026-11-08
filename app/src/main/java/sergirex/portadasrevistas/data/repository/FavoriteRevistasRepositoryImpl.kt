@@ -7,7 +7,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import sergirex.portadasrevistas.data.local.FavoritesCodec
 import sergirex.portadasrevistas.data.local.editSafely
 import sergirex.portadasrevistas.data.local.safeData
@@ -54,12 +54,19 @@ class FavoriteRevistasRepositoryImpl @Inject constructor(
     private val catalog: RevistasRepository
 ) : FavoriteRevistasRepository {
 
-    override val favorites: Flow<List<RevistaRef>> = context.favoritesDataStore.safeData
-        .map { prefs ->
-            // The catalog is the source of truth for names, web addresses, page counts and categories, so
-            // renamed magazines and favorites saved with older data show the current values.
-            FavoritesCodec.decode(prefs[FAVORITES_KEY]).map { ref ->
-                catalog.getById(ref.id)?.let { ref.copy(name = it.name, web = it.web, pages = it.pages, scale = it.scale, category = it.category) } ?: ref
+    override val favorites: Flow<List<RevistaRef>> =
+        combine(context.favoritesDataStore.safeData, catalog.catalogVersion) { prefs, _ ->
+            val stored = FavoritesCodec.decode(prefs[FAVORITES_KEY])
+            val byId = catalog.getAll().associateBy { it.id }
+            // An empty catalog means it couldn't be read: show favorites as saved rather than hide them all.
+            if (byId.isEmpty()) {
+                stored
+            } else {
+                // The catalog is the source of truth for names, web addresses, page counts and categories, and
+                // magazines that left it are hidden. They stay saved, so they return if the magazine is re-added.
+                stored.mapNotNull { ref ->
+                    byId[ref.id]?.let { ref.copy(name = it.name, web = it.web, pages = it.pages, scale = it.scale, category = it.category) }
+                }
             }
         }
 
@@ -69,5 +76,9 @@ class FavoriteRevistasRepositoryImpl @Inject constructor(
             val updated = if (current.any { it.id == revista.id }) current.filterNot { it.id == revista.id } else current + revista
             prefs[FAVORITES_KEY] = FavoritesCodec.encode(updated)
         }
+    }
+
+    override suspend fun clear() {
+        context.favoritesDataStore.editSafely { prefs -> prefs[FAVORITES_KEY] = FavoritesCodec.encode(emptyList()) }
     }
 }

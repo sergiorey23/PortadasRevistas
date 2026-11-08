@@ -21,6 +21,8 @@ import sergirex.portadasrevistas.domain.model.HomeTab
 import sergirex.portadasrevistas.domain.model.IssueDate
 import sergirex.portadasrevistas.domain.model.RevistaCover
 import sergirex.portadasrevistas.presentation.portadas.PortadasViewModel
+import sergirex.portadasrevistas.presentation.settings.SettingsViewModel
+import sergirex.portadasrevistas.ui.ActivityTransitions
 import java.io.File
 
 /**
@@ -32,6 +34,7 @@ import java.io.File
 class PortadasFragment : Fragment() {
 
     private val viewModel: PortadasViewModel by activityViewModels()
+    private val settingsViewModel: SettingsViewModel by activityViewModels()
     private val tab: HomeTab by lazy { HomeTab.fromKey(requireArguments().getString(ARG_TAB)) }
     private var _binding: PortadaLayoutBinding? = null
     private val binding get() = _binding!!
@@ -52,14 +55,24 @@ class PortadasFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val spanCount = if (resources.getBoolean(R.bool.isTablet)) 3 else 2
-        adapter = PortadasAdapter(onCoverClick = ::openDetail, onCoverLongClick = ::showCoverMenu)
-        binding.recyclerView.layoutManager = GridLayoutManager(context, spanCount)
+        val grid = GridLayoutManager(context, defaultSpanCount())
+        adapter = PortadasAdapter(
+            columnWidth = { (binding.recyclerView.width.takeIf { it > 0 } ?: resources.displayMetrics.widthPixels) / grid.spanCount },
+            onCoverClick = ::openDetail,
+            onCoverLongClick = ::showCoverMenu
+        )
+        binding.recyclerView.layoutManager = grid
         binding.recyclerView.adapter = adapter
         binding.refreshLayout.setOnRefreshListener { viewModel.refresh(tab) }
-        // The grid is wrapped (with the empty-state text) in a FrameLayout, so tell the
-        // pull-to-refresh gesture to look at the RecyclerView's scroll position instead.
-        binding.refreshLayout.setOnChildScrollUpCallback { _, _ -> binding.recyclerView.canScrollVertically(-1) }
+
+        // The user can pick 1 to 3 columns in Settings; 0 keeps the screen-size default.
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                settingsViewModel.gridColumns.collect { columns ->
+                    grid.spanCount = if (columns in 1..3) columns else defaultSpanCount()
+                }
+            }
+        }
 
         // Render whenever the page is on screen or being swiped to...
         viewLifecycleOwner.lifecycleScope.launch {
@@ -79,10 +92,13 @@ class PortadasFragment : Fragment() {
         }
     }
 
-    private fun openDetail(clicked: RevistaCover) {
-        // The pager of the detail screen swipes between the covers this tab has shown.
-        val portadas = viewModel.uiState(tab).value.covers.map { Portada.from(it.revista) }
-        startActivity(PortadaDetalle.createIntent(requireContext(), portadas, clicked.revista.id))
+    private fun defaultSpanCount() = if (resources.getBoolean(R.bool.isTablet)) 3 else 2
+
+    /** The cover grows from its grid cell into the detail screen, whose pager swipes between this tab's covers. */
+    private fun openDetail(clicked: RevistaCover, cell: View) {
+        val portadas = viewModel.uiState(tab).value.covers.map { Portada.from(it.revista, it.imageUrl) }
+        val intent = PortadaDetalle.createIntent(requireContext(), portadas, clicked.revista.id)
+        ActivityTransitions.launchFrom(requireActivity(), intent, cell)
     }
 
     private fun showCoverMenu(anchor: View, cover: RevistaCover) {

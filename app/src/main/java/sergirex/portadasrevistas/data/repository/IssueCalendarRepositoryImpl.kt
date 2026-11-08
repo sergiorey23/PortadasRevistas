@@ -14,25 +14,29 @@ import javax.inject.Singleton
 
 /**
  * Reads a magazine's issue calendar from the kiosk service: a single line of `yyyyMMdd` dates
- * separated by `|`, newest first. Successful answers are kept for the process lifetime (a
- * magazine publishes at most weekly, so a stale list is at worst a few hours behind).
+ * separated by `|`, newest first. Successful answers are kept for [MAX_AGE_MS]: the app can stay
+ * alive for days, and a newly published issue must show up without restarting it.
  */
 @Singleton
 class IssueCalendarRepositoryImpl @Inject constructor(
     private val client: OkHttpClient
 ) : IssueCalendarRepository {
 
-    private val cache = ConcurrentHashMap<String, List<String>>()
+    private data class Entry(val dates: List<String>, val readAt: Long)
+
+    private val cache = ConcurrentHashMap<String, Entry>()
 
     override suspend fun getIssueDates(magazineId: String, forceRefresh: Boolean): Result<List<String>> {
-        if (!forceRefresh) cache[magazineId]?.let { return Result.success(it) }
+        if (!forceRefresh) {
+            cache[magazineId]?.takeIf { System.currentTimeMillis() - it.readAt < MAX_AGE_MS }?.let { return Result.success(it.dates) }
+        }
         return withContext(Dispatchers.IO) {
             try {
                 client.newCall(Request.Builder().url(CoverUrls.history(magazineId)).build()).await().use { response ->
                     if (!response.isSuccessful) throw IOException("HTTP ${response.code}")
                     val dates = parse(response.body?.string().orEmpty())
                     if (dates.isEmpty()) throw IOException("No issues listed")
-                    cache[magazineId] = dates
+                    cache[magazineId] = Entry(dates, System.currentTimeMillis())
                     Result.success(dates)
                 }
             } catch (error: IOException) {
@@ -42,6 +46,9 @@ class IssueCalendarRepositoryImpl @Inject constructor(
     }
 
     internal companion object {
+        /** The app stays alive for days: after this, ask again so a newly published issue shows up. */
+        const val MAX_AGE_MS = 30 * 60 * 1000L
+
         /** The dates in [body]'s first line; anything that isn't a `yyyyMMdd` date is dropped. */
         fun parse(body: String): List<String> =
             body.lineSequence().firstOrNull().orEmpty().split("|").filter { it.length == 8 && it.all(Char::isDigit) }

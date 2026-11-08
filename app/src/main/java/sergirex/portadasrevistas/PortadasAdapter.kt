@@ -7,7 +7,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
+import coil3.size.Dimension
+import coil3.size.Size
 import sergirex.portadasrevistas.databinding.PortadaItemBinding
+import sergirex.portadasrevistas.domain.model.CoverUrls
 import sergirex.portadasrevistas.domain.model.IssueDate
 import sergirex.portadasrevistas.domain.model.RevistaCover
 
@@ -17,7 +20,8 @@ import sergirex.portadasrevistas.domain.model.RevistaCover
  * background Bitmap each. Image loading, memory and disk caching are Coil's job.
  */
 class PortadasAdapter(
-    private val onCoverClick: (RevistaCover) -> Unit,
+    private val columnWidth: () -> Int,
+    private val onCoverClick: (RevistaCover, View) -> Unit,
     private val onCoverLongClick: (View, RevistaCover) -> Unit
 ) : ListAdapter<RevistaCover, PortadasAdapter.ViewHolder>(DIFF_CALLBACK) {
 
@@ -35,15 +39,19 @@ class PortadasAdapter(
         private fun showRibbon(cover: RevistaCover) {
             val issueDate = cover.issueDate
             val old = cover.isOld && issueDate != null
-            binding.oldRibbon.visibility = if (old) View.VISIBLE else View.GONE
-            if (old) binding.oldRibbon.text = IssueDate.toRibbonLabel(issueDate.orEmpty())
+            binding.dateRibbon.visibility = if (old) View.VISIBLE else View.GONE
+            if (old) binding.dateRibbon.text = IssueDate.toRibbonLabel(issueDate.orEmpty())
         }
 
         fun bind(cover: RevistaCover) {
             binding.portadaImageView.contentDescription = cover.revista.name
-            binding.portadaImageView.load(cover.imageUrl)
+            // An explicit size, not Coil measuring the wrap_content ImageView (that left recreated pages blank).
+            // Decoding at the column width instead of the full thumbnail saves memory with 3 columns or on
+            // tablets; capped at the thumbnail's own width so a single column isn't upscaled.
+            val width = columnWidth().coerceIn(1, CoverUrls.THUMBNAIL_WIDTH)
+            binding.portadaImageView.load(cover.imageUrl) { size(Size(Dimension(width), Dimension.Undefined)) }
             showRibbon(cover)
-            binding.root.setOnClickListener { onCoverClick(cover) }
+            binding.root.setOnClickListener { onCoverClick(cover, binding.root) }
             binding.root.setOnLongClickListener {
                 onCoverLongClick(binding.root, cover)
                 true

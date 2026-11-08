@@ -1,38 +1,39 @@
 package sergirex.portadasrevistas.data
 
-import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import sergirex.portadasrevistas.data.local.RevistaDto
-import sergirex.portadasrevistas.data.local.toDomain
+import sergirex.portadasrevistas.data.catalog.CatalogParser
 import sergirex.portadasrevistas.domain.model.RevistaCategory
 import java.io.File
 
-/** Guards the bundled catalog: a typo here would otherwise only show up as a missing title or a crash at runtime. */
+/** Guards the bundled catalog and its published copy: a typo would otherwise only show up at runtime. */
 class CatalogAssetTest {
 
-    private val catalog: List<RevistaDto> =
-        Json.decodeFromString(File("src/main/assets/revistas.json").readText())
+    private val asset = File("src/main/assets/revistas.json")
+    private val published = File("../docs/catalog/revistas.json")
+
+    private val catalog = CatalogParser.parse(asset.readText())
 
     @Test
-    fun `every magazine has a name and valid reader settings`() {
-        catalog.forEach {
-            assertTrue("${it.id} has no name", it.name.isNotBlank())
-            assertTrue("${it.id} has a non-positive page count", it.pages > 0)
-            assertTrue("${it.id} has a non-numeric scale '${it.scale}'", it.scale.toIntOrNull() != null)
-        }
-    }
-
-    @Test
-    fun `ids are unique and categories are valid`() {
-        assertEquals(catalog.size, catalog.map { it.id }.toSet().size)
-        catalog.forEach { it.toDomain() } // throws on an unknown category
+    fun `the bundled catalog is valid and every entry survived validation`() {
+        assertNotNull("the bundled catalog doesn't validate", catalog)
+        assertEquals("some entries were skipped as invalid", 0, catalog!!.skipped)
     }
 
     @Test
     fun `every category has at least one magazine`() {
-        val used = catalog.map { it.category }.toSet()
-        RevistaCategory.entries.forEach { assertTrue("$it is empty", it.name in used) }
+        val used = catalog!!.revistas.map { it.category }.toSet()
+        RevistaCategory.entries.forEach { assertTrue("$it is empty", it in used) }
+    }
+
+    @Test
+    fun `the published copy is identical to the bundled one`() {
+        assertEquals(
+            "docs/catalog/revistas.json must be a copy of app/src/main/assets/revistas.json",
+            asset.readText(),
+            published.readText()
+        )
     }
 }

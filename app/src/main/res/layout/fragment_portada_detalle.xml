@@ -24,21 +24,22 @@
         app:zoomage_restrictBounds="false" />
 
     <!-- Shown, with the issue date, when the selected issue is out of date for its category. -->
-    <sergirex.portadasrevistas.CornerRibbonView
-        android:id="@+id/oldRibbon"
+    <sergirex.portadasrevistas.ui.CornerRibbonView
+        android:id="@+id/dateRibbon"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:ribbonColor="@color/ribbon_old"
-        app:ribbonTextColor="@color/on_ribbon_old"
+        app:ribbonColor="@color/date_ribbon"
+        app:ribbonTextColor="@color/on_date_ribbon"
         app:ribbonTextSize="14sp"
         tools:visibility="visible" />
 
-    <ProgressBar
+    <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/loadingProgressBar"
-        style="?android:attr/progressBarStyle"
+        style="@style/Widget.Material3Expressive.CircularProgressIndicator.Wavy"
+        android:indeterminate="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"

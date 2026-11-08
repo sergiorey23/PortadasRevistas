@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -19,6 +20,7 @@ import kotlinx.coroutines.launch
 import sergirex.portadasrevistas.domain.model.HomeTab
 import sergirex.portadasrevistas.domain.model.RevistaRef
 import sergirex.portadasrevistas.domain.model.toRef
+import sergirex.portadasrevistas.domain.repository.RevistasRepository
 import sergirex.portadasrevistas.domain.repository.SettingsRepository
 import sergirex.portadasrevistas.domain.usecase.GetFavoriteRevistasUseCase
 import sergirex.portadasrevistas.domain.usecase.GetRevistaCoversUseCase
@@ -38,13 +40,20 @@ class PortadasViewModel @Inject constructor(
     private val getFavoriteRevistas: GetFavoriteRevistasUseCase,
     private val getRevistaCovers: GetRevistaCoversUseCase,
     private val settings: SettingsRepository,
-    observeFavorites: ObserveFavoritesUseCase
+    observeFavorites: ObserveFavoritesUseCase,
+    catalog: RevistasRepository
 ) : ViewModel() {
 
-    private class TabLoader {
+    private class TabLoader(val tab: HomeTab) {
         val state = MutableStateFlow(PortadasUiState())
         var job: Job? = null
+
+        /** When the covers on screen were last loaded, 0 if never. */
+        var loadedAt = 0L
     }
+
+    /** Replaceable in tests. */
+    internal var clock: () -> Long = System::currentTimeMillis
 
     private val loaders = HashMap<String, TabLoader>()
 
@@ -58,18 +67,31 @@ class PortadasViewModel @Inject constructor(
     /** True once the initial-tab setting has been applied, so later tab changes don't re-select it. */
     var initialTabApplied = false
 
+    init {
+        // A newer catalog arrived: tabs that were already loaded re-check their magazine list (loadIfNeeded
+        // only fetches when the list actually changed, and tabs never opened still load lazily).
+        viewModelScope.launch {
+            catalog.catalogVersion.drop(1).collect { loaders.values.toList().forEach { loadIfNeeded(it.tab) } }
+        }
+    }
+
     suspend fun initialTab(): HomeTab = settings.initialTab.first()
 
     fun uiState(tab: HomeTab): StateFlow<PortadasUiState> = loader(tab).state.asStateFlow()
 
-    /** No-op while a load is running or when what's on screen is already current. */
+    /**
+     * No-op while a load is running or when what's on screen is current: same magazines, and loaded less than
+     * [STALE_AFTER_MS] ago. The Activity lives for days in the background, and magazines publish new issues
+     * meanwhile, so an old load is redone when the tab is shown again.
+     */
     fun loadIfNeeded(tab: HomeTab) {
         val loader = loader(tab)
         if (loader.job?.isActive == true) return
         loader.job = viewModelScope.launch {
             val revistas = revistasFor(tab)
             val state = loader.state.value
-            if (revistas == state.allRevistas && state.covers.isNotEmpty()) return@launch
+            val fresh = clock() - loader.loadedAt < STALE_AFTER_MS
+            if (revistas == state.allRevistas && state.covers.isNotEmpty() && fresh) return@launch
             fetch(loader, revistas, forceRefresh = false)
         }
     }
@@ -80,7 +102,7 @@ class PortadasViewModel @Inject constructor(
         loader.job = viewModelScope.launch { fetch(loader, revistasFor(tab), forceRefresh = true) }
     }
 
-    private fun loader(tab: HomeTab) = loaders.getOrPut(tab.key) { TabLoader() }
+    private fun loader(tab: HomeTab) = loaders.getOrPut(tab.key) { TabLoader(tab) }
 
     private suspend fun revistasFor(tab: HomeTab): List<RevistaRef> = when (tab) {
         HomeTab.Favorites -> getFavoriteRevistas()
@@ -105,6 +127,7 @@ class PortadasViewModel @Inject constructor(
                     loader.state.update { it.copy(covers = if (received) it.covers + cover else listOf(cover)) }
                     received = true
                 }
+            if (received) loader.loadedAt = clock()
         } finally {
             loader.state.update { it.copy(isRefreshing = false) }
         }
@@ -112,5 +135,6 @@ class PortadasViewModel @Inject constructor(
 
     private companion object {
         const val TAG = "PortadasViewModel"
+        const val STALE_AFTER_MS = 30 * 60 * 1000L
     }
 }

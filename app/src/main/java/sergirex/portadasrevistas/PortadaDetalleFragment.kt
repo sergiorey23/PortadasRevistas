@@ -58,7 +58,9 @@ class PortadaDetalleFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        preview = binding.cover.load(CoverUrls.latest(magazineId))
+        // The grid's image (Coil has it cached) stands in until the full-size cover arrives. The undated "latest" URL is
+        // only a fallback: Coil can hold an earlier issue under it.
+        preview = binding.cover.load(requireArguments().getString(ARG_PREVIEW) ?: CoverUrls.latest(magazineId))
         binding.cover.setOnClickListener { (activity as? PortadaDetalleHost)?.onCoverClicked(magazineId) }
 
         viewModel.loadIssues(magazineId)
@@ -105,8 +107,8 @@ class PortadaDetalleFragment : Fragment() {
     private fun renderRibbon(issue: IssueState) {
         val selected = issue.selected
         val old = selected != null && OldIssuePolicy.isOld(selected, category)
-        binding.oldRibbon.visibility = if (old) View.VISIBLE else View.GONE
-        if (old) binding.oldRibbon.text = IssueDate.toRibbonLabel(selected.orEmpty())
+        binding.dateRibbon.visibility = if (old) View.VISIBLE else View.GONE
+        if (old) binding.dateRibbon.text = IssueDate.toRibbonLabel(selected.orEmpty())
     }
 
     override fun onDestroyView() {
@@ -122,11 +124,13 @@ class PortadaDetalleFragment : Fragment() {
     companion object {
         private const val ARG_ID = "id"
         private const val ARG_CATEGORY = "category"
+        private const val ARG_PREVIEW = "preview"
 
-        fun newInstance(magazineId: String, category: RevistaCategory?) = PortadaDetalleFragment().apply {
+        fun newInstance(magazineId: String, category: RevistaCategory?, previewUrl: String?) = PortadaDetalleFragment().apply {
             arguments = Bundle().apply {
                 putString(ARG_ID, magazineId)
                 putString(ARG_CATEGORY, category?.name)
+                putString(ARG_PREVIEW, previewUrl)
             }
         }
     }

@@ -5,7 +5,13 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.serialization.json.Json
+import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
+import sergirex.portadasrevistas.data.catalog.BundledCatalog
+import sergirex.portadasrevistas.data.catalog.CatalogCache
+import sergirex.portadasrevistas.data.catalog.CatalogConfig
+import sergirex.portadasrevistas.data.catalog.RemoteCatalogSource
+import java.io.File
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import sergirex.portadasrevistas.data.local.DataStoreIssueSeenRepository
@@ -13,7 +19,8 @@ import sergirex.portadasrevistas.data.local.DataStoreScaleStore
 import sergirex.portadasrevistas.data.local.ScaleStore
 import sergirex.portadasrevistas.data.network.CoverCacheControlInterceptor
 import sergirex.portadasrevistas.data.repository.EngagementRepositoryImpl
-import sergirex.portadasrevistas.data.repository.EntitlementsRepositoryImpl
+import sergirex.portadasrevistas.data.repository.AdsEntitlementRepositoryImpl
+import sergirex.portadasrevistas.data.repository.WidgetStateRepositoryImpl
 import sergirex.portadasrevistas.data.repository.FavoriteRevistasRepositoryImpl
 import sergirex.portadasrevistas.data.repository.IssueCalendarRepositoryImpl
 import sergirex.portadasrevistas.data.repository.PageScaleRepositoryImpl
@@ -23,7 +30,8 @@ import sergirex.portadasrevistas.data.repository.RevistasRepositoryImpl
 import sergirex.portadasrevistas.data.repository.SettingsRepositoryImpl
 import sergirex.portadasrevistas.data.repository.ThemeRepositoryImpl
 import sergirex.portadasrevistas.domain.repository.EngagementRepository
-import sergirex.portadasrevistas.domain.repository.EntitlementsRepository
+import sergirex.portadasrevistas.domain.repository.AdsEntitlementRepository
+import sergirex.portadasrevistas.domain.repository.WidgetStateRepository
 import sergirex.portadasrevistas.domain.repository.FavoriteRevistasRepository
 import sergirex.portadasrevistas.domain.repository.IssueCalendarRepository
 import sergirex.portadasrevistas.domain.repository.IssueSeenRepository
@@ -75,7 +83,11 @@ abstract class AppModule {
 
     @Binds
     @Singleton
-    abstract fun bindEntitlementsRepository(impl: EntitlementsRepositoryImpl): EntitlementsRepository
+    abstract fun bindAdsEntitlementRepository(impl: AdsEntitlementRepositoryImpl): AdsEntitlementRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindWidgetStateRepository(impl: WidgetStateRepositoryImpl): WidgetStateRepository
 
     @Binds
     @Singleton
@@ -96,7 +108,18 @@ abstract class AppModule {
     companion object {
         @Provides
         @Singleton
-        fun provideJson(): Json = Json { ignoreUnknownKeys = true }
+        fun provideBundledCatalog(@ApplicationContext context: Context): BundledCatalog =
+            BundledCatalog { context.assets.open("revistas.json").bufferedReader().use { it.readText() } }
+
+        @Provides
+        @Singleton
+        fun provideCatalogCache(@ApplicationContext context: Context): CatalogCache =
+            CatalogCache(File(context.filesDir, "catalog"))
+
+        @Provides
+        @Singleton
+        fun provideRemoteCatalogSource(client: OkHttpClient): RemoteCatalogSource =
+            RemoteCatalogSource(client, CatalogConfig.URL)
 
         /** Shared by Coil (image downloads) and the cover/calendar requests, so all reuse connections. */
         @Provides

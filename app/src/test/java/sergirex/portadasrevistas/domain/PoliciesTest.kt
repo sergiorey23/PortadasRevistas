@@ -4,8 +4,6 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import sergirex.portadasrevistas.domain.model.Engagement
-import sergirex.portadasrevistas.domain.model.Entitlements
-import sergirex.portadasrevistas.domain.model.InterstitialPolicy
 import sergirex.portadasrevistas.domain.model.ReviewPromptPolicy
 
 class PoliciesTest {
@@ -35,19 +33,5 @@ class PoliciesTest {
     fun `not again soon after a previous request, but again after the cooldown`() {
         assertFalse(ReviewPromptPolicy.shouldPrompt(engaged(promptedDaysAgo = 89), now))
         assertTrue(ReviewPromptPolicy.shouldPrompt(engaged(promptedDaysAgo = 90), now))
-    }
-
-    @Test
-    fun `the full-screen ad shows on every third cover`() {
-        assertEquals3(listOf(1, 2, 3, 4, 5, 6).filter(InterstitialPolicy::shouldShow))
-        assertFalse(InterstitialPolicy.shouldShow(0))
-    }
-
-    private fun assertEquals3(shown: List<Int>) = org.junit.Assert.assertEquals(listOf(3, 6), shown)
-
-    @Test
-    fun `ads are shown until the remove-ads purchase`() {
-        assertTrue(Entitlements().showAds)
-        assertFalse(Entitlements(adsRemoved = true).showAds)
     }
 }

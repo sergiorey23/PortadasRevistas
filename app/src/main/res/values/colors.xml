@@ -43,6 +43,12 @@
     <color name="on_app_bar">#FFFFFF</color>
 
     <!-- The "old issue" ribbon: red in both modes so it reads as a warning on any cover. -->
-    <color name="ribbon_old">#D32F2F</color>
-    <color name="on_ribbon_old">#FFFFFF</color>
+    <color name="date_ribbon">#D32F2F</color>
+    <color name="on_date_ribbon">#FFFFFF</color>
+
+    <color name="app_bar_gradient_end">#AD1457</color>
+    <!-- Heart of a favorite magazine: the state is shown by color, not by fill. -->
+    <color name="favorite_active">#E53935</color>
+    <!-- Globe of the "website" button: the usual link blue. -->
+    <color name="web_link">#1A73E8</color>
 </resources>

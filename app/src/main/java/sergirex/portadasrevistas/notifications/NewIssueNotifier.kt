@@ -2,8 +2,6 @@ package sergirex.portadasrevistas.notifications
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -29,7 +27,7 @@ class NewIssueNotifier @Inject constructor(
     @SuppressLint("MissingPermission") // canPost() checks it
     fun show(newIssue: NewIssue) {
         if (!canPost()) return
-        createChannel()
+        NotificationChannels.ensureNewIssues(context)
 
         val openApp = PendingIntent.getActivity(
             context,
@@ -37,8 +35,9 @@ class NewIssueNotifier @Inject constructor(
             Intent(context, Portadas::class.java).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK },
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
-        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
+        val notification = NotificationCompat.Builder(context, NotificationChannels.NEW_ISSUES)
             .setSmallIcon(R.drawable.ic_stat_new_issue)
+            .setColor(ContextCompat.getColor(context, R.color.primary))
             .setContentTitle(context.getString(R.string.new_issue_title, newIssue.revista.name))
             .setContentText(context.getString(R.string.new_issue_text, IssueDate.toDisplay(newIssue.date)))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -52,19 +51,7 @@ class NewIssueNotifier @Inject constructor(
         Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
             ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
 
-    private fun createChannel() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
-        val manager = context.getSystemService(NotificationManager::class.java)
-        manager.createNotificationChannel(
-            NotificationChannel(CHANNEL_ID, context.getString(R.string.notification_channel_name), NotificationManager.IMPORTANCE_DEFAULT)
-        )
-        // The channel of the old daily reminder is no longer used.
-        manager.deleteNotificationChannel(LEGACY_CHANNEL_ID)
-    }
-
     private companion object {
-        const val CHANNEL_ID = "new_issues"
-        const val LEGACY_CHANNEL_ID = "26081995"
         const val NOTIFICATION_ID = 1
     }
 }

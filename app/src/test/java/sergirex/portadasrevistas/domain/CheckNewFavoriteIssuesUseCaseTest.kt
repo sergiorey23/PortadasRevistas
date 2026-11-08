@@ -23,6 +23,7 @@ class CheckNewFavoriteIssuesUseCaseTest {
     private val favorites = object : FavoriteRevistasRepository {
         override val favorites: Flow<List<RevistaRef>> = favoritesFlow
         override suspend fun toggle(revista: RevistaRef) = Unit
+        override suspend fun clear() = Unit
     }
 
     /** The newest issue of each magazine, or absent when its calendar can't be read. */

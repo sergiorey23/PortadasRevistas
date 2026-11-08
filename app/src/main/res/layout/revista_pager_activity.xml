@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/readerRoot"
+    android:transitionGroup="true"
     android:orientation="vertical"
     tools:context=".RevistaPagerActivity">
 
@@ -41,9 +43,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <ProgressBar
-            android:id="@+id/loadingProgressBar"
-            style="?android:attr/progressBarStyle"
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/loadingProgressBar"
+        style="@style/Widget.Material3Expressive.CircularProgressIndicator.Wavy"
+        android:indeterminate="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

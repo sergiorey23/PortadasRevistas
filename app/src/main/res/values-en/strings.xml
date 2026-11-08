@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Magazines</string>
+    <string name="app_name">Spanish Magazines</string>
     <string name="portada">Cover</string>
 
     <!-- Home tabs, in tab order -->
@@ -18,6 +18,7 @@
     <!-- Navigation drawer -->
     <string name="settings">Settings</string>
     <string name="removeAds">Remove ads</string>
+    <string name="remove_ads_badge">One-time</string>
     <string name="rate">Rate</string>
     <string name="help">Help</string>
     <string name="about">About</string>
@@ -25,44 +26,124 @@
     <string name="open_menu">Open menu</string>
     <string name="close_menu">Close menu</string>
     <string name="back">Back</string>
+    <string name="nav_header_tagline">Your magazines\' covers</string>
 
-    <!-- Help dialog -->
-    <string name="close">Close</string>
-    <string name="help_description">Swipe between the tabs to see the covers of each category. Press and hold a cover to share it, save it or visit its website.</string>
-    <string name="help_description2">Tap a cover to see it full size and pick another issue, and mark your favorite magazines to find them quickly in the Favorites tab.</string>
-    <string name="rate_app">If you like the app, please rate it on Google Play. It helps a lot!</string>
+    <!-- Help -->
+    <string name="help_title">How it works</string>
+    <string name="help_description">Swipe between tabs to browse the covers by category: Celebrity, Culture, Sports, Automotive and many more.</string>
+    <string name="help_tip_open">Tap a cover to see it full screen, zoom in, save or share it. Use the calendar to see earlier issues.</string>
+    <string name="help_tip_reader">Tap the enlarged cover to read the magazine page by page.</string>
+    <string name="help_tip_long_press">Press and hold a cover in the list to share it, save it or visit the magazine\'s website.</string>
+    <string name="help_tip_favorites">Tap the heart while viewing a cover to mark it as a favorite. The heart in the top bar takes you to your Favorites tab.</string>
+    <string name="help_tip_widget">Add the Favorites widget to your home screen and see your covers without opening the app.</string>
+    <string name="help_add_widget">Add widget</string>
+    <string name="help_got_it">Got it</string>
+    <string name="widget_added">Widget added to your home screen</string>
+    <string name="widget_add_failed">The widget could not be added</string>
+    <string name="rate_app">Do you like the app? A rating on Google Play helps a lot. Thank you!</string>
+
+    <!-- Favorites -->
+    <string name="fav_covers">Favorite covers</string>
+    <string name="fav_added">Added to favorites</string>
+    <string name="fav_removed">Removed from favorites</string>
+    <string name="fav_add">Add to favorites</string>
+    <string name="fav_remove">Remove from favorites</string>
+    <string name="fav_empty">You have no favorites yet. Open a cover and tap the heart to add it.</string>
 
     <!-- Menu actions -->
     <string name="date">Date</string>
     <string name="save">Save</string>
-    <string name="action_fav">Favorite</string>
-    <string name="fav_covers">Favorite covers</string>
     <string name="website">Website</string>
     <string name="add">Add</string>
     <string name="select_date">Select date</string>
-    <string name="no_favorites">You don\'t have any favorite magazine yet</string>
 
-    <!-- Settings screen -->
+    <!-- Settings: appearance and home -->
     <string name="tema">Theme</string>
     <string name="theme_mode">Mode</string>
-    <string name="categories">Categories</string>
-    <string name="initial_category">Initial category</string>
     <string name="default_system">System default</string>
     <string name="light">Light</string>
     <string name="dark">Dark</string>
+    <string name="pure_black_title">Pure black (AMOLED)</string>
+    <string name="pure_black_summary">Fully black background in dark mode. Saves battery on AMOLED screens.</string>
+    <string name="language_title">App language</string>
+    <string name="language_summary">Changed in the system settings</string>
+    <string name="categories">Categories</string>
+    <string name="initial_category">Initial category</string>
+    <string name="grid_columns_title">Cover columns</string>
+    <string name="grid_columns_auto">Automatic</string>
+    <string name="grid_columns_1">1 column</string>
+    <string name="grid_columns_2">2 columns</string>
+    <string name="grid_columns_3">3 columns</string>
+
+    <!-- Settings: new issue alerts -->
     <string name="notifications">Notifications</string>
     <string name="daily_notification_title">New issue alerts</string>
-    <string name="daily_notification_summary">Once a day we tell you if any of your favorite magazines has a new issue</string>
+    <string name="daily_notification_summary">We let you know when one of your favorite magazines has a new issue</string>
     <string name="notifications_permission_denied">The alerts need the notification permission. You can grant it in the system settings.</string>
+    <string name="notification_time_title">Check time</string>
+    <string name="notification_time_picker_title">Check time</string>
+    <string name="notification_frequency_title">Frequency</string>
+    <string name="notification_frequency_daily">Daily</string>
+    <string name="notification_frequency_weekly">Weekly</string>
+    <string name="notification_frequency_monthly">Monthly</string>
+    <string name="notification_days_title">Check days</string>
+    <string name="notification_days_dialog_title">Days to check on</string>
+    <string name="notification_days_weekdays_only">Weekdays only</string>
+    <string name="notification_days_every_day">Every day</string>
+    <string name="notification_days_weekdays">Weekdays (Monday to Friday)</string>
+    <string name="notification_days_pick_one">Pick at least one day</string>
+    <string name="notification_week_day_title">Day of the week</string>
+    <string name="notification_week_day_summary">Every %1$s</string>
+    <string name="notification_month_day_title">Day of the month</string>
+    <string name="notification_month_day_summary">Day %1$d of every month</string>
+    <string name="notification_month_day_last_summary">Day %1$d (or the last one in shorter months)</string>
+    <string name="notification_sound_title">Sound and vibration</string>
+    <string name="notification_sound_summary">Set in the system settings</string>
 
     <!-- New issue notification -->
     <string name="notification_channel_name">New issues</string>
     <string name="new_issue_title">%1$s: new issue</string>
     <string name="new_issue_text">The issue of %1$s is now available.</string>
 
+    <!-- Settings: purchase, catalog, storage, support -->
+    <string name="purchase_title">Purchase</string>
+    <string name="remove_ads_summary">One-time payment, forever</string>
+    <string name="restore_purchase_summary">New phone? Get your purchase back from Google Play</string>
+    <string name="ads_removed_summary">You already removed the ads. Thanks for your support!</string>
+    <string name="catalog_title">Magazine catalog</string>
+    <string name="catalog_status_title">Catalog status</string>
+    <string name="catalog_status_summary">Version %1$d · Magazines: %2$d\nLast check: %3$s</string>
+    <string name="catalog_never_checked">never</string>
+    <string name="catalog_refresh_title">Update now</string>
+    <string name="catalog_refresh_updated">Catalog updated</string>
+    <string name="catalog_refresh_up_to_date">You already have the latest catalog</string>
+    <string name="catalog_refresh_failed">Couldn\'t check. Please check your connection.</string>
+    <string name="storage_title">Storage</string>
+    <string name="cache_clear_title">Clear image cache</string>
+    <string name="cache_clear_summary">Using %1$s</string>
+    <string name="cache_cleared">Image cache cleared</string>
+    <string name="clear_favorites_title">Delete all favorites</string>
+    <string name="clear_favorites_none">You have no favorites</string>
+    <string name="clear_favorites_dialog_title">Delete all favorites?</string>
+    <string name="clear_favorites_confirm">Delete</string>
+    <string name="clear_favorites_done">Favorites deleted</string>
+    <plurals name="clear_favorites_summary">
+        <item quantity="one">You have %d favorite</item>
+        <item quantity="other">You have %d favorites</item>
+    </plurals>
+    <plurals name="clear_favorites_message">
+        <item quantity="one">%d magazine will be removed from your favorites. This can\'t be undone.</item>
+        <item quantity="other">%d magazines will be removed from your favorites. This can\'t be undone.</item>
+    </plurals>
+    <string name="support_title">Support</string>
+    <string name="feedback_title">Send feedback</string>
+    <string name="feedback_summary">Suggestions or report a missing magazine</string>
+    <string name="feedback_subject">Feedback about Magazine Covers</string>
+    <string name="feedback_body">Write your comment or the missing magazine here:\n\n\n\n— App details, please keep them —\nVersion: %1$s (%2$d)\nCatalog: v%3$d (%4$d magazines)\nAndroid: %5$s · %6$s</string>
+
     <!-- About screen -->
     <string name="app_full_name">Magazine Covers</string>
-    <string name="about_desc">Browse the covers of the main magazines, save or share them, and mark your favorites to keep them at hand.</string>
+    <string name="about_desc">The covers of the main magazines, always at hand. Read their pages, save them, share them and mark your favorites so we tell you about every new issue.</string>
     <string name="contact">Contact</string>
     <string name="mas_apps">More apps</string>
     <string name="portadas_periodicos">News Covers</string>
@@ -71,6 +152,7 @@
 
     <!-- Covers and reader -->
     <string name="covers_load_failed">The covers could not be loaded. Pull down to retry.</string>
+    <string name="refreshing">Updating covers</string>
     <string name="cover_not_found">Cover not found</string>
     <string name="cover_already_saved">The cover has already been saved.</string>
     <string name="issues_not_loaded">This magazine\'s issues haven\'t loaded yet</string>
@@ -83,16 +165,24 @@
     <string name="storage_permission_denied">Permission denied. The cover can\'t be saved or shared.</string>
     <string name="storage_unavailable">Storage is not accessible</string>
 
-    <!-- Purchases -->
-    <string name="billing_remove_ads_message">Get rid of the ads for %1$s, for life</string>
-    <string name="billing_cancel">Cancel</string>
+    <!-- Remove ads purchase -->
+    <string name="billing_dialog_title">Enjoy it without ads</string>
+    <string name="billing_dialog_subtitle">A single payment and the ads are gone for good.</string>
+    <string name="billing_price_caption">one-time payment · for life</string>
+    <string name="billing_benefit_no_ads">No banners on any screen</string>
+    <string name="billing_benefit_once">No subscriptions or fees</string>
+    <string name="billing_benefit_devices">Valid on all your devices with your Google account</string>
+    <string name="billing_benefit_support">You support the app\'s development</string>
+    <string name="billing_not_now">Not now</string>
     <string name="billing_restore">Restore purchase</string>
-    <string name="billing_buy">Buy</string>
     <string name="billing_no_products">No products are available right now. Please try again later.</string>
     <string name="billing_restored">Purchase restored</string>
     <string name="billing_nothing_to_restore">No purchase found</string>
-    <string name="billing_purchase_pending">Your purchase is pending. It will be activated once it completes.</string>
+    <string name="billing_purchase_pending">Your purchase is pending. We\'ll remove the ads as soon as it completes.</string>
     <string name="billing_error">The operation with Google Play could not be completed</string>
+
+    <!-- Favorites widget -->
+    <string name="widget_no_favorites">You have no favorite magazines yet. Mark them with the ❤ in the app.</string>
 
     <string name="no_app_found">There is no app to open this link</string>
     <string name="share_failed">The cover could not be shared</string>

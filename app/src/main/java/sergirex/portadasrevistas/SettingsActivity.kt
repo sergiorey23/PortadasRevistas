@@ -1,28 +1,63 @@
 package sergirex.portadasrevistas
 
 import android.Manifest
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
+import android.text.format.DateFormat
+import android.text.format.DateUtils
+import android.text.format.Formatter
 import android.view.View
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.viewModels
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.doOnPreDraw
+import androidx.core.view.updatePadding
 import androidx.core.content.ContextCompat
+import androidx.core.content.pm.PackageInfoCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.preference.ListPreference
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.filterNotNull
+import sergirex.portadasrevistas.domain.model.CatalogRefreshResult
 import sergirex.portadasrevistas.domain.model.HomeTab
+import sergirex.portadasrevistas.domain.model.CatalogStatus
+import sergirex.portadasrevistas.domain.model.ReminderConfig
+import sergirex.portadasrevistas.domain.model.ReminderFrequency
+import sergirex.portadasrevistas.domain.model.ReminderSchedule
 import sergirex.portadasrevistas.domain.model.ThemeMode
+import sergirex.portadasrevistas.domain.repository.AdsEntitlementRepository
+import sergirex.portadasrevistas.notifications.NotificationChannels
+import sergirex.portadasrevistas.presentation.ads.AdsViewModel
 import sergirex.portadasrevistas.presentation.settings.SettingsViewModel
 import sergirex.portadasrevistas.presentation.theme.ThemeViewModel
+import sergirex.portadasrevistas.ui.ActivityTransitions
+import sergirex.portadasrevistas.ui.PureBlackTheme
+import java.text.DateFormatSymbols
+import java.util.Calendar
+import javax.inject.Inject
 
 /**
  * Theme.Portadas is DayNight-aware (see values/themes.xml and the color roles in
@@ -33,22 +68,61 @@ import sergirex.portadasrevistas.presentation.theme.ThemeViewModel
 @AndroidEntryPoint
 class SettingsActivity : AppCompatActivity() {
 
+    @Inject
+    lateinit var adsEntitlement: AdsEntitlementRepository
+
+    private val settingsViewModel: SettingsViewModel by viewModels()
+    private val themeViewModel: ThemeViewModel by viewModels()
+    private val adsViewModel: AdsViewModel by viewModels()
+
+    /** Google Play purchase handling (restore and buy), shared with the preferences fragment. */
+    lateinit var billing: BillingManager
+        private set
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        PureBlackTheme.apply(this)
+        ActivityTransitions.asChild(this, R.id.settingsRoot)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_settings)
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.settingsContainer, PreferencesFragment())
-                .commit()
+        billing = BillingManager(this, lifecycleScope, adsEntitlement) { findViewById(android.R.id.content) }
+
+        // Show the screen only once every stored value it displays has been read, so nothing changes after it is
+        // drawn (a switch flipping, an entry getting disabled): hold the enter transition until then.
+        postponeEnterTransition()
+        lifecycleScope.launch {
+            try {
+                withTimeoutOrNull(LOAD_TIMEOUT_MS) {
+                    settingsViewModel.prepare()
+                    themeViewModel.awaitLoaded()
+                    adsViewModel.adsRemoved.filterNotNull().first()
+                }
+                if (savedInstanceState == null) {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.settingsContainer, PreferencesFragment())
+                        .commitNow()
+                }
+            } finally {
+                findViewById<View>(R.id.settingsRoot).doOnPreDraw { startPostponedEnterTransition() }
+            }
         }
+    }
+
+    override fun onDestroy() {
+        billing.destroy()
+        super.onDestroy()
     }
 
     override fun onSupportNavigateUp(): Boolean {
         onBackPressedDispatcher.onBackPressed()
         return true
+    }
+
+    private companion object {
+        /** Longest the screen waits for stored values before showing anyway. */
+        const val LOAD_TIMEOUT_MS = 1_500L
     }
 
     @AndroidEntryPoint
@@ -58,6 +132,9 @@ class SettingsActivity : AppCompatActivity() {
         // this Fragment never talks to a repository/DataStore directly.
         private val themeViewModel: ThemeViewModel by activityViewModels()
         private val settingsViewModel: SettingsViewModel by activityViewModels()
+        private val adsViewModel: AdsViewModel by activityViewModels()
+
+        private val billing get() = (requireActivity() as SettingsActivity).billing
 
         private val requestNotificationPermission =
             registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
@@ -71,13 +148,12 @@ class SettingsActivity : AppCompatActivity() {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.preferences, rootKey)
-            // Developer switches: a real screen in debug builds, an empty one in release (see DebugOptions).
+            // Developer tools: a real screen in debug builds, an empty one in release (see DebugOptions).
             addPreferencesFromResource(R.xml.preferences_debug)
             DebugOptions.bindPreferences(this)
 
-            // All three are stored through repositories (DataStore), not Preference's own
-            // default SharedPreferences file: the views below are kept in sync from the
-            // ViewModels' flows instead.
+            // Values are stored through repositories (DataStore), not Preference's own default
+            // SharedPreferences file: the views are kept in sync from the ViewModels' flows instead.
             findPreference<ListPreference>(KEY_THEME)?.apply {
                 isPersistent = false
                 setOnPreferenceChangeListener { _, newValue ->
@@ -85,10 +161,28 @@ class SettingsActivity : AppCompatActivity() {
                     true
                 }
             }
+            findPreference<SwitchPreferenceCompat>(KEY_PURE_BLACK)?.apply {
+                isPersistent = false
+                setOnPreferenceChangeListener { _, newValue ->
+                    settingsViewModel.setPureBlack(newValue as Boolean)
+                    true
+                }
+            }
+            findPreference<Preference>(KEY_LANGUAGE)?.apply {
+                isVisible = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                setOnPreferenceClickListener { openAppLanguageSettings(); true }
+            }
             findPreference<ListPreference>(KEY_INIT_CATEGORY)?.apply {
                 isPersistent = false
                 setOnPreferenceChangeListener { _, newValue ->
                     settingsViewModel.setInitialTab(HomeTab.fromKey(newValue as String))
+                    true
+                }
+            }
+            findPreference<ListPreference>(KEY_GRID_COLUMNS)?.apply {
+                isPersistent = false
+                setOnPreferenceChangeListener { _, newValue ->
+                    settingsViewModel.setGridColumns((newValue as String).toInt())
                     true
                 }
             }
@@ -106,25 +200,112 @@ class SettingsActivity : AppCompatActivity() {
                     }
                 }
             }
+            findPreference<Preference>(KEY_NOTIFICATION_TIME)?.setOnPreferenceClickListener { showTimePicker(); true }
+            findPreference<ListPreference>(KEY_NOTIFICATION_FREQUENCY)?.apply {
+                isPersistent = false
+                setOnPreferenceChangeListener { _, newValue ->
+                    settingsViewModel.setReminderFrequency(ReminderFrequency.valueOf(newValue as String))
+                    true
+                }
+            }
+            findPreference<Preference>(KEY_NOTIFICATION_DAYS)?.setOnPreferenceClickListener { showDaysDialog(); true }
+            findPreference<Preference>(KEY_NOTIFICATION_WEEK_DAY)?.setOnPreferenceClickListener { showWeekDayDialog(); true }
+            findPreference<Preference>(KEY_NOTIFICATION_MONTH_DAY)?.setOnPreferenceClickListener { showMonthDayDialog(); true }
+            findPreference<Preference>(KEY_NOTIFICATION_SOUND)?.apply {
+                isVisible = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+                setOnPreferenceClickListener { openChannelSettings(); true }
+            }
+            findPreference<Preference>(KEY_REMOVE_ADS)?.setOnPreferenceClickListener { billing.showPurchaseDialog(); true }
+            findPreference<Preference>(KEY_RESTORE_PURCHASE)?.setOnPreferenceClickListener { billing.restorePurchases(); true }
+            findPreference<Preference>(KEY_CATALOG_REFRESH)?.setOnPreferenceClickListener { refreshCatalog(); true }
+            findPreference<Preference>(KEY_CLEAR_CACHE)?.setOnPreferenceClickListener { clearImageCache(); true }
+            findPreference<Preference>(KEY_CLEAR_FAVORITES)?.setOnPreferenceClickListener { confirmClearFavorites(); true }
+            findPreference<Preference>(KEY_FEEDBACK)?.setOnPreferenceClickListener { sendFeedback(); true }
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
+            // Edge-to-edge: let the list scroll under the navigation bar, but stop its last item above it.
+            val extraBottom = resources.getDimensionPixelSize(R.dimen.settings_list_bottom_padding)
+            listView.clipToPadding = false
+            ViewCompat.setOnApplyWindowInsetsListener(listView) { list, insets ->
+                list.updatePadding(
+                    bottom = extraBottom + insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+                )
+                insets
+            }
             val themePreference = findPreference<ListPreference>(KEY_THEME)
+            val pureBlackPreference = findPreference<SwitchPreferenceCompat>(KEY_PURE_BLACK)
             val tabPreference = findPreference<ListPreference>(KEY_INIT_CATEGORY)
+            val gridPreference = findPreference<ListPreference>(KEY_GRID_COLUMNS)
             val notificationPreference = findPreference<SwitchPreferenceCompat>(KEY_DAILY_NOTIFICATION)
+            val timePreference = findPreference<Preference>(KEY_NOTIFICATION_TIME)
+            val frequencyPreference = findPreference<ListPreference>(KEY_NOTIFICATION_FREQUENCY)
+            val daysPreference = findPreference<Preference>(KEY_NOTIFICATION_DAYS)
+            val weekDayPreference = findPreference<Preference>(KEY_NOTIFICATION_WEEK_DAY)
+            val monthDayPreference = findPreference<Preference>(KEY_NOTIFICATION_MONTH_DAY)
+            val removeAdsPreference = findPreference<Preference>(KEY_REMOVE_ADS)
+            val clearFavoritesPreference = findPreference<Preference>(KEY_CLEAR_FAVORITES)
+
+            fun applyTheme(mode: ThemeMode) {
+                themePreference?.show(mode.toPreferenceValue())
+                // Pure black only exists in dark mode.
+                pureBlackPreference?.isEnabled = mode != ThemeMode.LIGHT
+            }
+            // Only the setting that applies to the chosen frequency is shown.
+            fun applyReminder(config: ReminderConfig) {
+                timePreference?.summary = formatTime(config.minutesOfDay)
+                frequencyPreference?.show(config.frequency.name)
+                daysPreference?.isVisible = config.frequency == ReminderFrequency.DAILY
+                daysPreference?.summary = daysSummary(config.days)
+                weekDayPreference?.isVisible = config.frequency == ReminderFrequency.WEEKLY
+                weekDayPreference?.summary = getString(R.string.notification_week_day_summary, weekDayName(config.weekDay))
+                monthDayPreference?.isVisible = config.frequency == ReminderFrequency.MONTHLY
+                monthDayPreference?.summary = monthDaySummary(config.monthDay)
+            }
+            fun applyAds(removed: Boolean?) {
+                removeAdsPreference?.apply {
+                    isEnabled = removed != true
+                    setSummary(if (removed == true) R.string.ads_removed_summary else R.string.remove_ads_summary)
+                }
+            }
+            fun applyFavorites(count: Int) {
+                clearFavoritesPreference?.apply {
+                    isEnabled = count > 0
+                    summary = if (count == 0) {
+                        getString(R.string.clear_favorites_none)
+                    } else {
+                        resources.getQuantityString(R.plurals.clear_favorites_summary, count, count)
+                    }
+                }
+            }
+
+            // The first frame already shows the stored state: the activity waited for it (see SettingsActivity).
+            applyTheme(themeViewModel.themeMode.value)
+            pureBlackPreference?.isChecked = settingsViewModel.pureBlack.value
+            tabPreference?.show(settingsViewModel.initialTab.value.key)
+            gridPreference?.show(settingsViewModel.gridColumns.value.toString())
+            notificationPreference?.isChecked = settingsViewModel.dailyNotificationEnabled.value
+            applyReminder(settingsViewModel.reminderConfig.value)
+            applyAds(adsViewModel.adsRemoved.value)
+            applyFavorites(settingsViewModel.favoritesCount.value)
+            settingsViewModel.preparedCatalogStatus?.let(::showCatalogStatus)
+            settingsViewModel.preparedImageCacheSize?.let(::showCacheSize)
 
             viewLifecycleOwner.lifecycleScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    launch {
-                        themeViewModel.themeMode.collect { mode -> themePreference?.show(mode.toPreferenceValue()) }
-                    }
-                    launch {
-                        settingsViewModel.initialTab.collect { tab -> tabPreference?.show(tab.key) }
-                    }
+                    launch { themeViewModel.themeMode.collect(::applyTheme) }
+                    launch { settingsViewModel.pureBlack.collect { pureBlackPreference?.isChecked = it } }
+                    launch { settingsViewModel.initialTab.collect { tab -> tabPreference?.show(tab.key) } }
+                    launch { settingsViewModel.gridColumns.collect { gridPreference?.show(it.toString()) } }
                     launch {
                         settingsViewModel.dailyNotificationEnabled.collect { notificationPreference?.isChecked = it }
                     }
+                    launch { settingsViewModel.reminderConfig.collect(::applyReminder) }
+                    launch { adsViewModel.adsRemoved.collect(::applyAds) }
+                    launch { settingsViewModel.favoritesCount.collect(::applyFavorites) }
+                    launch { updateCatalogStatus() }
+                    launch { updateCacheSummary() }
                 }
             }
         }
@@ -138,6 +319,216 @@ class SettingsActivity : AppCompatActivity() {
             Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
                 ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) ==
                 PackageManager.PERMISSION_GRANTED
+
+        // --- New-issue check: time and frequency ---
+
+        private fun formatTime(minutes: Int): String {
+            val time = Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, minutes / 60)
+                set(Calendar.MINUTE, minutes % 60)
+            }.time
+            return DateFormat.getTimeFormat(requireContext()).format(time)
+        }
+
+        private fun showTimePicker() {
+            val minutes = settingsViewModel.reminderConfig.value.minutesOfDay
+            val format = if (DateFormat.is24HourFormat(requireContext())) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H
+            val picker = MaterialTimePicker.Builder()
+                .setTimeFormat(format)
+                .setHour(minutes / 60)
+                .setMinute(minutes % 60)
+                .setTitleText(R.string.notification_time_picker_title)
+                .build()
+            picker.addOnPositiveButtonClickListener {
+                settingsViewModel.setReminderMinutes(picker.hour * 60 + picker.minute)
+            }
+            picker.show(childFragmentManager, TAG_TIME_PICKER)
+        }
+
+        private fun daysSummary(days: Set<Int>): String = when (days) {
+            ReminderSchedule.ALL_DAYS -> getString(R.string.notification_days_every_day)
+            ReminderSchedule.WEEKDAYS -> getString(R.string.notification_days_weekdays)
+            else -> {
+                val names = DateFormatSymbols.getInstance().shortWeekdays
+                ReminderSchedule.DAYS_IN_ORDER.filter { it in days }.joinToString(", ") { names[it] }
+            }
+        }
+
+        private fun showDaysDialog() {
+            val order = ReminderSchedule.DAYS_IN_ORDER
+            val fullNames = DateFormatSymbols.getInstance().weekdays
+            val names = order.map { day -> fullNames[day].replaceFirstChar { it.uppercase() } }.toTypedArray()
+            val selected = settingsViewModel.reminderConfig.value.days.toMutableSet()
+            val checked = BooleanArray(order.size) { order[it] in selected }
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.notification_days_dialog_title)
+                .setMultiChoiceItems(names, checked) { _, which, isChecked ->
+                    if (isChecked) selected += order[which] else selected -= order[which]
+                }
+                .setNeutralButton(R.string.notification_days_weekdays_only) { _, _ ->
+                    settingsViewModel.setReminderDays(ReminderSchedule.WEEKDAYS)
+                }
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(android.R.string.ok) { _, _ ->
+                    if (selected.isEmpty()) {
+                        Toast.makeText(requireContext(), R.string.notification_days_pick_one, Toast.LENGTH_SHORT).show()
+                    } else {
+                        settingsViewModel.setReminderDays(selected)
+                    }
+                }
+                .show()
+        }
+
+        private fun weekDayName(day: Int): String = DateFormatSymbols.getInstance().weekdays[day]
+
+        private fun showWeekDayDialog() {
+            val order = ReminderSchedule.DAYS_IN_ORDER
+            val names = order.map { day -> weekDayName(day).replaceFirstChar { it.uppercase() } }.toTypedArray()
+            val current = order.indexOf(settingsViewModel.reminderConfig.value.weekDay)
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.notification_week_day_title)
+                .setSingleChoiceItems(names, current) { dialog, which ->
+                    settingsViewModel.setReminderWeekDay(order[which])
+                    dialog.dismiss()
+                }
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
+        }
+
+        private fun monthDaySummary(day: Int): String =
+            // Day 29 or later doesn't exist in every month: then the check runs on the month's last day.
+            getString(if (day > 28) R.string.notification_month_day_last_summary else R.string.notification_month_day_summary, day)
+
+        private fun showMonthDayDialog() {
+            val days = (1..ReminderSchedule.MAX_MONTH_DAY).map { it.toString() }.toTypedArray()
+            val current = settingsViewModel.reminderConfig.value.monthDay - 1
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.notification_month_day_title)
+                .setSingleChoiceItems(days, current) { dialog, which ->
+                    settingsViewModel.setReminderMonthDay(which + 1)
+                    dialog.dismiss()
+                }
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
+        }
+
+        // --- System settings shortcuts ---
+
+        private fun openAppLanguageSettings() {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+            val intent = Intent(Settings.ACTION_APP_LOCALE_SETTINGS, Uri.fromParts("package", requireContext().packageName, null))
+            requireContext().startActivityOrToast(intent)
+        }
+
+        private fun openChannelSettings() {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
+            val context = requireContext()
+            NotificationChannels.ensureNewIssues(context)
+            val intent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
+                .putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                .putExtra(Settings.EXTRA_CHANNEL_ID, NotificationChannels.NEW_ISSUES)
+            context.startActivityOrToast(intent)
+        }
+
+        // --- Catalog ---
+
+        private suspend fun updateCatalogStatus() = showCatalogStatus(settingsViewModel.catalogStatus())
+
+        private fun showCatalogStatus(status: CatalogStatus) {
+            val preference = findPreference<Preference>(KEY_CATALOG_STATUS) ?: return
+            val checked = if (status.lastCheckedAt == 0L) {
+                getString(R.string.catalog_never_checked)
+            } else {
+                DateUtils.getRelativeTimeSpanString(status.lastCheckedAt, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS)
+            }
+            preference.summary = getString(R.string.catalog_status_summary, status.version, status.entries, checked)
+        }
+
+        private fun refreshCatalog() {
+            val refresh = findPreference<Preference>(KEY_CATALOG_REFRESH) ?: return
+            refresh.isEnabled = false
+            viewLifecycleOwner.lifecycleScope.launch {
+                val message = when (settingsViewModel.refreshCatalog()) {
+                    CatalogRefreshResult.UPDATED -> R.string.catalog_refresh_updated
+                    CatalogRefreshResult.UP_TO_DATE -> R.string.catalog_refresh_up_to_date
+                    CatalogRefreshResult.FAILED -> R.string.catalog_refresh_failed
+                }
+                Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+                updateCatalogStatus()
+                refresh.isEnabled = true
+            }
+        }
+
+        // --- Storage ---
+
+        private suspend fun updateCacheSummary() = showCacheSize(settingsViewModel.imageCacheSize())
+
+        private fun showCacheSize(size: Long) {
+            findPreference<Preference>(KEY_CLEAR_CACHE)?.summary =
+                getString(R.string.cache_clear_summary, Formatter.formatShortFileSize(requireContext(), size))
+        }
+
+        private fun clearImageCache() {
+            viewLifecycleOwner.lifecycleScope.launch {
+                settingsViewModel.clearImageCache()
+                Toast.makeText(requireContext(), R.string.cache_cleared, Toast.LENGTH_SHORT).show()
+                updateCacheSummary()
+            }
+        }
+
+        // --- Favorites ---
+
+        private fun confirmClearFavorites() {
+            val count = settingsViewModel.favoritesCount.value
+            if (count == 0) return
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.clear_favorites_dialog_title)
+                .setMessage(resources.getQuantityString(R.plurals.clear_favorites_message, count, count))
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(R.string.clear_favorites_confirm) { _, _ ->
+                    val context = requireContext().applicationContext
+                    settingsViewModel.clearFavorites {
+                        refreshFavoritesWidgets(context)
+                        Toast.makeText(context, R.string.clear_favorites_done, Toast.LENGTH_SHORT).show()
+                    }
+                }
+                .show()
+        }
+
+        /** Widgets don't watch the favorites: ask them to redraw so they show their empty state right away. */
+        private fun refreshFavoritesWidgets(context: Context) {
+            val ids = AppWidgetManager.getInstance(context).getAppWidgetIds(ComponentName(context, FavoritosWidget::class.java))
+            if (ids.isEmpty()) return
+            context.sendBroadcast(
+                Intent(context, FavoritosWidget::class.java)
+                    .setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+                    .putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+            )
+        }
+
+        // --- Feedback ---
+
+        private fun sendFeedback() {
+            viewLifecycleOwner.lifecycleScope.launch {
+                val context = requireContext()
+                val status = settingsViewModel.catalogStatus()
+                val info = context.packageManager.getPackageInfo(context.packageName, 0)
+                val body = getString(
+                    R.string.feedback_body,
+                    info.versionName ?: "?",
+                    PackageInfoCompat.getLongVersionCode(info).toInt(),
+                    status.version,
+                    status.entries,
+                    Build.VERSION.RELEASE,
+                    Build.MODEL
+                )
+                val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"))
+                    .putExtra(Intent.EXTRA_EMAIL, arrayOf(SUPPORT_EMAIL))
+                    .putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback_subject))
+                    .putExtra(Intent.EXTRA_TEXT, body)
+                context.startActivityOrToast(intent)
+            }
+        }
 
         private fun String.toThemeMode(): ThemeMode = when (this) {
             "light" -> ThemeMode.LIGHT
@@ -153,8 +544,25 @@ class SettingsActivity : AppCompatActivity() {
 
         private companion object {
             const val KEY_THEME = "theme"
+            const val KEY_PURE_BLACK = "pure_black"
+            const val KEY_LANGUAGE = "app_language"
             const val KEY_INIT_CATEGORY = "init_category"
+            const val KEY_GRID_COLUMNS = "grid_columns"
             const val KEY_DAILY_NOTIFICATION = "daily_notification"
+            const val KEY_NOTIFICATION_TIME = "daily_notification_time"
+            const val KEY_NOTIFICATION_FREQUENCY = "notification_frequency"
+            const val KEY_NOTIFICATION_DAYS = "daily_notification_days"
+            const val KEY_NOTIFICATION_WEEK_DAY = "notification_week_day"
+            const val KEY_NOTIFICATION_MONTH_DAY = "notification_month_day"
+            const val KEY_NOTIFICATION_SOUND = "notification_sound"
+            const val KEY_REMOVE_ADS = "remove_ads"
+            const val KEY_RESTORE_PURCHASE = "restore_purchase"
+            const val KEY_CATALOG_STATUS = "catalog_status"
+            const val KEY_CATALOG_REFRESH = "catalog_refresh"
+            const val KEY_CLEAR_CACHE = "clear_image_cache"
+            const val KEY_CLEAR_FAVORITES = "clear_favorites"
+            const val KEY_FEEDBACK = "send_feedback"
+            const val TAG_TIME_PICKER = "reminder_time"
         }
     }
 }

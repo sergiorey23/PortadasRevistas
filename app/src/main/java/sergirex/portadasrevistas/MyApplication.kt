@@ -1,8 +1,13 @@
 package sergirex.portadasrevistas
 
 import android.app.Application
+import android.app.UiModeManager
+import android.os.Build
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
@@ -12,11 +17,17 @@ import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import sergirex.portadasrevistas.domain.model.ThemeMode
 import sergirex.portadasrevistas.domain.usecase.GetThemeModeUseCase
+import sergirex.portadasrevistas.domain.usecase.RefreshCatalogUseCase
+import sergirex.portadasrevistas.domain.repository.SettingsRepository
+import sergirex.portadasrevistas.notifications.NotificationChannels
 import sergirex.portadasrevistas.notifications.NotificationScheduler
+import sergirex.portadasrevistas.ui.PureBlackTheme
 import javax.inject.Inject
 
 /**
@@ -42,21 +53,50 @@ class MyApplication : Application(), SingletonImageLoader.Factory {
     @Inject
     lateinit var notificationScheduler: NotificationScheduler
 
+    @Inject
+    lateinit var refreshCatalog: RefreshCatalogUseCase
+
+    @Inject
+    lateinit var settings: SettingsRepository
+
     // Lives for the whole process, same as the night-mode setting it applies —
     // there's nothing to cancel it early for, unlike a ViewModel's viewModelScope.
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     override fun onCreate() {
         super.onCreate()
+        NotificationChannels.ensureNewIssues(this)
+        // Read in the background (a tiny file) instead of blocking start-up; the first dark-mode Activity waits for
+        // it only if it isn't done yet, so it's still themed right from the first frame.
+        PureBlackTheme.install(this, initial = applicationScope.async(Dispatchers.IO) { settings.pureBlack.first() })
+        applicationScope.launch { settings.pureBlack.collect(PureBlackTheme::setEnabled) }
         applicationScope.launch {
-            getThemeMode().collect { mode -> AppCompatDelegate.setDefaultNightMode(mode.toNightMode()) }
+            getThemeMode().collect { mode ->
+                AppCompatDelegate.setDefaultNightMode(mode.toNightMode())
+                applyToSplashScreen(mode)
+            }
         }
-        // Alarms don't survive a force-stop or update, so make sure the reminder matches the setting at every start.
+        // The app stays alive for days (back only minimizes it), so check for a newer catalog every time it
+        // comes to the foreground, not just at process start. The repository skips the request if it
+        // checked recently, and keeps the current catalog if anything fails.
+        ProcessLifecycleOwner.get().lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onStart(owner: LifecycleOwner) {
+                applicationScope.launch {
+                    try {
+                        refreshCatalog()
+                    } catch (error: Exception) {
+                        Log.w("MyApplication", "Catalog refresh failed", error)
+                    }
+                }
+            }
+        })
+        // Make sure the new-issue check is scheduled as the settings say (e.g. after the permission was granted
+        // in the system settings); a check that is already set is kept as it is.
         applicationScope.launch {
             try {
                 notificationScheduler.sync()
             } catch (error: Exception) {
-                Log.e("MyApplication", "Couldn't sync the daily reminder", error)
+                Log.e("MyApplication", "Couldn't sync the new-issue check", error)
             }
         }
     }
@@ -64,6 +104,22 @@ class MyApplication : Application(), SingletonImageLoader.Factory {
     override fun newImageLoader(context: PlatformContext): ImageLoader = ImageLoader.Builder(context)
         .components { add(OkHttpNetworkFetcherFactory(callFactory = { okHttpClient.get() })) }
         .build()
+
+    /**
+     * The launch splash is drawn by the system before this process exists, so it follows the system theme
+     * unless the system itself knows the app's own setting: Android 12+ remembers it per app.
+     */
+    private fun applyToSplashScreen(mode: ThemeMode) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return
+        val uiMode = getSystemService(UiModeManager::class.java) ?: return
+        uiMode.setApplicationNightMode(
+            when (mode) {
+                ThemeMode.LIGHT -> UiModeManager.MODE_NIGHT_NO
+                ThemeMode.DARK -> UiModeManager.MODE_NIGHT_YES
+                ThemeMode.SYSTEM -> UiModeManager.MODE_NIGHT_AUTO
+            }
+        )
+    }
 
     private fun ThemeMode.toNightMode(): Int = when (this) {
         ThemeMode.LIGHT -> AppCompatDelegate.MODE_NIGHT_NO

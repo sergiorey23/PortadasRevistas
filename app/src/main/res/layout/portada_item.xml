@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="2dp"
-    app:cardCornerRadius="8dp"
+    app:cardCornerRadius="4dp"
     app:cardElevation="4dp">
 
     <ImageView
@@ -16,14 +16,14 @@
         android:contentDescription="@string/portada" />
 
     <!-- Shown, with the issue date, over covers whose issue is out of date for their category. -->
-    <sergirex.portadasrevistas.CornerRibbonView
-        android:id="@+id/oldRibbon"
+    <sergirex.portadasrevistas.ui.CornerRibbonView
+        android:id="@+id/dateRibbon"
         android:layout_width="84dp"
         android:layout_height="84dp"
         android:layout_gravity="top|end"
         android:visibility="gone"
-        app:ribbonColor="@color/ribbon_old"
-        app:ribbonTextColor="@color/on_ribbon_old"
+        app:ribbonColor="@color/date_ribbon"
+        app:ribbonTextColor="@color/on_date_ribbon"
         app:ribbonTextSize="10sp" />
 
 </androidx.cardview.widget.CardView>

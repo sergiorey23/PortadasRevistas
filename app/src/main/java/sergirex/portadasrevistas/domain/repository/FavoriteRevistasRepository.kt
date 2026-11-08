@@ -13,4 +13,7 @@ interface FavoriteRevistasRepository {
 
     /** Adds [revista] to the favorites, or removes it if it is already there. */
     suspend fun toggle(revista: RevistaRef)
+
+    /** Removes every favorite, including saved ones whose magazine has left the catalog. */
+    suspend fun clear()
 }

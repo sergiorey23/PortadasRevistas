@@ -50,7 +50,8 @@ class RevistaCoverRepositoryImplTest {
         val cover = repository.getCovers(listOf(semana), forceRefresh = true).toList().single()
 
         assertEquals("20261007", cover.issueDate)
-        assertEquals("https://www.kioskoymas.com/Imageresize/getLatestImage/3845/424/600", cover.imageUrl)
+        // The dated image, so a new issue is a new URL and never shows the cached previous cover.
+        assertEquals("https://t.prcdn.co/img?file=38452026100700000000001001&scale=74", cover.imageUrl)
     }
 
     @Test
@@ -59,5 +60,6 @@ class RevistaCoverRepositoryImplTest {
 
         assertNull(cover.issueDate)
         assertEquals(false, cover.isOld)
+        assertEquals("https://www.kioskoymas.com/Imageresize/getLatestImage/m001/424/600", cover.imageUrl)
     }
 }

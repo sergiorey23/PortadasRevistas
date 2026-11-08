@@ -1,7 +1,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/homeRoot"
+    android:transitionGroup="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg_status_bar_strip"
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
@@ -34,6 +37,7 @@
                         style="@style/Widget.Portadas.Toolbar"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        app:titleMarginBottom="@dimen/toolbar_title_margin"
                         app:layout_collapseMode="pin" />
 
                 </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -50,22 +54,38 @@
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/viewpager"
+                android:transitionGroup="true"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             </androidx.viewpager2.widget.ViewPager2>
 
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/progressBar"
+                style="@style/Widget.Material3Expressive.CircularProgressIndicator.Wavy"
+                android:indeterminate="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         <com.google.android.material.navigation.NavigationView
             android:id="@+id/navView"
-            android:layout_width="250dp"
+            android:layout_width="300dp"
             android:layout_height="match_parent"
             android:layout_gravity="start"
+            app:drawerLayoutCornerSize="0dp"
             app:headerLayout="@layout/nav_header"
-            app:menu="@menu/drawer">
-</com.google.android.material.navigation.NavigationView>
+            app:itemIconSize="26dp"
+            app:itemShapeInsetBottom="2dp"
+            app:itemShapeInsetTop="2dp"
+            app:itemTextAppearance="@style/TextAppearance.Portadas.DrawerItem"
+            app:itemVerticalPadding="14dp"
+            app:menu="@menu/drawer"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Portadas.Square" />
 
     </androidx.drawerlayout.widget.DrawerLayout>
 

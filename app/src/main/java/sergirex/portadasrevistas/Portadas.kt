@@ -1,24 +1,34 @@
 package sergirex.portadasrevistas
 
 import android.Manifest
+import android.app.PendingIntent
+import android.appwidget.AppWidgetManager
+import android.content.BroadcastReceiver
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.graphics.drawable.LayerDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.text.Html
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDialog
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -27,37 +37,39 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DiffUtil
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 import sergirex.portadasrevistas.databinding.AboutBinding
+import sergirex.portadasrevistas.databinding.DialogHelpBinding
 import sergirex.portadasrevistas.databinding.ActivityPortadasBinding
-import sergirex.portadasrevistas.domain.model.Entitlements
 import sergirex.portadasrevistas.domain.model.HomeTab
-import sergirex.portadasrevistas.domain.repository.EntitlementsRepository
-import sergirex.portadasrevistas.presentation.EntitlementsViewModel
+import sergirex.portadasrevistas.domain.repository.AdsEntitlementRepository
+import sergirex.portadasrevistas.presentation.ads.AdsViewModel
 import sergirex.portadasrevistas.presentation.portadas.PortadasViewModel
 import sergirex.portadasrevistas.presentation.portadas.titleRes
 import sergirex.portadasrevistas.presentation.settings.SettingsViewModel
-import javax.inject.Inject
+import sergirex.portadasrevistas.ui.ActivityTransitions
+import sergirex.portadasrevistas.ui.PureBlackTheme
 
 /** The home screen: a pager of magazine-cover tabs, the navigation drawer and the toolbar actions. */
 @AndroidEntryPoint
 class Portadas : AppCompatActivity() {
 
-    @Inject
-    lateinit var entitlementsRepository: EntitlementsRepository
-
     private lateinit var binding: ActivityPortadasBinding
     private var billingManager: BillingManager? = null
+    private var widgetPinReceiver: BroadcastReceiver? = null
     private var adManager: AdManager? = null
-    private var alertDialog: AlertDialog? = null
 
     private val viewModel: PortadasViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
-    private val entitlementsViewModel: EntitlementsViewModel by viewModels()
+    private val adsViewModel: AdsViewModel by viewModels()
+
+    @Inject
+    lateinit var adsEntitlement: AdsEntitlementRepository
+    private var bannerRequested = false
     private lateinit var tabsAdapter: TabsAdapter
 
     // Must be registered before STARTED per the Activity Result API contract.
@@ -69,28 +81,21 @@ class Portadas : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         // Shows the launch splash and switches to Theme.Portadas (postSplashScreenTheme) once drawn.
         installSplashScreen()
+        PureBlackTheme.apply(this)
+        ActivityTransitions.asParent(this, R.id.viewpager)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        binding = ActivityPortadasBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
-
-        billingManager = BillingManager(this, lifecycleScope, entitlementsRepository) { binding.drawerLayout }
+        billingManager = BillingManager(this, lifecycleScope, adsEntitlement) { binding.drawerLayout }
         adManager = AdManager(this)
 
+        binding = ActivityPortadasBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        limitAppBarColorToStatusBar()
+        setSupportActionBar(binding.toolbar)
+
         setUpTabs()
-        setUpDrawer()
-        askNotificationPermissionOnce()
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                entitlementsViewModel.entitlements.collect(::onEntitlementsChanged)
-            }
-        }
-    }
-
-    private fun setUpDrawer() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -104,7 +109,7 @@ class Portadas : AppCompatActivity() {
         binding.navView.setNavigationItemSelectedListener { menuItem ->
             binding.drawerLayout.closeDrawers()
             when (menuItem.itemId) {
-                R.id.nav_help -> showDialog().show()
+                R.id.nav_help -> showHelp()
                 R.id.nav_remove_ads -> billingManager?.showPurchaseDialog()
                 R.id.nav_rate -> launchMarket()
                 R.id.nav_share -> {
@@ -119,7 +124,7 @@ class Portadas : AppCompatActivity() {
                     startActivityOrToast(Intent.createChooser(intent, null))
                 }
                 R.id.nav_about -> showAboutInfo()
-                R.id.nav_settings -> startActivity(Intent(applicationContext, SettingsActivity::class.java))
+                R.id.nav_settings -> ActivityTransitions.launch(this, Intent(applicationContext, SettingsActivity::class.java))
             }
             true
         }
@@ -129,13 +134,15 @@ class Portadas : AppCompatActivity() {
         )
         binding.drawerLayout.addDrawerListener(drawerToggle)
         drawerToggle.syncState()
+
+        askNotificationPermissionOnce()
+
+        observeAdsEntitlement()
     }
 
     private fun setUpTabs() {
         tabsAdapter = TabsAdapter(this)
         binding.viewpager.adapter = tabsAdapter
-        // Lets a tab two swipes away be ready by the time it is reached, like the old pager did.
-        binding.viewpager.offscreenPageLimit = 2
         // The mediator observes the adapter, so tabs added/removed by the adapter update the TabLayout by themselves.
         TabLayoutMediator(binding.tabs, binding.viewpager) { tab, position ->
             tab.setText(tabsAdapter.tabs[position].titleRes)
@@ -160,22 +167,6 @@ class Portadas : AppCompatActivity() {
         binding.viewpager.setCurrentItem(tabs.indexOf(selected).coerceAtLeast(0), false)
     }
 
-    /** Ads are shown only to people who haven't bought anything; a purchase takes the banner away at once. */
-    private fun onEntitlementsChanged(entitlements: Entitlements) {
-        binding.navView.menu.findItem(R.id.nav_remove_ads).isVisible = !entitlements.adsRemoved
-
-        if (entitlements.showAds) {
-            binding.bannerContainer.visibility = View.VISIBLE
-            if (binding.bannerContainer.childCount == 0) {
-                adManager?.loadBanner(binding.bannerContainer, MAIN_BANNER_PLACEMENT)
-            }
-        } else {
-            adManager?.destroy()
-            binding.bannerContainer.removeAllViews()
-            binding.bannerContainer.visibility = View.GONE
-        }
-    }
-
     private fun askNotificationPermissionOnce() {
         lifecycleScope.launch {
             val needsPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
@@ -188,6 +179,43 @@ class Portadas : AppCompatActivity() {
         }
     }
 
+    /** Shows the banner (and the "Remove ads" item) until the user owns the purchase; reacts if that changes. */
+    private fun observeAdsEntitlement() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                adsViewModel.adsRemoved.collect { removed ->
+                    when (removed) {
+                        null -> Unit
+                        true -> {
+                            adManager?.destroy()
+                            bannerRequested = false
+                            binding.bannerContainer.visibility = View.GONE
+                            setRemoveAdsItemVisible(false)
+                        }
+                        false -> {
+                            binding.bannerContainer.visibility = View.VISIBLE
+                            setRemoveAdsItemVisible(true)
+                            if (!bannerRequested) {
+                                bannerRequested = true
+                                adManager?.loadBanner(binding.bannerContainer, MAIN_BANNER_PLACEMENT)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Hiding the item isn't enough: NavigationView recycles its rows and a recycled row keeps the previous
+     * item's action view, so the "one-time" badge would stay drawn on the neighbouring item.
+     */
+    private fun setRemoveAdsItemVisible(visible: Boolean) {
+        val item = binding.navView.menu.findItem(R.id.nav_remove_ads)
+        item.isVisible = visible
+        item.actionView?.visibility = if (visible) View.VISIBLE else View.GONE
+    }
+
     private fun showAboutInfo() {
         val aboutBinding = AboutBinding.inflate(layoutInflater, binding.drawerLayout, false)
 
@@ -198,16 +226,14 @@ class Portadas : AppCompatActivity() {
         }
         aboutBinding.appVersion.text = "v${versionName ?: "N/A"}"
 
-        aboutBinding.appSource.setOnClickListener {
-            startActivityOrToast(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.lasportadas.es/")))
-        }
 
         aboutBinding.privacyPolicy.setOnClickListener {
-            startActivityOrToast(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.lasportadas.es/privacy.php")))
+            startActivityOrToast(Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_POLICY_URL)))
         }
 
         aboutBinding.contact.setOnClickListener {
-            startActivityOrToast(Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:sssergiooo23@gmail.com")))
+            val uri = Uri.parse("mailto:$SUPPORT_EMAIL")
+            startActivityOrToast(Intent(Intent.ACTION_SENDTO, uri))
         }
 
         aboutBinding.portadasPeriodicos.setOnClickListener {
@@ -215,29 +241,81 @@ class Portadas : AppCompatActivity() {
         }
 
         MaterialAlertDialogBuilder(this)
-            .setPositiveButton(R.string.close, null)
             .setView(aboutBinding.root)
             .show()
     }
 
-    private fun showDialog(): AlertDialog {
-        alertDialog?.let { return it }
+    /**
+     * The window background paints the app-bar color behind the status bar; keep that strip exactly as tall as
+     * the status bar so it can't show through behind the cover list.
+     */
+    private fun limitAppBarColorToStatusBar() {
+        val background = binding.root.background.mutate() as? LayerDrawable ?: return
+        binding.root.background = background
+        binding.root.addOnLayoutChangeListener { view, _, _, _, _, _, _, _, _ ->
+            background.setLayerHeight(STATUS_STRIP_LAYER, view.paddingTop)
+        }
+    }
 
-        val message = "<Big>${getString(R.string.help_description)}<br/><br/>" +
-            "${getString(R.string.help_description2)}</Big><br/><br/>${getString(R.string.rate_app)}"
-        val dialog = MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.help)
-            .setIcon(R.mipmap.magazines_icon)
-            .setPositiveButton("OK", null)
-            .create()
-        dialog.setMessage(
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                Html.fromHtml(message, Html.FROM_HTML_MODE_LEGACY)
-            else
-                @Suppress("DEPRECATION") Html.fromHtml(message)
+    private fun showHelp() {
+        val help = DialogHelpBinding.inflate(layoutInflater, binding.drawerLayout, false)
+        help.tipSwipe.icon.setImageResource(R.drawable.ic_swap_horiz_24)
+        help.tipSwipe.text.setText(R.string.help_description)
+        help.tipOpen.icon.setImageResource(R.drawable.ic_fullscreen_24)
+        help.tipOpen.text.setText(R.string.help_tip_open)
+        help.tipReader.icon.setImageResource(R.drawable.ic_menu_book_24)
+        help.tipReader.text.setText(R.string.help_tip_reader)
+        help.tipLongPress.icon.setImageResource(R.drawable.ic_touch_app_24)
+        help.tipLongPress.text.setText(R.string.help_tip_long_press)
+        help.tipFavorites.icon.setImageResource(R.drawable.ic_favorite_black_24dp)
+        help.tipFavorites.text.setText(R.string.help_tip_favorites)
+
+        help.tipWidget.icon.setImageResource(R.drawable.ic_widgets_24)
+        help.tipWidget.text.setText(R.string.help_tip_widget)
+
+        val dialog = AppCompatDialog(this, R.style.Theme_Portadas_FullScreenDialog).apply { setContentView(help.root) }
+        val widgets = AppWidgetManager.getInstance(this)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && widgets.isRequestPinAppWidgetSupported) {
+            help.addWidget.visibility = View.VISIBLE
+            help.addWidget.setOnClickListener {
+                dialog.dismiss()
+                pinFavoritesWidget(widgets)
+            }
+        }
+        help.rate.setOnClickListener { dialog.dismiss(); launchMarket() }
+        help.gotIt.setOnClickListener { dialog.dismiss() }
+        dialog.show()
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+    }
+
+    /** Asks the launcher to pin the widget; the system confirmation doesn't tell us the outcome, so a callback toasts it. */
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun pinFavoritesWidget(widgets: AppWidgetManager) {
+        unregisterWidgetPinReceiver()
+        val action = "$packageName.WIDGET_PINNED"
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                Toast.makeText(applicationContext, R.string.widget_added, Toast.LENGTH_LONG).show()
+                unregisterWidgetPinReceiver()
+            }
+        }
+        ContextCompat.registerReceiver(this, receiver, IntentFilter(action), ContextCompat.RECEIVER_NOT_EXPORTED)
+        widgetPinReceiver = receiver
+
+        val callback = PendingIntent.getBroadcast(
+            this, 0, Intent(action).setPackage(packageName),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-        alertDialog = dialog
-        return dialog
+        val requested = widgets.requestPinAppWidget(ComponentName(this, FavoritosWidget::class.java), null, callback)
+        if (!requested) {
+            unregisterWidgetPinReceiver()
+            Toast.makeText(this, R.string.widget_add_failed, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun unregisterWidgetPinReceiver() {
+        widgetPinReceiver?.let { unregisterReceiver(it) }
+        widgetPinReceiver = null
     }
 
     private fun launchMarket() {
@@ -273,14 +351,16 @@ class Portadas : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.fav) {
-            val favoritesIndex = tabsAdapter.tabs.indexOf(HomeTab.Favorites)
-            if (favoritesIndex >= 0) {
-                binding.viewpager.currentItem = favoritesIndex
-            } else {
-                Snackbar.make(binding.drawerLayout, R.string.no_favorites, Snackbar.LENGTH_SHORT)
-                    .apply { animationMode = Snackbar.ANIMATION_MODE_FADE }
-                    .show()
+        when (item.itemId) {
+            R.id.fav -> {
+                val favoritesIndex = tabsAdapter.tabs.indexOf(HomeTab.Favorites)
+                if (favoritesIndex >= 0) {
+                    binding.viewpager.currentItem = favoritesIndex
+                } else {
+                    Snackbar.make(binding.drawerLayout, R.string.fav_empty, Snackbar.LENGTH_LONG)
+                        .apply { animationMode = Snackbar.ANIMATION_MODE_FADE }
+                        .show()
+                }
             }
         }
         return true
@@ -288,13 +368,14 @@ class Portadas : AppCompatActivity() {
 
     override fun onDestroy() {
         // A dialog still showing when the Activity goes away would leak its window.
-        alertDialog?.dismiss()
+        unregisterWidgetPinReceiver()
         billingManager?.destroy()
         adManager?.destroy()
         super.onDestroy()
     }
 
     private companion object {
+        const val STATUS_STRIP_LAYER = 1
         const val MAIN_BANNER_PLACEMENT = "483584450995789_487598283927739"
     }
 }

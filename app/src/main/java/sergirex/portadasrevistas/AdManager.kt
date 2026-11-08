@@ -15,23 +15,20 @@ import com.facebook.ads.InterstitialAd
 import com.facebook.ads.InterstitialAdListener
 
 /**
- * Meta Audience Network ads, shared by every screen that shows one. One instance per Activity: it
- * owns the views it creates and releases them in [destroy].
+ * Meta Audience Network ads, shared by every screen that shows one. One instance per Activity: it owns the [AdView]
+ * banner and the [InterstitialAd] it creates and releases them in [destroy].
  */
 class AdManager(private val context: Context) {
 
     private var adView: AdView? = null
-    private var interstitial: InterstitialAd? = null
 
     init {
         initializeSdk(context)
     }
 
-    /** Adds a banner for [placementId] to [container] and requests an ad (phones get 320x50, tablets 320x90). */
+    /** Adds a 50dp-tall banner (the smallest size) for [placementId] to [container] and requests an ad. */
     fun loadBanner(container: ViewGroup, placementId: String) {
-        val size = if (context.resources.getBoolean(R.bool.isPhone)) AdSize.BANNER_HEIGHT_50 else AdSize.BANNER_HEIGHT_90
-        val banner = AdView(context, placementId, size)
-        adView?.destroy()
+        val banner = AdView(context, placementId, AdSize.BANNER_HEIGHT_50)
         adView = banner
         container.removeAllViews()
         container.addView(banner)
@@ -51,27 +48,50 @@ class AdManager(private val context: Context) {
         banner.loadAd(banner.buildLoadAdConfig().withAdListener(listener).build())
     }
 
-    /** Loads a full-screen ad for [placementId] and shows it as soon as it is ready. */
-    fun showInterstitial(placementId: String) {
-        val ad = InterstitialAd(context, placementId)
+    private var interstitial: InterstitialAd? = null
+    private var onInterstitialClosed: (() -> Unit)? = null
+
+    /** Requests an interstitial for [placementId]; [onLoaded] runs once it can be shown. */
+    fun loadInterstitial(placementId: String, onLoaded: () -> Unit) {
         interstitial?.destroy()
+        val ad = InterstitialAd(context, placementId)
         interstitial = ad
-
         val listener = object : InterstitialAdListener {
-            override fun onAdLoaded(loaded: Ad) {
-                if (loaded === interstitial && ad.isAdLoaded) ad.show()
+            override fun onAdLoaded(ad: Ad) {
+                Log.d(TAG, "Interstitial loaded ($placementId)")
+                onLoaded()
             }
 
-            override fun onError(failed: Ad, adError: AdError) {
+            override fun onError(ad: Ad, adError: AdError) {
                 Log.w(TAG, "Interstitial failed ($placementId): ${adError.errorCode} ${adError.errorMessage}")
+                // An error while it is on screen must not leave the user stuck behind it.
+                closeInterstitial()
             }
 
-            override fun onInterstitialDisplayed(shown: Ad) = Unit
-            override fun onInterstitialDismissed(dismissed: Ad) = Unit
-            override fun onAdClicked(clicked: Ad) = Unit
-            override fun onLoggingImpression(logged: Ad) = Unit
+            override fun onInterstitialDisplayed(ad: Ad) = Unit
+            override fun onInterstitialDismissed(ad: Ad) = closeInterstitial()
+            override fun onAdClicked(ad: Ad) = Unit
+            override fun onLoggingImpression(ad: Ad) = Unit
         }
         ad.loadAd(ad.buildLoadAdConfig().withAdListener(listener).build())
+    }
+
+    val isInterstitialReady: Boolean
+        get() = interstitial?.let { it.isAdLoaded && !it.isAdInvalidated } == true
+
+    /** Shows the loaded interstitial and calls [onClosed] when it goes away; returns false if there is none to show. */
+    fun showInterstitial(onClosed: () -> Unit): Boolean {
+        val ad = interstitial?.takeIf { isInterstitialReady } ?: return false
+        onInterstitialClosed = onClosed
+        if (ad.show()) return true
+        onInterstitialClosed = null
+        return false
+    }
+
+    private fun closeInterstitial() {
+        val callback = onInterstitialClosed ?: return
+        onInterstitialClosed = null
+        callback()
     }
 
     fun destroy() {
@@ -79,6 +99,7 @@ class AdManager(private val context: Context) {
         adView = null
         interstitial?.destroy()
         interstitial = null
+        onInterstitialClosed = null
     }
 
     private companion object {

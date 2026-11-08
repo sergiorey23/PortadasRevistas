@@ -19,6 +19,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import sergirex.portadasrevistas.databinding.RevistaPagerActivityBinding
 import sergirex.portadasrevistas.presentation.reader.ReaderViewModel
+import sergirex.portadasrevistas.ui.ActivityTransitions
+import sergirex.portadasrevistas.ui.PureBlackTheme
 import kotlin.math.abs
 
 /** The magazine reader: swipe through the pages of one issue, or jump with the slider. */
@@ -33,6 +35,8 @@ class RevistaPagerActivity : AppCompatActivity() {
     private var pages = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        PureBlackTheme.apply(this)
+        ActivityTransitions.asChild(this, R.id.readerRoot)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = RevistaPagerActivityBinding.inflate(layoutInflater)

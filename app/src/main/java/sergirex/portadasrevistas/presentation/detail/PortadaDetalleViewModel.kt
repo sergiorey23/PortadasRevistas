@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import sergirex.portadasrevistas.domain.model.CoverOpenOutcome
 import sergirex.portadasrevistas.domain.model.RevistaRef
 import sergirex.portadasrevistas.domain.usecase.GetIssueDatesUseCase
 import sergirex.portadasrevistas.domain.usecase.MarkReviewPromptedUseCase
@@ -77,8 +76,8 @@ class PortadaDetalleViewModel @Inject constructor(
         viewModelScope.launch { toggleFavoriteUseCase(revista) }
     }
 
-    /** Counts the visit; says whether it's a good moment to ask for a review or show the full-screen ad. */
-    suspend fun onCoverOpened(): CoverOpenOutcome = recordCoverOpened()
+    /** Counts the visit; true when it's a good moment to ask for a review. */
+    suspend fun onCoverOpened(): Boolean = recordCoverOpened()
 
     fun onReviewPromptShown() {
         viewModelScope.launch { markReviewPrompted() }

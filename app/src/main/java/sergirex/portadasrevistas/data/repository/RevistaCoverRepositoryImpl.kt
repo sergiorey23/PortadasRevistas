@@ -57,8 +57,10 @@ class RevistaCoverRepositoryImpl @Inject constructor(
     private suspend fun findCover(revista: RevistaRef, forceRefresh: Boolean): RevistaCover? {
         if (!coverExists(revista.id, forceRefresh)) return null
         // The calendar only dates the cover: if it can't be read, the cover is still shown (just never flagged as old).
-        val issueDate = calendar.getIssueDates(revista.id).getOrNull()?.firstOrNull()
-        return RevistaCover(revista, CoverUrls.latest(revista.id), issueDate)
+        val issueDate = calendar.getIssueDates(revista.id, forceRefresh).getOrNull()?.firstOrNull()
+        // The dated URL, so a new issue never shows the cached image of the previous one.
+        val imageUrl = issueDate?.let { CoverUrls.issueThumbnail(revista.id, it) } ?: CoverUrls.latest(revista.id)
+        return RevistaCover(revista, imageUrl, issueDate)
     }
 
     private suspend fun coverExists(id: String, forceRefresh: Boolean): Boolean {

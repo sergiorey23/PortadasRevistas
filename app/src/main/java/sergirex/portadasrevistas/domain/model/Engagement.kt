@@ -25,13 +25,3 @@ object ReviewPromptPolicy {
             now - engagement.installedAt >= MIN_DAYS_SINCE_INSTALL * DAY_MILLIS &&
             engagement.lastReviewPromptAt.let { it == null || now - it >= MIN_DAYS_BETWEEN_PROMPTS * DAY_MILLIS }
 }
-
-/** How often the full-screen ad is shown: on every third cover opened. */
-object InterstitialPolicy {
-    const val EVERY_N_OPENS = 3
-
-    fun shouldShow(coverOpens: Int): Boolean = coverOpens > 0 && coverOpens % EVERY_N_OPENS == 0
-}
-
-/** What opening a cover triggers besides showing it. */
-data class CoverOpenOutcome(val promptReview: Boolean, val showInterstitial: Boolean)
